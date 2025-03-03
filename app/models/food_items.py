@@ -4,14 +4,13 @@ from sqlalchemy.orm import relationship
 from app.core.db import Base
 
 class FoodItem(Base):
-    '''Храним информацию о продуктах'''
     __tablename__ = 'food_items'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)  # Название продукта
-    calories = Column(Float, nullable=False)  # Калории на 100 г
-    proteins = Column(Float, nullable=True)  # Белки
-    fats = Column(Float, nullable=True)  # Жиры
-    carbs = Column(Float, nullable=True)  # Углеводы
+    name = Column(String, unique=True, nullable=False)
+    calories = Column(Float, nullable=False)
+    proteins = Column(Float, nullable=False, default=0.0)
+    fats = Column(Float, nullable=False, default=0.0)
+    carbs = Column(Float, nullable=False, default=0.0)
 
-    meals = relationship('Meal', back_populates='food')
+    meal_associations = relationship('MealFoodItem', back_populates='food_item', cascade='all, delete-orphan')

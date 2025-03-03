@@ -1,8 +1,8 @@
 """Изначальные таблицы созданы
 
-Revision ID: 2d8897221615
+Revision ID: fd46f49def03
 Revises: 
-Create Date: 2025-03-02 00:29:55.460047
+Create Date: 2025-03-04 00:09:02.648770
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2d8897221615'
+revision: str = 'fd46f49def03'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,21 +24,13 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('calories', sa.Float(), nullable=False),
-    sa.Column('proteins', sa.Float(), nullable=True),
-    sa.Column('fats', sa.Float(), nullable=True),
-    sa.Column('carbs', sa.Float(), nullable=True),
+    sa.Column('proteins', sa.Float(), nullable=False),
+    sa.Column('fats', sa.Float(), nullable=False),
+    sa.Column('carbs', sa.Float(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
     op.create_index(op.f('ix_food_items_id'), 'food_items', ['id'], unique=False)
-    op.create_table('goals',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
-    )
-    op.create_index(op.f('ix_goals_id'), 'goals', ['id'], unique=False)
     op.create_table('test_questions',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('text', sa.String(), nullable=False),
@@ -49,7 +41,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_test_questions_id'), 'test_questions', ['id'], unique=False)
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('goal_id', sa.Integer(), nullable=True),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
@@ -60,19 +51,24 @@ def upgrade() -> None:
     sa.Column('height', sa.Integer(), nullable=True),
     sa.Column('gender', sa.Enum('MALE', 'FEMALE', name='gender'), nullable=True),
     sa.Column('activity_level', sa.Enum('SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'ATHLETE', name='activitylevel'), nullable=True),
-    sa.ForeignKeyConstraint(['goal_id'], ['goals.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     op.create_index(op.f('ix_users_username'), 'users', ['username'], unique=True)
+    op.create_table('workouts',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('duration_minutes', sa.Integer(), nullable=False),
+    sa.Column('calories_burned', sa.Float(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_workouts_id'), 'workouts', ['id'], unique=False)
     op.create_table('meals',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('food_id', sa.Integer(), nullable=True),
-    sa.Column('quantity', sa.Float(), nullable=False),
-    sa.Column('datetime', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['food_id'], ['food_items.id'], ondelete='CASCADE'),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -80,45 +76,66 @@ def upgrade() -> None:
     op.create_table('test_results',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('answers', sa.JSON(), nullable=False),
-    sa.Column('date_taken', sa.Date(), nullable=False),
-    sa.Column('fitness_level', sa.String(), nullable=True),
-    sa.Column('recommended_calories', sa.Float(), nullable=True),
+    sa.Column('question_id', sa.Integer(), nullable=True),
+    sa.Column('answer', sa.String(), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['question_id'], ['test_questions.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_test_results_id'), 'test_results', ['id'], unique=False)
-    op.create_table('workouts',
+    op.create_table('user_goals',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('duration_minutes', sa.Integer(), nullable=False),
-    sa.Column('calories_burned', sa.Float(), nullable=False),
-    sa.Column('date', sa.Date(), nullable=True),
-    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('goal', sa.Enum('LOSE_WEIGHT', 'KEEPING_FIT', 'GAIN_MUSCLE_MASS', name='usergoal'), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_workouts_id'), 'workouts', ['id'], unique=False)
+    op.create_index(op.f('ix_user_goals_id'), 'user_goals', ['id'], unique=False)
+    op.create_table('user_workouts',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('workout_id', sa.Integer(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['workout_id'], ['workouts.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_user_workouts_id'), 'user_workouts', ['id'], unique=False)
+    op.create_table('meal_food_items',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('meal_id', sa.Integer(), nullable=True),
+    sa.Column('food_item_id', sa.Integer(), nullable=True),
+    sa.Column('quantity', sa.Float(), nullable=False),
+    sa.ForeignKeyConstraint(['food_item_id'], ['food_items.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['meal_id'], ['meals.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_meal_food_items_id'), 'meal_food_items', ['id'], unique=False)
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_index(op.f('ix_workouts_id'), table_name='workouts')
-    op.drop_table('workouts')
+    op.drop_index(op.f('ix_meal_food_items_id'), table_name='meal_food_items')
+    op.drop_table('meal_food_items')
+    op.drop_index(op.f('ix_user_workouts_id'), table_name='user_workouts')
+    op.drop_table('user_workouts')
+    op.drop_index(op.f('ix_user_goals_id'), table_name='user_goals')
+    op.drop_table('user_goals')
     op.drop_index(op.f('ix_test_results_id'), table_name='test_results')
     op.drop_table('test_results')
     op.drop_index(op.f('ix_meals_id'), table_name='meals')
     op.drop_table('meals')
+    op.drop_index(op.f('ix_workouts_id'), table_name='workouts')
+    op.drop_table('workouts')
     op.drop_index(op.f('ix_users_username'), table_name='users')
     op.drop_index(op.f('ix_users_id'), table_name='users')
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     op.drop_index(op.f('ix_test_questions_id'), table_name='test_questions')
     op.drop_table('test_questions')
-    op.drop_index(op.f('ix_goals_id'), table_name='goals')
-    op.drop_table('goals')
     op.drop_index(op.f('ix_food_items_id'), table_name='food_items')
     op.drop_table('food_items')
     # ### end Alembic commands ###

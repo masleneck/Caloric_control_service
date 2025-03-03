@@ -1,22 +1,24 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
 import enum
-
+from datetime import datetime
 from app.core.db import Base
 
 
 class UserGoal(enum.Enum):
     '''Цели пользователя'''
     LOSE_WEIGHT = 'lose weight' # похудение
-    KEEPEING_FIT = 'keepeing fit' # поддержание формы
+    KEEPING_FIT = 'keeping fit' # поддержание формы
     GAIN_MUSCLE_MASS = 'gain muscle mass' # набрать мышечную массу
 
-class Goal(Base):
-    '''Храним возможные цели'''
-    __tablename__ = 'goals'
+
+class UserGoalHistory(Base):
+    """История целей пользователя"""
+    __tablename__ = 'user_goals'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False) # Цели
-    description = Column(String, nullable=True) # Описание
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    goal = Column(Enum(UserGoal), nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)  
 
-    users = relationship('User', back_populates='goal')
+    user = relationship('User', back_populates='goals')
