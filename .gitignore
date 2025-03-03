@@ -1,0 +1,6 @@
+*.env
+venv/
+*alembic.txt
+*bd.txt
+*errors.txt
+*git.txt
