@@ -85,4 +85,4 @@ git checkout -b user_goals (user_goals- название ветки)
 
 
 Подтянуть изменения на локальную машину:
-git pull origin main
+git pull origin main 
