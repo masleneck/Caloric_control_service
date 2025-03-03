@@ -25,7 +25,7 @@ async def read_users_me(
     current_user: UserResponse = Depends(get_current_user),
     ):
     '''Возвращает информацию о текущем пользователе (если прошел авторизацию).'''
-    return await current_user
+    return current_user
 
 
 @router.put(
