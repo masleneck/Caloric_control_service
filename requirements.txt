@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+asyncpg
+pydantic
+pydantic[email]
+pydantic-settings
+python-dotenv
+alembic
+sqlalchemy_utils
+phonenumbers
+passlib[bcrypt]
+python-jose[cryptography]
+jinja2

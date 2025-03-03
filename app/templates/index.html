@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Опросник</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <h1>Опросник</h1>
+        <a href="#" class="login-btn">Авторизация</a>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <span id="step-counter">1/5</span>
+    </header>
+
+    <main>
+      <div id="question-container">
+          <!-- Вопросы загружаются динамически -->
+      </div>
+      <div class="buttons">
+          <button id="prevBtn" onclick="prevQuestion()" disabled>Назад</button>
+          <button id="nextBtn" onclick="nextQuestion()" disabled>Далее</button>
+      </div>
+    </main>
+  
+
+    <script type="module" src="{{ url_for('static', path='js/main.js') }}"></script>
+</body>
+</html>

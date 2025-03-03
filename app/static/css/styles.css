@@ -1,0 +1,148 @@
+body {
+  font-family: Verdana, Geneva, sans-serif;
+  text-align: center;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  background-color: #e6e7d1;
+}
+
+header {
+  background: #b85143;
+  color: white;
+  padding: 20px;
+  font-size: 24px;
+}
+
+h1 {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.login-btn {
+  text-decoration: none;
+  background: white;
+  color: #b85143;
+  padding: 10px 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: 0.3s;
+  position: absolute;
+  right: 20px;
+  top: 2%;
+  z-index: 10;
+}
+
+.login-btn:hover {
+  background: #f5f5f5;
+}
+
+.progress-bar {
+  width: 50%;
+  height: 5px;
+  background: #ddd;
+  margin: 20px auto;
+  border-radius: 5px;
+  position: relative;
+  z-index: 5;
+}
+
+.progress {
+  height: 100%;
+  background: #a6bdad;
+  width: 0%;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+#step-counter {
+  font-size: 20px;
+}
+
+main {
+  padding: 20px;
+}
+
+.question {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.option {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  background: #a6bdad;
+  padding: 40px;
+  border-radius: 10px;
+  width: 300px;
+  margin: 10px 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s;
+}
+
+.option:hover {
+  border-color: #b85143;
+}
+
+.option.selected {
+  border-color: #a6bdad;
+  background: #b85143;
+  color: white;
+}
+
+input {
+  padding: 40px;
+  width: 250px;
+  margin-top: 10px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  border: none;
+  background: #b85143;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  opacity: 1;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button.active {
+  opacity: 1;
+}
+
+.register-btn {
+  display: block;
+  width: 200px;
+  text-align: center;
+  margin: 20px auto;
+  padding: 12px;
+  background: #b85143;
+  color: white;
+  font-size: 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.register-btn:hover {
+  background: #b85143be;
+}
