@@ -70,3 +70,19 @@ git commit -m "Добавил все файлы проекта"
 
 Отправляю файлы в гитхаб:
 git push origin main
+
+
+git add .
+git commit -m 'настроил гитигнор'
+пушит ветку в которой я нахожусь
+git push
+
+Перейти на ветку
+git checkout 'название ветки'
+
+Создать ветку
+git checkout -b user_goals (user_goals- название ветки)
+
+
+Подтянуть изменения на локальную машину:
+git pull origin main
