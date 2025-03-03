@@ -12,3 +12,4 @@ phonenumbers
 passlib[bcrypt]
 python-jose[cryptography]
 jinja2
+python-multipart

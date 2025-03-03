@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
-from models.goals import UserGoal
+from app.models.goals import UserGoal
 
 class GoalBase(BaseModel):
     '''Базовая схема для целей (общие поля)'''

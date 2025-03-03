@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.core.config import settings
-from app.routes import users, workouts, auth, food_items, meals, test, test_questions
+from app.routes import users, workouts, auth, food_items, meals, test, test_questions, goals
 
 app = FastAPI(
     title=settings.app_title,  
@@ -21,9 +21,9 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(food_items.router)
 app.include_router(meals.router)
-
-
+app.include_router(goals.router)
 app.include_router(test_questions.router)
+
 
 if __name__ == '__main__':
     pass
