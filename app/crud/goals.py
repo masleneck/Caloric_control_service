@@ -21,3 +21,18 @@ async def get_all_goals(session: AsyncSession) -> List[GoalResponse]:
     result = await session.execute(select(Goal))
     goals = result.scalars().all()
     return [GoalResponse.model_validate(goal) for goal in goals]
+
+
+# async def update_goal(session: AsyncSession, goal_id: int, goal_data: GoalUpdate) -> Optional[Goal]:
+#     '''Обновляет информацию о цели'''
+#     result = await session.execute(select(Goal).filter(Goal.id == goal_id))
+#     goal = result.scalars().first()
+#     if not goal:
+#         raise HTTPException(status_code=404, detail='Продукт не найден')
+#     validated_food = GoalUpdate.model_validate(goal_data) 
+#     for key, value in validated_food.model_dump().items():
+#         setattr(goal, key, value)
+#     await session.commit()
+#     await session.refresh(goal)
+#     return goal
+

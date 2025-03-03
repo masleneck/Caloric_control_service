@@ -43,3 +43,19 @@ async def get_goal_list(
     ):
     '''Позволяет пользователю получить список всех целей'''
     return await get_all_goals(session)
+
+
+# @router.put(
+#         '/update/{food_id}',
+#         tags=['Цели 🎯'],
+#         summary='Обновить информацию цели',
+#         response_model=GoalResponse
+#         )
+# async def update_food_info(
+#     food_id: int,
+#     food_data: FoodCreate,
+#     session: AsyncSession = Depends(get_async_session),
+#     admin_user: User = Depends(is_admin)  
+#     ):
+#     '''Позволяет администратору обновить информацию о продукте'''
+#     return await update_food(session, food_id, food_data)
