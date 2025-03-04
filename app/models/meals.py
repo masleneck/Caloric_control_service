@@ -5,21 +5,24 @@ from datetime import datetime
 from app.core.db import Base
 
 class Meal(Base):
+    '''Хранит приемы пищи'''
     __tablename__ = 'meals'
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     user = relationship('User', back_populates='meals')
     food_items = relationship('MealFoodItem', back_populates='meal', cascade='all, delete-orphan')
+
+
 class MealFoodItem(Base):
-    """Связь приемов пищи и продуктов"""
+    '''Связь приемов пищи и продуктов'''
     __tablename__ = 'meal_food_items'
 
     id = Column(Integer, primary_key=True, index=True)
-    meal_id = Column(Integer, ForeignKey('meals.id', ondelete='CASCADE'))
-    food_item_id = Column(Integer, ForeignKey('food_items.id', ondelete='CASCADE'))
+    meal_id = Column(Integer, ForeignKey('meals.id', ondelete='CASCADE'), nullable=False)
+    food_item_id = Column(Integer, ForeignKey('food_items.id', ondelete='CASCADE'), nullable=False)
     quantity = Column(Float, nullable=False)  
 
     meal = relationship('Meal', back_populates='food_items')

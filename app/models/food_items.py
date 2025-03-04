@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from app.core.db import Base
 
 class FoodItem(Base):
+    '''Хранит продукты'''
     __tablename__ = 'food_items'
 
     id = Column(Integer, primary_key=True, index=True)
@@ -13,4 +14,4 @@ class FoodItem(Base):
     fats = Column(Float, nullable=False, default=0.0)
     carbs = Column(Float, nullable=False, default=0.0)
 
-    meal_associations = relationship('MealFoodItem', back_populates='food_item', cascade='all, delete-orphan')
+    meals = relationship('MealFoodItem', back_populates='food_item', cascade='all, delete-orphan')
