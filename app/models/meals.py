@@ -1,29 +1,13 @@
-from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
 from datetime import datetime
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
 class Meal(Base):
     '''Хранит приемы пищи'''
-    __tablename__ = 'meals'
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
-
-    user = relationship('User', back_populates='meals')
-    food_items = relationship('MealFoodItem', back_populates='meal', cascade='all, delete-orphan')
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
 
 
-class MealFoodItem(Base):
-    '''Связь приемов пищи и продуктов'''
-    __tablename__ = 'meal_food_items'
 
-    id = Column(Integer, primary_key=True, index=True)
-    meal_id = Column(Integer, ForeignKey('meals.id', ondelete='CASCADE'), nullable=False)
-    food_item_id = Column(Integer, ForeignKey('food_items.id', ondelete='CASCADE'), nullable=False)
-    quantity = Column(Float, nullable=False)  
-
-    meal = relationship('Meal', back_populates='food_items')
-    food_item = relationship('FoodItem', back_populates='meal_associations')

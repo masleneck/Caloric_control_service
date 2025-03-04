@@ -1,43 +1,33 @@
-'''
-Настройка работы с базой данных (создает подключение к PostgreSQL)
-Файл нужен для создания соединения с PostgreSQL и управления async сессиями SQLAlchemy
-
-AsyncSession асинхронная версия сессии SQLAlchemy, которая позволяет работать с базой данных без блокировки
-
-Функция get_async_session() используется в API для получения сессии
-'''
-
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy import Column, Integer 
-from sqlalchemy.orm import sessionmaker, declarative_base, declared_attr
+from typing import Annotated
+from sqlalchemy import Integer
+from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
 from app.core.config import settings
 
 
-class PreBase:
+DATABASE_URL =settings.database_url
+# Создаем асинхронный движок для работы с базой данных
+engine = create_async_engine(url=DATABASE_URL, echo=True) 
+# Создаем фабрику сессий для взаимодействия с базой данных
+new_session = async_sessionmaker(engine, expire_on_commit=False) 
+
+async def get_session():
+    async with new_session() as session:
+        yield session
+
+class Base(AsyncAttrs, DeclarativeBase):
+    '''
+    Base- Абстрактный базовый класс для всех моделей, от которого будут наследоваться все таблицы.
+    Он не создаст отдельную таблицу в базе данных, но предоставит базовую функциональность для всех других моделей.
+    DeclarativeBase: Основной класс для всех моделей, от которого будут наследоваться все таблицы (модели таблиц)
+    AsyncAttrs: Позволяет создавать асинхронные модели, что улучшает производительность при работе с асинхронными операциями
+    '''
+    __abstract__ = True  # Класс абстрактный, чтобы не создавать отдельную таблицу для него
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+
+    @declared_attr.directive
+    def __tablename__(cls) -> str:
+        return cls.__name__.lower() + 's'
     
-    @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower()
-
-    id = Column(Integer, primary_key=True)
-
-
-Base = declarative_base(cls=PreBase)
-
-
-engine = create_async_engine(settings.database_url, echo=True) # создает асинхронный движок для работы с базой данных. 
-# echo=True включает вывод SQL-запросов в консоль, полезно для отладки
-
-
-AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession) # фабрика для создания сессий
-# expire_on_commit=False - данные в сессии не будут удаляться после коммита (иначе после сохранения объекта к нему нельзя будет обратиться)
-# class_=AsyncSession - указываем, что сессии должны быть асинхронными
-
-
-async def get_async_session(): # get_db
-    '''
-    Генератор зависимостей для FastAPI
-    '''
-    async with AsyncSessionLocal() as session: # открывает сессию
-        yield session # передает сессию в обработчик запроса, а после завершения автоматически закрывает ее
