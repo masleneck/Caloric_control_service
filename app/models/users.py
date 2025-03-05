@@ -16,7 +16,7 @@ class User(Base):
     hashed_password: Mapped[str]
     role: Mapped[Role] = mapped_column(
         default = Role.USER, # Этот параметр задает значение по умолчанию на уровне приложения (SQLAlchemy)
-        server_default = text("'user'") # Этот параметр задает значение по умолчанию на уровне базы данных
+        server_default = text("'USER'") # Этот параметр задает значение по умолчанию на уровне базы данных
     )
 
     # Связь один-к-одному с Profile

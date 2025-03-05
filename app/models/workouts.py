@@ -17,5 +17,11 @@ class Workout(Base):
         back_populates='workouts'
     )
 
+    # Связь многие-к-одному с WorkoutInfo
+    workout_info: Mapped['WorkoutInfo'] = relationship(
+        'WorkoutInfo',
+        back_populates='workouts'
+    )
+
 
 

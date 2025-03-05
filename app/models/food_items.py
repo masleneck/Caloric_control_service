@@ -11,8 +11,8 @@ class FoodItem(Base):
     proteins: Mapped[float] 
     fats: Mapped[float] 
     carbs: Mapped[float] 
-    
-     # Связь многие-ко-многим с Meal
+
+     # Связь многие-ко-многим с Meal через MealFoodItem
     meals: Mapped[list['Meal']] = relationship(
         'Meal',
         secondary='meal_food_items',

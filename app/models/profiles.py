@@ -15,7 +15,7 @@ class Profile(Base):
     '''Хранит информацию пользователя'''
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     name: Mapped[str]
-    gender: Mapped[Gender] = mapped_column(default = Gender.NOT_STATED, server_default = text("'not stated'"))
+    gender: Mapped[Gender] = mapped_column(default = Gender.NOT_STATED, server_default = text("'NOT_STATED'"))
     weight: Mapped[float]
     height: Mapped[int]
     birthday_date: Mapped[datetime | None] = mapped_column(DateTime)

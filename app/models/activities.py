@@ -18,7 +18,7 @@ class Activity(Base):
     __tablename__ = 'activities'
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    activity_level: Mapped[ActivityLevel] = mapped_column(default = ActivityLevel.NOT_STATED, server_default = text("'not stated'"))
+    activity_level: Mapped[ActivityLevel] = mapped_column(default = ActivityLevel.NOT_STATED, server_default = text("'NOT_STATED'"))
 
     # Обратная связь один-к-одному с User
     user: Mapped['User'] = relationship(

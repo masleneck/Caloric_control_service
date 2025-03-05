@@ -5,7 +5,7 @@ import enum
 
 from app.core.db import Base
 
-class Goals(enum.Enum):
+class СurrentGoal(enum.Enum):
     '''Цели пользователя'''
     LOSE_WEIGHT = 'lose weight' # похудение
     KEEPING_FIT = 'keeping fit' # поддержание формы
@@ -15,7 +15,7 @@ class Goals(enum.Enum):
 class Goal(Base):
     '''История целей пользователя'''
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    goal: Mapped[Goals] = mapped_column(default = Goals.NOT_STATED, server_default = text("'not stated'"))
+    goal: Mapped[СurrentGoal] = mapped_column(default = СurrentGoal.NOT_STATED, server_default = text("'NOT_STATED'"))
     created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
     
     # Обратная связь один-к-одному с User
