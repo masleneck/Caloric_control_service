@@ -19,3 +19,10 @@ class Profile(Base):
     weight: Mapped[float]
     height: Mapped[int]
     birthday_date: Mapped[datetime | None] = mapped_column(DateTime)
+    
+    # Обратная связь один-к-одному с User
+    user: Mapped['User'] = relationship(
+    'User',
+    back_populates='profile',
+    uselist=False
+    )

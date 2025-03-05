@@ -17,6 +17,13 @@ class Goal(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     goal: Mapped[Goals] = mapped_column(default = Goals.NOT_STATED, server_default = text("'not stated'"))
     created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
+    
+    # Обратная связь один-к-одному с User
+    user: Mapped['User'] = relationship(
+    'User',
+    back_populates='goal',
+    uselist=False
+    )
 
  
 

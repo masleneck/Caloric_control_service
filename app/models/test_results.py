@@ -10,4 +10,18 @@ class TestResult(Base):
     question_id: Mapped[int] = mapped_column(ForeignKey('testquestions.id'))
     answer: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
+    
+    # Обратная связь один-к-одному с User
+    user: Mapped['User'] = relationship(
+    'User',
+    back_populates='testresult',
+    uselist=False
+    )
+
+    # Обратная связь один-к-одному с TestQuestion
+    testquestion: Mapped['TestQuestion'] = relationship(
+    'TestQuestion',
+    back_populates='testresult',
+    uselist=False
+    )
 

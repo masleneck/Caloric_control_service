@@ -11,5 +11,11 @@ class Workout(Base):
     workout_info_id: Mapped[int] = mapped_column(ForeignKey('workout_info.id'))
     created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
 
+    # Связь многие-к-одному с User
+    user: Mapped['User'] = relationship(
+        'User',
+        back_populates='workouts'
+    )
+
 
 

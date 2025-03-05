@@ -11,4 +11,10 @@ class FoodItem(Base):
     proteins: Mapped[float] 
     fats: Mapped[float] 
     carbs: Mapped[float] 
-
+    
+     # Связь многие-ко-многим с Meal
+    meals: Mapped[list['Meal']] = relationship(
+        'Meal',
+        secondary='meal_food_items',
+        back_populates='food_items'
+    )
