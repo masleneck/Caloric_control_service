@@ -1,13 +1,23 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, func
+from sqlalchemy import ForeignKey, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+import enum
 
 from app.core.db import Base
+
+class Mealtime(enum.Enum):
+    '''Тип приема пищи'''
+    BREAKFAST = 'breakfast'
+    LUNCH = 'lunch'
+    DINNER = 'dinner'
+    NOT_STATED = 'not stated'
 
 class Meal(Base):
     '''Хранит приемы пищи'''
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    created_at: Mapped[datetime] = mapped_column(server_default = func.now()) 
+    mealtime: Mapped[Mealtime] = mapped_column(default = Mealtime.NOT_STATED, server_default = text("'NOT_STATED'"))
+    meal_date: Mapped[datetime] = mapped_column(DateTime)
+
     
     # Связь многие-к-одному с User
     user: Mapped['User'] = relationship(

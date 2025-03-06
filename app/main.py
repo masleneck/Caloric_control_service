@@ -25,8 +25,7 @@ app.include_router(goals.router)
 app.include_router(test_questions.router)
 
 
-if __name__ == '__main__':
-    pass
+    # pass
     # import os
     # import uvicorn
     

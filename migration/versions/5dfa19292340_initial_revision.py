@@ -1,8 +1,8 @@
 """Initial revision
 
-Revision ID: 517a2446ee0a
+Revision ID: 5dfa19292340
 Revises: 
-Create Date: 2025-03-05 14:50:04.586854
+Create Date: 2025-03-05 21:16:20.529901
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '517a2446ee0a'
+revision: str = '5dfa19292340'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -55,24 +55,10 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('activities',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('activity_level', sa.Enum('SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'ATHLETE', 'NOT_STATED', name='activitylevel',create_type=False), server_default=sa.text("'NOT_STATED'"), nullable=False),
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('goals',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('goal', sa.Enum('LOSE_WEIGHT', 'KEEPING_FIT', 'GAIN_MUSCLE_MASS', 'NOT_STATED', name='сurrentgoal',create_type=False), server_default=sa.text("'NOT_STATED'"), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('meals',
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('mealtime', sa.Enum('BREAKFAST', 'LUNCH', 'DINNER', 'NOT_STATED', name='mealtime',create_type=False), server_default=sa.text("'NOT_STATED'"), nullable=False),
+    sa.Column('meal_date', sa.DateTime(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -83,7 +69,9 @@ def upgrade() -> None:
     sa.Column('gender', sa.Enum('MALE', 'FEMALE', 'NOT_STATED', name='gender',create_type=False), server_default=sa.text("'NOT_STATED'"), nullable=False),
     sa.Column('weight', sa.Float(), nullable=False),
     sa.Column('height', sa.Integer(), nullable=False),
+    sa.Column('goal', sa.Enum('LOSE_WEIGHT', 'KEEPING_FIT', 'GAIN_MUSCLE_MASS', 'NOT_STATED', name='сurrentgoal',create_type=False), server_default=sa.text("'NOT_STATED'"), nullable=False),
     sa.Column('birthday_date', sa.DateTime(), nullable=True),
+    sa.Column('activity_level', sa.Enum('SEDENTARY', 'LIGHT', 'MODERATE', 'ACTIVE', 'ATHLETE', 'NOT_STATED', name='activitylevel',create_type=False), server_default=sa.text("'NOT_STATED'"), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -126,8 +114,6 @@ def downgrade() -> None:
     op.drop_table('testresults')
     op.drop_table('profiles')
     op.drop_table('meals')
-    op.drop_table('goals')
-    op.drop_table('activities')
     op.drop_table('workout_info')
     op.drop_table('users')
     op.drop_table('testquestions')
@@ -135,5 +121,6 @@ def downgrade() -> None:
     # ### end Alembic commands ###
     op.execute('DROP TYPE IF EXISTS role')
     op.execute('DROP TYPE IF EXISTS activitylevel')
-    op.execute('DROP TYPE IF EXISTS currentgoal')
+    op.execute('DROP TYPE IF EXISTS сurrentgoal')
     op.execute('DROP TYPE IF EXISTS gender')
+    op.execute('DROP TYPE IF EXISTS mealtime')

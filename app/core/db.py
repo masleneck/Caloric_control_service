@@ -1,4 +1,3 @@
-from typing import Annotated
 from sqlalchemy import Integer
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
@@ -8,13 +7,26 @@ from app.core.config import settings
 
 DATABASE_URL =settings.database_url
 # Создаем асинхронный движок для работы с базой данных
-engine = create_async_engine(url=DATABASE_URL, echo=True) 
+engine = create_async_engine(url=DATABASE_URL) 
 # Создаем фабрику сессий для взаимодействия с базой данных
 new_session = async_sessionmaker(engine, expire_on_commit=False) 
 
-async def get_session():
-    async with new_session() as session:
-        yield session
+
+def connection(method): # принимает исходную функцию для обёртки
+    async def wrapper(*args, **kwargs): # это функция-обёртка, которая принимает все аргументы исходной функции
+        async with new_session() as session:
+    # автоматически создаёт и закрывает сессию в асинхронном режиме, освобождая от управления сессией вручную
+    # Сессия передаётся в исходную функцию через аргумент session
+            try:
+                # Явно не открываем транзакции, так как они уже есть в контексте
+                return await method(*args, session=session, **kwargs)
+            except Exception as e:
+                await session.rollback()  # Откатываем сессию при ошибке
+                raise e  # Поднимаем исключение дальше
+            finally:
+                await session.close()  # Закрываем сессию
+
+    return wrapper
 
 class Base(AsyncAttrs, DeclarativeBase):
     '''
@@ -31,3 +43,5 @@ class Base(AsyncAttrs, DeclarativeBase):
     def __tablename__(cls) -> str:
         return cls.__name__.lower() + 's'
     
+
+

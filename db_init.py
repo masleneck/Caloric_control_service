@@ -2,8 +2,8 @@ import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import delete
 
-from models.test_questions import TestQuestion
-from core.db import get_async_session
+from app.models.test_questions import TestQuestion
+from app.core.db import get_async_session
 
 async def add_test_questions():
     '''Удаляем старые вопросы и добавляем новые'''

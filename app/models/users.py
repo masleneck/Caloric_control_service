@@ -28,22 +28,6 @@ class User(Base):
     lazy='joined'  # Автоматически подгружает profile при запросе user
     )
 
-    # Связь один-к-одному с Activity
-    activities: Mapped['Activity'] = relationship(  
-    'Activity',
-    back_populates='user', 
-    uselist=False,  
-    lazy='joined'  
-    )
-
-    # Связь один-к-одному с Goal
-    goal: Mapped['Goal'] = relationship(  
-    'Goal',
-    back_populates='user', 
-    uselist=False, 
-    lazy='joined'  
-    )
-
     # Связь один-к-одному с TestResult
     testresult: Mapped['TestResult'] = relationship(  
     'TestResult',
