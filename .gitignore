@@ -4,3 +4,4 @@ venv/
 *bd.txt
 *errors.txt
 *git.txt
+*sqlalchemy.txt

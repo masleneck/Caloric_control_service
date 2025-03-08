@@ -1,5 +1,5 @@
 from sqlalchemy import Integer
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column, class_mapper
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
 from app.core.config import settings
@@ -28,6 +28,8 @@ def connection(method): # принимает исходную функцию д�
 
     return wrapper
 
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     '''
     Base- Абстрактный базовый класс для всех моделей, от которого будут наследоваться все таблицы.
@@ -42,6 +44,21 @@ class Base(AsyncAttrs, DeclarativeBase):
     @declared_attr.directive
     def __tablename__(cls) -> str:
         return cls.__name__.lower() + 's'
+    
+    
+    def to_dict(self) -> dict:
+        '''Универсальный метод для конвертации объекта SQLAlchemy в словарь
+        class_mapper(self.__class__) — этот метод возвращает объект маппера SQLAlchemy, который содержит информацию о всех колонках модели.
+
+        {column.key: getattr(self, column.key)} — создает словарь, в котором ключи — это названия колонок,
+        а значения — данные этих колонок для текущего объекта.
+
+        Этот метод универсален и будет работать с любой таблицей или моделью, унаследованной от класса Base.
+        '''
+        # Получаем маппер для текущей модели
+        columns = class_mapper(self.__class__).columns
+        # Возвращаем словарь всех колонок и их значений
+        return {column.key: getattr(self, column.key) for column in columns}
     
 
 
