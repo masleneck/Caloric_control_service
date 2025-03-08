@@ -5,3 +5,4 @@ venv/
 *errors.txt
 *git.txt
 *sqlalchemy.txt
+*pydantic.txt
