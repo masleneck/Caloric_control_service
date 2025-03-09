@@ -1,7 +1,7 @@
 # python -m app.crud.select_methods_dao
 
 from app.dao.dao import UserDAO
-from app.core.db import connection
+from app.dao.db import connection
 from app.schemas.users import UserPydantic, UsernameIdPydantic
 
 from asyncio import run

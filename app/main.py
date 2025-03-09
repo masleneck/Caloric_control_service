@@ -1,41 +1,55 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+from fastapi import FastAPI, APIRouter
 from fastapi.templating import Jinja2Templates
-
+from fastapi.staticfiles import StaticFiles
+from loguru import logger
 from app.core.config import settings
-from app.routes import users, workouts, auth, food_items, meals, test, test_questions, goals
-
-app = FastAPI(
-    title=settings.app_title,  
-    description='API для управления пользователями и тренировками',
-)
-
-app.mount('/static', StaticFiles(directory='app/static'), name='static')
-
-templates = Jinja2Templates(directory='app/templates')
-
-app.include_router(test.router)
-
-app.include_router(workouts.router)
-app.include_router(auth.router)  
-app.include_router(users.router)
-app.include_router(food_items.router)
-app.include_router(meals.router)
-app.include_router(goals.router)
-app.include_router(test_questions.router)
+from app.auth.router import router as router_auth
 
 
-    # pass
-    # import os
-    # import uvicorn
-    
-    # print(os.path.exists('templates/index.html')) 
-    # print(os.path.exists('static')) 
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
+    '''Управление жизненным циклом приложения.'''
+    logger.info('Инициализация приложения...')
+    yield
+    logger.info('Завершение работы приложения...')
 
-    # print(os.environ.get('DATABASE_URL'))
-    # print(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES'))
 
-    # uvicorn.run('main:app', host='127.0.0.1', port=8000, reload=True)
+def create_app() -> FastAPI:
+    '''
+   Создание и конфигурация FastAPI приложения.
+   Returns: Сконфигурированное приложение FastAPI
+   '''
+    app = FastAPI(
+        title=settings.APP_TITLE,
+        description=('API для управления пользователями, тренировками и их питанием'),
+    )
+    # Монтирование статических файлов
+    app.mount(
+        '/static',
+        StaticFiles(directory='app/static'),
+        name='static'
+    )
+    templates = Jinja2Templates(directory='app/templates')
+    # Регистрация роутеров
+    register_routers(app)
+    return app
 
-    # uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
-    
+
+def register_routers(app: FastAPI) -> None:
+    '''Регистрация роутеров приложения.'''
+    # Корневой роутер
+    root_router = APIRouter()
+
+    @root_router.get('/', tags=['root'])
+    def home_page():
+        return {'hello!!!'}
+
+    # Подключение роутеров
+    app.include_router(root_router, tags=['root'])
+    app.include_router(router_auth, prefix='/auth', tags=['Auth'])
+
+
+# Создание экземпляра приложения
+app = create_app()

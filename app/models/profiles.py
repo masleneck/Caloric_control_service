@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from app.core.db import Base
+from app.dao.db import Base
 
 class Gender(enum.Enum):
     '''Пол пользователя'''
@@ -11,7 +11,7 @@ class Gender(enum.Enum):
     FEMALE = 'female'
     NOT_STATED = 'not stated'
 
-class СurrentGoal(enum.Enum):
+class CurrentGoal(enum.Enum):
     '''Цели пользователя'''
     LOSE_WEIGHT = 'lose weight' # похудение
     KEEPING_FIT = 'keeping fit' # поддержание формы
@@ -31,10 +31,11 @@ class Profile(Base):
     '''Хранит информацию пользователя'''
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     name: Mapped[str]
+    last_name: Mapped[str | None]
     gender: Mapped[Gender] = mapped_column(default = Gender.NOT_STATED, server_default = text("'NOT_STATED'"))
     weight: Mapped[float]
     height: Mapped[int]
-    goal: Mapped[СurrentGoal] = mapped_column(default = СurrentGoal.NOT_STATED, server_default = text("'NOT_STATED'"))
+    goal: Mapped[CurrentGoal] = mapped_column(default = CurrentGoal.NOT_STATED, server_default = text("'NOT_STATED'"))
     birthday_date: Mapped[datetime | None] = mapped_column(DateTime)
     activity_level: Mapped[ActivityLevel] = mapped_column(default = ActivityLevel.NOT_STATED, server_default = text("'NOT_STATED'"))
 

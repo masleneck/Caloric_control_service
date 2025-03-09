@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from app.core.db import Base, DATABASE_URL  # Импортируем URL базы из db.py
+from app.dao.db import Base, DATABASE_URL  # Импортируем URL базы из db.py
 from app.models import User, Profile, Workout, WorkoutInfo, Meal, MealFoodItem, FoodItem, TestQuestion, TestResult
 
 # Указываем Alembic, какой URL использовать для подключения к базе данных

@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from app.core.db import Base
+from app.dao.db import Base
 
 class Mealtime(enum.Enum):
     '''Тип приема пищи'''
