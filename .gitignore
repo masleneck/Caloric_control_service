@@ -1,6 +1,16 @@
-*.env
+# Игнорирование виртуальных окружений Python
 venv/
+
+# Игнорирование файлов с окружением
+.env.*
+
+# Игнорирование скомпилированных файлов Python
+__pycache__/
+
+# Игнорирование черновиков
 *alembic.txt
 *bd.txt
 *errors.txt
 *git.txt
+*sqlalchemy.txt
+*pydantic.txt

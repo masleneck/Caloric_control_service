@@ -1,40 +1,63 @@
-from pydantic import BaseModel, ConfigDict, Field, field_serializer
-from datetime import datetime as dt
-from typing import Optional
+from typing import List
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from datetime import datetime
+from app.models.meals import Mealtime
 
-
-class MealCreate(BaseModel):
-    '''Схема для создания приема пищи'''
-    food_id: int  # ID продукта из food_items
-    quantity: float = Field(gt=0, description='Количество в граммах')  # Количество продукта
-
-    model_config = ConfigDict(from_attributes=True) 
-
-
-class MealUpdate(BaseModel):
-    '''Схема для обновления информации о приеме пищи'''
-    food_id: int  # ID продукта из food_items
-    quantity: float = Field(gt=0, description='Количество в граммах')  # Количество продукта
-    datetime: Optional[dt] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class MealResponse(BaseModel):
-    '''Схема ответа API с расчетом калорий, белков, жиров и углеводов'''
+class FoodItemShortResponse(BaseModel):
     id: int
-    food_id: int
-    quantity: float
-    datetime: dt
-    food_name: str  # Название продукта
+    name: str
     calories: float
     proteins: float
     fats: float
     carbs: float
 
+class MealFoodItemResponse(BaseModel):
+    id: int
+    meal_id: int
+    food_item: FoodItemShortResponse
+    quantity: float
+
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('datetime')
-    def serialize_datetime(self, dt: dt, _info) -> str:
-        '''Автоматически форматирует дату при возврате в API'''
-        return dt.strftime('%d-%m-%Y %H:%M')
+class MealDetailResponse(BaseModel):
+    id: int
+    mealtime: Mealtime
+    meal_date: datetime
+    total_calories: float = Field(..., description='Суммарная калорийность')
+    food_items: List[MealFoodItemResponse]
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True, json_encoders = {datetime: lambda v: v.isoformat()})
+
+
+class MealCreate(BaseModel):
+    food_item_id: int = Field(..., gt=0)
+    mealtime: Mealtime
+    meal_date: datetime
+    quantity: float = Field(..., gt=0)
+
+    @field_validator('meal_date')
+    def validate_date(cls, v):
+        if v > datetime.now():
+            raise ValueError('Дата не может быть в будущем')
+        return v
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'example': {
+                'food_item_id': 1,
+                'mealtime': 'breakfast',
+                'meal_date': '2024-04-20 06:59:59',
+                'quantity': 150.5
+            }
+        }
+    )
+
+class MealCreateResponse(BaseModel):
+    message: str
+    meal_id: int
+    model_config = ConfigDict(from_attributes=True,json_schema_extra={
+            'example': {
+                'message': 'Прием пищи под ID 5 добавлен успешно!',
+                'meal_id': 5
+            }
+        }
+    )

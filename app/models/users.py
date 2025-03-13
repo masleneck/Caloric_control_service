@@ -1,53 +1,51 @@
-'''
-Column - используется для описания полей таблицы
-Integer, String - типы данных столбцов (числовые и строковые значения)
-declarative_base - создает базовый класс для моделей
-'''
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Enum, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy import text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from app.core.db import Base
+from app.dao.db import Base
 
-class UserRole(enum.Enum):
+class Role(enum.Enum):
     '''Роли'''
     USER = 'user'
     ADMIN = 'admin'
 
-class ActivityLevel(enum.Enum):
-    '''Уровень активности пользователя'''
-    SEDENTARY = 'sedentary'  # Малоподвижный образ жизни
-    LIGHT = 'light'  # Легкая активность (1-3 тренировки в неделю)
-    MODERATE = 'moderate'  # Средняя активность (3-5 тренировок в неделю)
-    ACTIVE = 'active'  # Высокая активность (6-7 тренировок в неделю)
-    ATHLETE = 'athlete'  # Спортсмен
-
-class Gender(enum.Enum):
-    '''Пол пользователя'''
-    MALE = 'male'
-    FEMALE = 'female'
-
 class User(Base):
-    '''Храним информацию о пользователях'''
-    __tablename__ = 'users'
+    '''Хранит информацию для авторизации'''
+    email: Mapped[str] = mapped_column(unique=True)
+    password : Mapped[str]
+    role: Mapped[Role] = mapped_column(
+        default = Role.USER, # Этот параметр задает значение по умолчанию на уровне приложения (SQLAlchemy)
+        server_default = text("'USER'") # Этот параметр задает значение по умолчанию на уровне базы данных
+    )
 
-    id = Column(Integer, primary_key=True, index=True)
-    goal_id = Column(Integer, ForeignKey('goals.id'), nullable=True)  # Связь с целями
-    name = Column(String, nullable=False) # Имя
-    email = Column(String, unique=True, index=True, nullable=False) # Почта
-    username = Column(String, unique=True, index=True, nullable=False) # Никнейм
-    hashed_password = Column(String, nullable=False)  # Храним только хеш пароля
-    birthday_date = Column(Date, nullable=True) # Дата рождения
-    role = Column(Enum(UserRole), default=UserRole.USER, nullable=False) # Роль(admin)
+    # Связь один-к-одному с Profile
+    profile: Mapped['Profile'] = relationship(  
+    'Profile',
+    back_populates='user', # Указывает на атрибут обратной связи в модели Profile. 
+    # Это значит, что при доступе к профилю можно также получить связанного пользователя.
+    uselist=False,  # Ключевой параметр для связи один-к-одному
+    lazy='joined'  # Автоматически подгружает profile при запросе user
+    )
 
-    weight = Column(Float, nullable=True)  # Вес в кг
-    height = Column(Integer, nullable=True)  # Рост в см
-    gender = Column(Enum(Gender), nullable=True)  # Пол
-    activity_level = Column(Enum(ActivityLevel), nullable=True)  # Уровень активности
+    # Связь один-к-одному с TestResult
+    testresult: Mapped['TestResult'] = relationship(  
+    'TestResult',
+    back_populates='user', 
+    uselist=False, 
+    lazy='joined'  
+    )
 
-    goal = relationship('Goal', back_populates='users', uselist=False) 
-    test_results = relationship('TestResult', back_populates='user', cascade='all, delete-orphan')
-    workouts = relationship('Workout', back_populates='user', cascade='all, delete-orphan')
-    meals = relationship('Meal', back_populates='user', cascade='all, delete-orphan')
+    # Связь один-ко-многим с Meal
+    meals: Mapped[list['Meal']] = relationship(
+        'Meal',
+        back_populates='user',
+        cascade="all, delete-orphan"  # При удалении User удаляются и связанные Post
+    )
 
+    # Связь один-ко-многим с Workout
+    workouts: Mapped[list['Workout']] = relationship(
+        'Workout',
+        back_populates='user',
+        cascade="all, delete-orphan"  # При удалении User удаляются и связанные Workout
+    )
 

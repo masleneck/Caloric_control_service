@@ -1,12 +1,18 @@
-from sqlalchemy import Column, Integer, String, JSON
+from sqlalchemy.orm import Mapped, relationship
 
-from app.core.db import Base
+from app.dao.db import Base
 
 class TestQuestion(Base):
     '''Храним вопросы для теста'''
-    __tablename__ = "test_questions"
+    text: Mapped[str]  
+    type: Mapped[str]  # 'options' или 'input'
+    options: Mapped[str | None]
+    
+    # Связь один-к-одному с TestResult
+    testresult: Mapped['TestResult'] = relationship(  
+    'TestResult',
+    back_populates='testquestion',
+    uselist=False,  
+    lazy='joined'  
+    )
 
-    id = Column(Integer, primary_key=True, index=True)
-    text = Column(String, nullable=False)  # Текст вопроса
-    type = Column(String, nullable=False)  # "options" или "input"
-    options = Column(JSON, nullable=True)  # Варианты ответа (если type="options")

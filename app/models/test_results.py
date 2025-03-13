@@ -1,18 +1,27 @@
-from sqlalchemy import Column, Integer, ForeignKey, JSON, Float, String, Date
-from sqlalchemy.orm import relationship
-from datetime import date
+from datetime import datetime
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.db import Base
+from app.dao.db import Base
 
 class TestResult(Base):
-    '''Храним информацию о результатах тестирования.'''
-    __tablename__ = 'test_results'
+    '''Хранит результаты тестирования пользователя'''
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    question_id: Mapped[int] = mapped_column(ForeignKey('testquestions.id'))
+    answer: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
+    
+    # Обратная связь один-к-одному с User
+    user: Mapped['User'] = relationship(
+    'User',
+    back_populates='testresult',
+    uselist=False
+    )
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
-    answers = Column(JSON, nullable=False)  # Храним ответы в формате JSON
-    date_taken = Column(Date, default=date.today, nullable=False)  # Дата прохождения теста
-    fitness_level = Column(String, nullable=True)  # Уровень физической подготовки
-    recommended_calories = Column(Float, nullable=True)  # Рассчитанная дневная норма калорий
+    # Обратная связь один-к-одному с TestQuestion
+    testquestion: Mapped['TestQuestion'] = relationship(
+    'TestQuestion',
+    back_populates='testresult',
+    uselist=False
+    )
 
-    user = relationship('User', back_populates='test_results')

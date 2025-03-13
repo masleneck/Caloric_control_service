@@ -1,17 +1,25 @@
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.db import Base
+from app.dao.db import Base
 
 class FoodItem(Base):
-    '''Храним информацию о продуктах'''
+    '''Хранит продукты'''
     __tablename__ = 'food_items'
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)  # Название продукта
-    calories = Column(Float, nullable=False)  # Калории на 100 г
-    proteins = Column(Float, nullable=True)  # Белки
-    fats = Column(Float, nullable=True)  # Жиры
-    carbs = Column(Float, nullable=True)  # Углеводы
+    name: Mapped[str] = mapped_column(unique=True)
+    calories: Mapped[float]
+    proteins: Mapped[float] 
+    fats: Mapped[float] 
+    carbs: Mapped[float] 
 
-    meals = relationship('Meal', back_populates='food')
+     # Связь многие-ко-многим с Meal через MealFoodItem
+    meals: Mapped[list['Meal']] = relationship(
+        'Meal',
+        secondary='meal_food_items',
+        back_populates='food_items'
+    )
+
+    meal_food_links: Mapped[list['MealFoodItem']] = relationship(
+    'MealFoodItem',
+    back_populates='food_item'
+    )
