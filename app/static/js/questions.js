@@ -1,14 +1,26 @@
-export let questions = [];
-
-export async function loadQuestions() {
-    try {
-        const response = await fetch('/test');  
-        if (!response.ok) {
-            throw new Error('Ошибка загрузки вопросов');
-        }
-        questions = await response.json();  
-    } catch (error) {
-        console.error('Ошибка:', error);
-    }
-}
-
+export const questions = [
+    { id: 1, 
+      text: "Как часто вы занимаетесь спортом?", 
+      type: "options", 
+      options: ["Не занимаюсь", "Редко", "Два раза в неделю", "Каждый день", "Ненавижу Влада"] 
+    },
+    { id: 2, 
+      text: "Сколько литров воды вы пьете в день?", 
+      type: "input", 
+      placeholder: "Введите количество в литрах" 
+    },
+    { id: 3, 
+      text: "Сколько часов вы спите в сутки?", 
+      type: "options", 
+      options: ["Менее 5", "5-6", "7-8", "Более 8"] 
+    },
+    { id: 4, 
+      text: "Ваш вес (кг):", 
+      type: "input", 
+      placeholder: "Введите вес" 
+    },
+    { id: 5, 
+      text: "Ваш уровень активности:", 
+      type: "options", 
+      options: ["На чиле", "Лёгкая активность", "Средняя активность", "Высокая активность", "Чемпик"] }
+  ];
