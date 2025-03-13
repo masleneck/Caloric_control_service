@@ -18,8 +18,9 @@ class BaseDAO(Generic[T]):
         self._session = session
         if self.model is None:
             raise ValueError('Модель должна быть указана в дочернем классе')
-
+    
     async def find_one_or_none_by_id(self, data_id: int):
+        '''Находит запись по ID или возвращает None.'''
         try:
             query = select(self.model).filter_by(id=data_id)
             result = await self._session.execute(query)
@@ -30,6 +31,25 @@ class BaseDAO(Generic[T]):
         except SQLAlchemyError as e:
             logger.error(f'Ошибка при поиске записи с ID {data_id}: {e}')
             raise
+
+
+    async def find_one_by_fields(self, **filters):
+        '''Ищет запись по любым полям модели'''
+        try:
+            query = select(self.model).filter_by(**filters)
+            result = await self._session.execute(query)
+            return result.scalar_one_or_none()
+        except SQLAlchemyError as e:
+            logger.error(f'Ошибка: {e}')
+            raise
+
+
+    async def delete_by_id(self, id: int):
+        '''Удаляет запись по ID'''
+        await self._session.execute(
+            sqlalchemy_delete(self.model).where(self.model.id == id))
+        await self._session.flush()
+
 
     async def find_one_or_none(self, filters: BaseModel):
         filter_dict = filters.model_dump(exclude_unset=True)

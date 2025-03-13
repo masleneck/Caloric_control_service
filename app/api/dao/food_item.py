@@ -1,33 +1,11 @@
-from loguru import logger
-from sqlalchemy import select, func
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.ext.asyncio import AsyncSession
-
-# from app.schemas.? import ?
+from sqlalchemy import select
+from typing import Optional
 from app.dao.base import BaseDAO
-from app.models import FoodItem
+from app.models.food_items import FoodItem
 
-
-class FoodItemDAO(BaseDAO):
+class FoodItemDAO(BaseDAO[FoodItem]):
     model = FoodItem
 
-    @classmethod
-    async def add_food_item(cls, session: AsyncSession, food_data: dict) -> int:
-        '''
-        Добавляет продукт в базу данных.
-        
-        : session: Асинхронная сессия базы данных.
-        : food_data: Данные продукта (словарь).
-        :return: ID добавленного продукта
-        '''
-        food = cls.model(**food_data)
-        session.add(food)
-
-        try:
-            await session.flush()  # Позволяет получить ID перед коммитом
-            logger.info(f'Продукт "{food.name}" добавлен в базу.')
-            return food.id
-        except SQLAlchemyError as e:
-            await session.rollback()
-            logger.error(f'Ошибка при добавлении продукта: {e}')
-            raise e
+    async def get_food_item_by_id(self, food_item_id: int) -> FoodItem | None:
+        '''Получить продукт по ID с проверкой существования'''
+        return await self.find_one_or_none_by_id(food_item_id)

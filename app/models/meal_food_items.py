@@ -11,4 +11,14 @@ class MealFoodItem(Base):
     food_item_id: Mapped[int] = mapped_column(ForeignKey('food_items.id'))
     quantity: Mapped[float]
 
+    # Связь с Meal
+    meal: Mapped['Meal'] = relationship(
+        'Meal',
+        back_populates='meal_food_links'
+    )
 
+    # Связь с FoodItem
+    food_item: Mapped['FoodItem'] = relationship(
+        'FoodItem',
+        back_populates='meal_food_links'
+    )

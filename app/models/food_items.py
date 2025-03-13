@@ -18,3 +18,8 @@ class FoodItem(Base):
         secondary='meal_food_items',
         back_populates='food_items'
     )
+
+    meal_food_links: Mapped[list['MealFoodItem']] = relationship(
+    'MealFoodItem',
+    back_populates='food_item'
+    )

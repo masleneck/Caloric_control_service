@@ -3,18 +3,18 @@ from fastapi import Request, Depends
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dao import UsersDAO
+from app.auth.dao import UserDAO
 from app.models.users import User, Role
 from app.core.config import settings
 from app.dependencies.dao_dep import get_session_without_commit
-from app.core.exceptions import TokenNoFound, NoJwtException, TokenExpiredException, NoUserIdException, ForbiddenException, UserNotFoundException
+from app.core.exceptions import TokenNotFoundException, InvalidJwtTokenException, TokenExpiredException, UserIdNotFoundException, ForbiddenException, UserNotFoundException
 
 
 def get_access_token(request: Request) -> str:
     '''Извлекаем access_token из кук.'''
     token = request.cookies.get('user_access_token')
     if not token:
-        raise TokenNoFound
+        raise TokenNotFoundException
     return token
 
 
@@ -22,7 +22,7 @@ def get_refresh_token(request: Request) -> str:
     '''Извлекаем refresh_token из кук.'''
     token = request.cookies.get('user_refresh_token')
     if not token:
-        raise TokenNoFound
+        raise TokenNotFoundException
     return token
 
 
@@ -39,15 +39,15 @@ async def check_refresh_token(
         )
         user_id = payload.get('sub')
         if not user_id:
-            raise NoJwtException
+            raise InvalidJwtTokenException
 
-        user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+        user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
         if not user:
-            raise NoJwtException
+            raise InvalidJwtTokenException
 
         return user
     except JWTError:
-        raise NoJwtException
+        raise InvalidJwtTokenException
 
 
 async def get_current_user(
@@ -62,7 +62,7 @@ async def get_current_user(
         raise TokenExpiredException
     except JWTError:
         # Общая ошибка для токенов
-        raise NoJwtException
+        raise InvalidJwtTokenException
 
     expire: str = payload.get('exp')
     expire_time = datetime.fromtimestamp(int(expire), tz=timezone.utc)
@@ -71,9 +71,9 @@ async def get_current_user(
 
     user_id: str = payload.get('sub')
     if not user_id:
-        raise NoUserIdException
+        raise UserIdNotFoundException
 
-    user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+    user = await UserDAO(session).find_one_or_none_by_id(data_id=int(user_id))
     if not user:
         raise UserNotFoundException
     return user

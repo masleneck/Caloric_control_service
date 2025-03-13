@@ -7,13 +7,15 @@ from app.auth.utils import authenticate_user, set_tokens
 from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.core.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
-from app.api.dao import UserDAO
 from app.schemas.users import UserRegister, UserAuth, EmailModel, UserAddDB, UserInfo
+from .dao import UserDAO
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/auth',
+    tags=['Аутентификация 🛡️']
+    )
 
-
-@router.post('/register/')
+@router.post('/register/', summary='Регистрация пользователя')
 async def register_user(user_data: UserRegister,
                         session: AsyncSession = Depends(get_session_with_commit)) -> dict:
     # Проверка существования пользователя
@@ -33,7 +35,7 @@ async def register_user(user_data: UserRegister,
     return {'message': 'Вы успешно зарегистрированы!'}
 
 
-@router.post('/login/')
+@router.post('/login/', summary='Аунтификация пользователя')
 async def auth_user(
         response: Response,
         user_data: UserAuth,
@@ -53,26 +55,26 @@ async def auth_user(
     }
 
 
-@router.post('/logout')
+@router.post('/logout', summary='Выйти из системы')
 async def logout(response: Response):
     response.delete_cookie('user_access_token')
     response.delete_cookie('user_refresh_token')
     return {'message': 'Пользователь успешно вышел из системы'}
 
 
-@router.get('/me/')
+@router.get('/me/', summary='Получить информацию о себе')
 async def get_me(user_data: User = Depends(get_current_user)) -> UserInfo:
     return UserInfo.model_validate(user_data)
 
 
-@router.get('/all_users/')
+@router.get('/all_users/', summary='🚨Получить информацию о всех пользователях')
 async def get_all_users(session: AsyncSession = Depends(get_session_with_commit),
                         user_data: User = Depends(get_current_admin_user)
                         ) -> List[UserInfo]:
     return await UserDAO(session).find_all()
 
 
-@router.post('/refresh')
+@router.post('/refresh',summary='Обновить токены')
 async def process_refresh_token(
         response: Response,
         user: User = Depends(check_refresh_token)

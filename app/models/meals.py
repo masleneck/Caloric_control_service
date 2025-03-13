@@ -32,3 +32,9 @@ class Meal(Base):
         back_populates='meals'
     )
 
+    # Связь один-ко-многим с MealFoodItem 
+    meal_food_links: Mapped[list['MealFoodItem']] = relationship(
+        'MealFoodItem',
+        back_populates='meal',
+        cascade='all, delete-orphan'
+    )
