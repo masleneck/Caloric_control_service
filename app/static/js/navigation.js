@@ -1,11 +1,12 @@
 import { renderQuestion } from "./ui.js";
-import { questions } from "./questions.js";
 
 let currentQuestionIndex = 0;
-let answers = {}; // Ответы пользователя
+let answers = {};
+let questions = [];  // Вопросы будут загружены из бэка
 
-export function init() {
-    console.log("Опросник инициализирован"); // Проверяю грузит или нет 
+export function init(loadedQuestions) {
+    questions = loadedQuestions;
+    console.log("Опросник инициализирован с вопросами:", questions);
     loadQuestion();
 }
 

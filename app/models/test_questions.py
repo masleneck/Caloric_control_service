@@ -1,12 +1,12 @@
-from sqlalchemy.orm import Mapped, relationship
-
+from sqlalchemy.orm import Mapped, relationship, mapped_column
+from sqlalchemy import JSON
 from app.dao.db import Base
 
 class TestQuestion(Base):
     '''Храним вопросы для теста'''
     text: Mapped[str]  
     type: Mapped[str]  # 'options' или 'input'
-    options: Mapped[str | None]
+    options: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
     
     # Связь один-к-одному с TestResult
     testresult: Mapped['TestResult'] = relationship(  

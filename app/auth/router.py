@@ -67,7 +67,7 @@ async def get_me(user_data: User = Depends(get_current_user)) -> UserInfo:
     return UserInfo.model_validate(user_data)
 
 
-@router.get('/all_users/', summary='🚨Получить информацию о всех пользователях')
+@router.get('/all_users/', summary='🚨 Получить информацию о всех пользователях')
 async def get_all_users(session: AsyncSession = Depends(get_session_with_commit),
                         user_data: User = Depends(get_current_admin_user)
                         ) -> List[UserInfo]:

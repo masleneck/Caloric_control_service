@@ -10,7 +10,7 @@ def create_tokens(data: dict) -> dict:
     # Текущее время в UTC
     now = datetime.now(timezone.utc)
 
-    # AccessToken - 30 минут
+    # AccessToken - 10 минут
     access_expire = now + timedelta(minutes=10)
     access_payload = data.copy()
     access_payload.update({'exp': int(access_expire.timestamp()), 'type': 'access'})
