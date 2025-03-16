@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 from sqlalchemy import JSON
-from app.dao.db import Base
+from app.data.db import Base
 
 class TestQuestion(Base):
     '''Храним вопросы для теста'''

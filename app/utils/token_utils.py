@@ -1,13 +1,11 @@
-from passlib.context import CryptContext
-from jose import jwt
 from datetime import datetime, timedelta, timezone
+from jose import jwt
 from fastapi.responses import Response
 
 from app.core.config import settings
 
-
 def create_tokens(data: dict) -> dict:
-    # Текущее время в UTC
+    '''Создает access и refresh токены.'''
     now = datetime.now(timezone.utc)
 
     # AccessToken - 10 минут
@@ -31,14 +29,8 @@ def create_tokens(data: dict) -> dict:
     )
     return {'access_token': access_token, 'refresh_token': refresh_token}
 
-
-async def authenticate_user(user, password):
-    if not user or verify_password(plain_password=password, password =user.password) is False:
-        return None
-    return user
-
-
 def set_tokens(response: Response, user_id: int):
+    '''Устанавливает токены в cookies.'''
     new_tokens = create_tokens(data={'sub': str(user_id)})
     access_token = new_tokens.get('access_token')
     refresh_token = new_tokens.get('refresh_token')
@@ -58,14 +50,3 @@ def set_tokens(response: Response, user_id: int):
         secure=True,
         samesite='lax'
     )
-
-
-pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-
-
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, password : str) -> bool:
-    return pwd_context.verify(plain_password, password )

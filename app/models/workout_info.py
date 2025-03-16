@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, relationship
 
-from app.dao.db import Base
+from app.data.db import Base
 
 
 class WorkoutInfo(Base):

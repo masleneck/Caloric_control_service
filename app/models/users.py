@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from app.dao.db import Base
+from app.data.db import Base
 
 class Role(enum.Enum):
     '''Роли'''

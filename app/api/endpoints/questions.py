@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies.dao_dep import get_session_without_commit
 from app.models.test_questions import TestQuestion
-from app.api.dao import QuestionDAO
+from app.data.dao import QuestionDAO
 from app.schemas.test_questions import TestQuestionResponse  # Импортируем схему
 
 router = APIRouter(prefix='/questions', tags=['Вопросы ❓️'])

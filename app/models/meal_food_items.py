@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.dao.db import Base
+from app.data.db import Base
 
 class MealFoodItem(Base):
     '''Связь приемов пищи и продуктов'''

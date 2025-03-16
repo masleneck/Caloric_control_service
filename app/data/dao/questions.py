@@ -1,7 +1,6 @@
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from app.dao.base import BaseDAO
+from app.data.dao import BaseDAO
 from app.models.test_questions import TestQuestion
 
 class QuestionDAO(BaseDAO[TestQuestion]):

@@ -3,7 +3,7 @@ from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.test_questions import TestQuestion
-from app.dao.db import async_session_maker
+from app.data.db import async_session_maker
 
 async def add_test_questions():
     '''Удаляет старые вопросы и добавляет новые'''

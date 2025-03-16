@@ -2,13 +2,14 @@ from typing import List
 from fastapi import APIRouter, Response, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.users import User
-from app.auth.utils import authenticate_user, set_tokens
+from app.models import User
+from app.utils.auth_utils import authenticate_user
+from app.utils.token_utils import set_tokens
 from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.core.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
 from app.schemas.users import UserRegister, UserAuth, EmailModel, UserAddDB, UserInfo
-from .dao import UserDAO
+from app.data.dao import UserDAO
 
 router = APIRouter(
     prefix='/auth',

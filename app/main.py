@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from app.core.config import settings
-from app.auth.router import router as router_auth
+from app.api.endpoints.auth import router as router_auth
 from app.api.endpoints.nutrition import router as router_nutrition
 from app.api.endpoints.questions import router as router_questions
 
