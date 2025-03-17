@@ -6,6 +6,7 @@ from app.dependencies.auth_dep import get_current_user, get_current_admin_user, 
 from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
 from app.schemas.users import UserRegister, UserAuth, UserInfo, ConfidentialInfoResponse, UpdateConfidentialInfoRequest
 from app.data.dao import UserDAO
+from app.api.endpoints.profile import router as profile_router
 
 router = APIRouter(
     prefix='/auth',
@@ -61,7 +62,7 @@ async def process_refresh_token(
 
 
 
-@router.get('/confidential_info', response_model=ConfidentialInfoResponse)
+@profile_router.get('/confidential_info', response_model=ConfidentialInfoResponse)
 async def get_confidential_info(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_without_commit)
@@ -71,12 +72,12 @@ async def get_confidential_info(
     return await dao.get_confidential_info(current_user)
 
 
-# @router.put('/update_confidential_info')
-# async def update_confidential_info(
-#     credentials: UpdateConfidentialInfoRequest,
-#     current_user: User = Depends(get_current_user),
-#     session: AsyncSession = Depends(get_session_with_commit)
-# ):
-#     '''Обновить конфиденциальную информацию текущего пользователя.'''
-#     dao = UserDAO(session)
-#     return await dao.update_confidential_info(current_user, credentials)
+@profile_router.put('/update_confidential_info')
+async def update_confidential_info(
+    credentials: UpdateConfidentialInfoRequest,
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session_with_commit)
+):
+    '''Обновить конфиденциальную информацию текущего пользователя.'''
+    dao = UserDAO(session)
+    return await dao.update_confidential_info(current_user, credentials)

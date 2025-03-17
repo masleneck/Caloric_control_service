@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy.orm import object_session
 from app.data.dao import BaseDAO
 from app.models import User
 from app.schemas.users import UserRegister, UserAuth, UserInfo, ConfidentialInfoResponse, UpdateConfidentialInfoRequest
@@ -47,24 +48,27 @@ class UserDAO(BaseDAO[User]):
         '''Получить конфиденциальную информацию пользователя.'''
         return ConfidentialInfoResponse(email=user.email, password='******')
     
-    # async def update_confidential_info(
-    #     self,
-    #     user: User,
-    #     credentials: UpdateConfidentialInfoRequest
-    # ) -> dict:
-    #     '''Обновить конфиденциальную информацию пользователя.'''
-    #     if user.email != credentials.email or not verify_password(credentials.password, user.password):
-    #         raise HTTPException(status_code=400, detail='Неверный email или password!')
+    async def update_confidential_info(
+        self,
+        user: User,
+        credentials: UpdateConfidentialInfoRequest
+    ) -> dict:
+        '''Обновить конфиденциальную информацию пользователя.'''
+        if user.email != credentials.email or not verify_password(credentials.password, user.password):
+            raise HTTPException(status_code=400, detail='Неверный email или password!')
     
-    #     if credentials.new_password != credentials.confirm_new_password:
-    #         raise HTTPException(status_code=400, detail='Пароли не совпадают!')
-    
-    #     user.email = credentials.new_email
-    #     user.password = get_password_hash(credentials.new_password)
+        if credentials.new_password != credentials.confirm_new_password:
+            raise HTTPException(status_code=400, detail='Пароли не совпадают!')
+   
+        # Обновляем email и пароль
+        user.email = credentials.new_email
+        user.password = get_password_hash(credentials.new_password)
 
-    #     # Сессия уже передана в DAO, поэтому не нужно вызывать add()
-    #     # self._session.add(user)
+        # Явно добавляем объект в текущую сессию
+        merged_user = await self._session.merge(user)
 
-    #     await self._session.commit()
-    
-    #     return {'message': 'Конфиденциальные данные изменены успешно!'}
+        # Фиксируем изменения в базе данных
+        await self._session.commit()
+
+
+        return {'message': 'Конфиденциальные данные изменены успешно!'}
