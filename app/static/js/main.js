@@ -1,27 +1,40 @@
-document.getElementById("startQuizBtn").addEventListener("click", () => {
-    window.location.href = "quiz.html"; // Переход на страницу опросника
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("startQuizBtn").addEventListener("click", () => {
+        window.location.href = "quiz.html"; // Переход на страницу опросника
+    });
+
+    // Вызываем отрисовку формы сразу после загрузки страницы
+    showLoginForm();
 });
 
-document.getElementById("loginBtn").addEventListener("click", showLoginForm);
-
-// Показываем форму входа
+// Функция для отрисовки формы входа сразу при загрузке страницы
 function showLoginForm() {
     const main = document.getElementById("start-screen");
-    main.innerHTML = `
-        <h2>Вход</h2>
+
+    // Проверяем, нет ли уже формы, чтобы не дублировать
+    if (document.getElementById("login-form")) return;
+
+    console.log("Отображение формы входа");
+
+    const loginFormContainer = document.createElement("div");
+    loginFormContainer.innerHTML = `
+        <h2>Авторизация</h2>
         <form id="login-form">
             <input type="text" id="login" placeholder="Логин" required><br>
             <input type="password" id="login-password" placeholder="Пароль" required><br>
-            <button type="submit" class="register-btn">Войти</button>
+            <button type="submit" class="login-btn">Войти</button>
         </form>
     `;
 
+    main.appendChild(loginFormContainer);
+
+    // Вешаем обработчик на отправку формы
     document.getElementById("login-form").addEventListener("submit", loginUser);
 }
 
-// Обрабатываем вход
+// Функция отправки формы входа
 function loginUser(event) {
-    event.preventDefault();
+    event.preventDefault(); 
 
     const login = document.getElementById("login").value.trim();
     const password = document.getElementById("login-password").value.trim();
@@ -31,7 +44,7 @@ function loginUser(event) {
         return;
     }
 
-    console.log("Отправка данных для входа:", { login, password });
+    console.log("Отправка данных:", { login, password });
 
     fetch("/login", {
         method: "POST",
@@ -40,6 +53,7 @@ function loginUser(event) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log("Ответ от сервера:", data);
         alert(data.message || "Успешный вход!");
         window.location.href = "/home"; // Перенаправляем после входа
     })
