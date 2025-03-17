@@ -10,23 +10,26 @@
 
     <header>
         <h1>Опросник</h1>
-        <a href="#" class="login-btn">Авторизация</a>
         <div class="progress-bar">
             <div class="progress"></div>
         </div>
         <span id="step-counter">1/5</span>
     </header>
 
-    <main>
-      <div id="question-container">
-          <!-- Вопросы загружаются динамически -->
-      </div>
-      <div class="buttons">
-          <button id="prevBtn" onclick="prevQuestion()" disabled>Назад</button>
-          <button id="nextBtn" onclick="nextQuestion()" disabled>Далее</button>
-      </div>
+    <!-- Экран выбора действия -->
+    <main id="start-screen">
+        <button id="startQuizBtn">Пройти опросник</button>
+        <button id="loginBtn">Авторизоваться</button>
     </main>
-  
+
+    <!-- Опросник (скрыт по умолчанию) -->
+    <main id="quiz-container" style="display: none;">
+        <div id="question-container"></div>
+        <div class="buttons">
+            <button id="prevBtn" disabled>Назад</button>
+            <button id="nextBtn" disabled>Далее</button>
+        </div>
+    </main>
 
     <script type="module" src="../static/js/main.js"></script>
 </body>
