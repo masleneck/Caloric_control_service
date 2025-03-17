@@ -8,7 +8,7 @@ from app.data.dao import BaseDAO
 from datetime import date
 from app.schemas.meals import MealProductsResponse, NutritionalInfo, BaseMeal, MealUpdateRequest
 from app.models import Mealtime
-from app.core.exceptions import MealNotFound, InvalidQuantity, FoodItemNotFound
+from app.core.exceptions import MealNotFound, InvalidQuantity, FoodItemNotFound, MealAlreadyExists
 
 
 
@@ -95,6 +95,7 @@ class MealDAO(BaseDAO[Meal]):
         products = [link.food_item.name for link in meal.meal_food_links]
 
         return MealProductsResponse(
+            meal_id=meal.id,
             mealtime=meal.mealtime,
             products=products
         )
@@ -125,9 +126,22 @@ class MealDAO(BaseDAO[Meal]):
             raise InvalidQuantity(detail='Количество продуктов и их количеств должно совпадать')
 
         # Проверяем, что все количества больше 0
-        if any(q <= 0 for q in meal_data.quantities):
-            raise InvalidQuantity(detail='Количество продукта должно быть больше 0')
+        # if any(q <= 0 for q in meal_data.quantities):
+        #     raise InvalidQuantity(detail='Количество продукта должно быть больше 0')
 
+         # Проверяем, что в этот день у пользователя нет другого приема пищи с таким же mealtime
+        existing_meal = await self._session.execute(
+            select(Meal)
+            .where(Meal.user_id == user_id)
+            .where(Meal.meal_date == meal_data.meal_date)
+            .where(Meal.mealtime == meal_data.mealtime)
+            .where(Meal.id != meal_id)  # Исключаем текущий прием пищи из проверки
+        )
+        existing_meal = existing_meal.scalar_one_or_none()
+
+        if existing_meal:
+            raise MealAlreadyExists(detail=f'Прием пищи ({meal_data.mealtime}) уже существует в этот день')
+    
         # Находим или создаем прием пищи
         meal = await self.find_one_or_none_by_id(meal_id)
         if not meal:

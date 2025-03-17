@@ -46,7 +46,7 @@ class Meal(Base):
             'id': self.id,
             'user_id': self.user_id,
             'mealtime': self.mealtime.value,  # Преобразуем Enum в строку
-            'meal_date': self.meal_date.date(), # <-- Преобразуем datetime в date
+            'meal_date': self.meal_date, # <-- Преобразуем datetime в date
             'food_items': [
                 {
                     'food_item': {
