@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Опросник</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Опросник</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <span id="step-counter">1/5</span>
+    </header>
+
+    <main id="quiz-container">
+        <div id="question-container"></div>
+        <div class="buttons">
+            <button id="prevBtn" disabled>Назад</button>
+            <button id="nextBtn" disabled>Далее</button>
+        </div>
+    </main>
+
+    <script type="module" src="../static/js/quiz.js"></script>
+</body>
+</html>

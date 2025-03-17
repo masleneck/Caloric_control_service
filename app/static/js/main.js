@@ -1,37 +1,10 @@
-import { init, nextQuestion, prevQuestion } from "./navigation.js";
-import { questions as mockQuestions } from "./questions.js";
+document.getElementById("startQuizBtn").addEventListener("click", () => {
+    window.location.href = "quiz.html"; // Переход на страницу опросника
+});
 
-document.getElementById("startQuizBtn").addEventListener("click", startQuiz);
 document.getElementById("loginBtn").addEventListener("click", showLoginForm);
-document.getElementById("nextBtn").addEventListener("click", nextQuestion);
-document.getElementById("prevBtn").addEventListener("click", prevQuestion);
 
-// Функция для загрузки вопросов
-async function loadQuestions() {
-    try {
-        const response = await fetch("/questions/");
-        if (!response.ok) throw new Error("Ошибка загрузки вопросов");
-        return await response.json();
-    } catch (error) {
-        console.error("Ошибка при загрузке вопросов, используем моковые данные:", error);
-        return mockQuestions;
-    }
-}
-
-// Запуск опроса
-async function startQuiz() {
-    document.getElementById("start-screen").style.display = "none";
-    document.getElementById("quiz-container").style.display = "block";
-    const questions = await loadQuestions();
-    
-    if (questions.length > 0) {
-        init(questions);
-    } else {
-        console.error("Вопросы не загружены");
-    }
-}
-
-// Отображение формы входа
+// Показываем форму входа
 function showLoginForm() {
     const main = document.getElementById("start-screen");
     main.innerHTML = `
@@ -46,7 +19,7 @@ function showLoginForm() {
     document.getElementById("login-form").addEventListener("submit", loginUser);
 }
 
-// Авторизация пользователя
+// Обрабатываем вход
 function loginUser(event) {
     event.preventDefault();
 
@@ -68,6 +41,7 @@ function loginUser(event) {
     .then(response => response.json())
     .then(data => {
         alert(data.message || "Успешный вход!");
+        window.location.href = "/home"; // Перенаправляем после входа
     })
     .catch(error => console.error("Ошибка авторизации:", error));
 }
