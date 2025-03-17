@@ -72,27 +72,41 @@ class TokenInvalidFormatException(AppException):
         
 # === Ошибки nutrition ===
 class MealNotFound(HTTPException):
+    '''Ошибка: прием пищи не найден.'''
     def __init__(self, detail: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=detail
         )
-class FoodItemNotFound(HTTPException):
-    def __init__(self, food_item_id: int):
+
+class NutritionalInfoNotFound(HTTPException):
+    '''Ошибка: информация о питании не найдена.'''
+    def __init__(self, detail: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Продукт с ID {food_item_id} не найден'
+            detail=detail
         )
 
-class ForbiddenException(HTTPException):
-    def __init__(self):
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail='Доступ запрещён. Вы можете работать только со своими данными.'
-        )
-class InvalidMealData(HTTPException):
+class InvalidQuantity(HTTPException):
+    '''Ошибка: недопустимое количество продукта.'''
     def __init__(self, detail: str):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=detail
+        )
+
+class FoodItemNotFound(HTTPException):
+    '''Ошибка: продукт не найден.'''
+    def __init__(self, detail: str):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=detail
+        )
+
+class MealAlreadyExists(HTTPException):
+    '''Ошибка: прием пищи уже существует.'''
+    def __init__(self, detail: str):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
             detail=detail
         )

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy import text
 from functools import wraps
 
-from app.dao.db import async_session_maker
+from app.data.db import async_session_maker
 
 
 class DatabaseSessionManager:

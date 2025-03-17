@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 
-from app.dao.db import Base
+from app.data.db import Base
 
 class Mealtime(enum.Enum):
     '''Тип приема пищи'''
@@ -15,7 +15,7 @@ class Mealtime(enum.Enum):
 class Meal(Base):
     '''Хранит приемы пищи'''
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    mealtime: Mapped[Mealtime] = mapped_column(default = Mealtime.NOT_STATED, server_default = text("'NOT_STATED'"))
+    mealtime: Mapped[Mealtime] = mapped_column(default = Mealtime.NOT_STATED, server_default = text('"NOT_STATED"'))
     meal_date: Mapped[datetime] = mapped_column(DateTime)
 
     
@@ -38,3 +38,23 @@ class Meal(Base):
         back_populates='meal',
         cascade='all, delete-orphan'
     )
+
+
+    def to_pydantic(self):
+        '''Преобразует объект SQLAlchemy в словарь, совместимый с MealSimple'''
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'mealtime': self.mealtime.value,  # Преобразуем Enum в строку
+            'meal_date': self.meal_date, # <-- Преобразуем datetime в date
+            'food_items': [
+                {
+                    'food_item': {
+                        'id': link.food_item.id,
+                        'name': link.food_item.name,  # Только id и name
+                    },
+                    'quantity': link.quantity,
+                }
+                for link in self.meal_food_links
+            ],
+        }

@@ -1,17 +1,17 @@
 import asyncio
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.test_questions import TestQuestion
-from app.dao.db import get_async_session
+from app.data.db import async_session_maker
 
 async def add_test_questions():
-    '''Удаляем старые вопросы и добавляем новые'''
-    async for db in get_async_session():  
-        # Удаляем все старые вопросы
-        await db.execute(delete(TestQuestion))
-        await db.commit()
-        
+    '''Удаляет старые вопросы и добавляет новые'''
+    async with async_session_maker() as session:
+        # Удаляем старые вопросы
+        await session.execute(delete(TestQuestion))
+        await session.commit()
+
         # Добавляем новые вопросы
         questions = [
             TestQuestion(
@@ -22,7 +22,7 @@ async def add_test_questions():
             TestQuestion(
                 text='Сколько литров воды Вы пьете в день:',
                 type='input',
-                options=None  # Для input-полей options нет
+                options=None
             ),
             TestQuestion(
                 text='Сколько часов Вы спите в сутки?',
@@ -40,18 +40,17 @@ async def add_test_questions():
                 options=['На чиле', 'Лёгкая активность', 'Средняя активность', 'Высокая активность', 'Чемпик']
             ),
             TestQuestion(
-                text='Есть ли у вас вредные привычки?:',
+                text='Вредные привычки:',
                 type='options',
-                options=['Я алкаш', 'HQD-монстр', 'Люблю Амаля']
+                options=['Их нет', 'Люблю Амаля', 'HQD-монстр', 'Наркоман', 'Алкоголик']
             ),
         ]
-        
-        db.add_all(questions)
-        await db.commit()
+
+        session.add_all(questions)
+        await session.commit()
         print('Вопросы успешно обновлены в БД!')
-        break  
 
 if __name__ == '__main__':
     asyncio.run(add_test_questions())
 
-# PS C:\fastapi_project> py -m app.core.db_init
+# py -m db_init

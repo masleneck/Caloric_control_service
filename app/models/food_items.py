@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.dao.db import Base
+from app.data.db import Base
 
 class FoodItem(Base):
     '''Хранит продукты'''

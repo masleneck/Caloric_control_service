@@ -3,7 +3,7 @@ from typing import Self
 from pydantic import (
     BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field
 )
-from app.auth.utils import get_password_hash
+from app.utils.auth_utils import get_password_hash
 from app.models.users import Role
 from app.models.profiles import Gender, CurrentGoal, ActivityLevel
 
