@@ -14,7 +14,7 @@ async def get_fullname(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_without_commit)
 ):
-    """Получить полное имя (name + lastname) текущего пользователя в формате JSON."""
+    '''Получить полное имя (name + lastname) текущего пользователя в формате JSON.'''
     dao = ProfileDAO(session)
     return await dao.get_role_and_fullname(current_user)
 

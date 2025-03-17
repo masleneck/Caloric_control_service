@@ -10,11 +10,11 @@ class UserDAO(BaseDAO[User]):
     model = User
 
     async def get_user_by_email(self, email: str) -> User | None:
-        """Найти пользователя по email."""
+        '''Найти пользователя по email.'''
         return await self.find_one_by_fields(email=email)
 
     async def register_user(self, user_data: UserRegister) -> dict:
-        """Зарегистрировать нового пользователя."""
+        '''Зарегистрировать нового пользователя.'''
         existing_user = await self.find_one_by_fields(email=user_data.email)
         if existing_user:
             raise UserAlreadyExistsException
@@ -33,14 +33,14 @@ class UserDAO(BaseDAO[User]):
         return {'message': 'Вы успешно зарегистрированы!'}
 
     async def authenticate_user(self, user_data: UserAuth) -> User:
-        """Аутентифицировать пользователя."""
+        '''Аутентифицировать пользователя.'''
         user = await self.find_one_by_fields(email=user_data.email)
         if not user or not verify_password(user_data.password, user.password):
             raise IncorrectEmailOrPasswordException
         return user
 
     async def get_all_users(self) -> list[UserInfo]:
-        """Получить информацию о всех пользователях."""
+        '''Получить информацию о всех пользователях.'''
         users = await self.find_all()
         return [UserInfo.model_validate(user) for user in users]
 

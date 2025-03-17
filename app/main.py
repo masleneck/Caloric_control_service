@@ -1,6 +1,7 @@
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import FastAPI, APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
@@ -31,6 +32,14 @@ def create_app() -> FastAPI:
         description='API для управления пользователями, тренировками и их питанием',
         lifespan=lifespan,
     )
+    # Настройка CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=['http://localhost:5500'],  # Укажите домен вашего фронтенда
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
 
     # Монтирование статических файлов
     app.mount(
@@ -53,9 +62,15 @@ def register_routers(app: FastAPI) -> None:
     async def index(request: Request):
         '''Рендеринг главной страницы'''
         return templates.TemplateResponse('index.html', {'request': request})
+    
+    # @root_router.get('/home')
+    # async def show_home(request: Request):
+    #     '''Отображает страницу home.html.'''
+    #     return templates.TemplateResponse('home.html', {'request': request})
 
     # Подключение роутеров
-    app.include_router(root_router, tags=['root'])
+    app.include_router(root_router)
+
     app.include_router(router_questions)
     app.include_router(router_auth)
     app.include_router(router_profile)

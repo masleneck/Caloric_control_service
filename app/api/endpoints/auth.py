@@ -18,9 +18,10 @@ async def register_user(
     user_data: UserRegister,
     session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
-    """Зарегистрировать нового пользователя."""
+    '''Зарегистрировать нового пользователя.'''
     dao = UserDAO(session)
     return await dao.register_user(user_data)
+
 
 @router.post('/login/', summary='Аутентификация пользователя')
 async def auth_user(
@@ -28,15 +29,16 @@ async def auth_user(
     user_data: UserAuth,
     session: AsyncSession = Depends(get_session_without_commit)
 ) -> dict:
-    """Аутентифицировать пользователя."""
+    '''Аутентифицировать пользователя.'''
     dao = UserDAO(session)
     user = await dao.authenticate_user(user_data)
     set_tokens(response, user.id)
     return {'ok': True, 'message': 'Авторизация успешна!'}
 
+
 @router.post('/logout', summary='Выйти из системы')
 async def logout(response: Response) -> dict:
-    """Выйти из системы."""
+    '''Выйти из системы.'''
     response.delete_cookie('user_access_token')
     response.delete_cookie('user_refresh_token')
     return {'message': 'Пользователь успешно вышел из системы'}
@@ -46,7 +48,7 @@ async def get_all_users(
     session: AsyncSession = Depends(get_session_with_commit),
     current_user: User = Depends(get_current_admin_user)
 ) -> list[UserInfo]:
-    """Получить информацию о всех пользователях."""
+    '''Получить информацию о всех пользователях.'''
     dao = UserDAO(session)
     return await dao.get_all_users()
 
@@ -55,7 +57,7 @@ async def process_refresh_token(
     response: Response,
     user: User = Depends(check_refresh_token)
 ) -> dict:
-    """Обновить токены."""
+    '''Обновить токены.'''
     set_tokens(response, user.id)
     return {'message': 'Токены успешно обновлены'}
 
