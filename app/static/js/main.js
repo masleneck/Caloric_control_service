@@ -64,6 +64,8 @@ async function loginUser(event) {
             body: JSON.stringify({ email, password }) // Отправляем email и пароль
         });
 
+        console.log("Статус ответа:", response.status); 
+        
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.detail || "Ошибка авторизации");
@@ -73,7 +75,7 @@ async function loginUser(event) {
         console.log("Ответ от сервера:", data);
 
         // Перенаправляем пользователя на главную страницу после успешной авторизации
-        window.location.href = "/";
+        window.location.href = "/home";
     } catch (error) {
         console.error("Ошибка авторизации:", error);
         showError(error.message || "Ошибка авторизации");

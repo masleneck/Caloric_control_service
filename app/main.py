@@ -63,10 +63,10 @@ def register_routers(app: FastAPI) -> None:
         '''Рендеринг главной страницы'''
         return templates.TemplateResponse('index.html', {'request': request})
     
-    # @root_router.get('/home')
-    # async def show_home(request: Request):
-    #     '''Отображает страницу home.html.'''
-    #     return templates.TemplateResponse('home.html', {'request': request})
+    @root_router.get('/home', tags=['home'])
+    async def show_home(request: Request):
+        '''Отображает страницу home.html.'''
+        return templates.TemplateResponse('home.html', {'request': request})
 
     # Подключение роутеров
     app.include_router(root_router)
