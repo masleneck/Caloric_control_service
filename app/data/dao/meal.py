@@ -1,16 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, delete
 from sqlalchemy.orm import selectinload
-from app.models.meals import Meal
-from app.models.meal_food_items import MealFoodItem
-from app.models.food_items import FoodItem
-from app.data.dao import BaseDAO
 from datetime import date
+from app.data.dao import BaseDAO
+from app.models import Meal, MealFoodItem, FoodItem, Mealtime
 from app.schemas.meals import MealProductsResponse, NutritionalInfo, BaseMeal, MealUpdateRequest
-from app.models import Mealtime
 from app.core.exceptions import MealNotFound, InvalidQuantity, FoodItemNotFound, MealAlreadyExists
-
-
 
 class MealDAO(BaseDAO[Meal]):
     model = Meal
@@ -20,16 +14,16 @@ class MealDAO(BaseDAO[Meal]):
     ) -> NutritionalInfo:
         '''
         Получить информацию о питании за день.
-    
+
         Args:
             user_id (int): ID пользователя.
             meal_date (date): Дата приема пищи.
-    
+
         Returns:
             NutritionalInfo: Суммарные данные о питании за день.
-    
+
         Raises:
-            NutritionalInfoNotFound: Если данные о питании не найдены.
+            HTTPException: Если данные о питании не найдены.
         '''
         query = (
             select(
@@ -38,7 +32,7 @@ class MealDAO(BaseDAO[Meal]):
                 func.sum(FoodItem.fats * MealFoodItem.quantity / 100).label('fats'),
                 func.sum(FoodItem.carbs * MealFoodItem.quantity / 100).label('carbs')
             )
-            .select_from(Meal)  # Явно указываем таблицу meals
+            .select_from(Meal)
             .join(MealFoodItem, Meal.id == MealFoodItem.meal_id)
             .join(FoodItem, MealFoodItem.food_item_id == FoodItem.id)
             .where(Meal.user_id == user_id)
@@ -57,33 +51,30 @@ class MealDAO(BaseDAO[Meal]):
             )
 
         return NutritionalInfo(**nutritional_info._asdict())
-    
-    
-
 
     async def get_meal_by_user_and_date(
         self, user_id: int, meal_date: date, mealtime: Mealtime
     ) -> MealProductsResponse:
         '''
         Получить прием пищи по дате и типу.
-        
+
         Args:
             user_id (int): ID пользователя.
             meal_date (date): Дата приема пищи.
             mealtime (Mealtime): Тип приема пищи (breakfast, lunch, dinner).
-        
+
         Returns:
             MealProductsResponse: mealtime и список имен продуктов.
-        
+
         Raises:
-            MealNotFound: Если прием пищи не найден.
+            HTTPException: Если прием пищи не найден.
         '''
         query = (
             select(Meal)
             .where(Meal.user_id == user_id)
             .where(Meal.meal_date == meal_date)
             .where(Meal.mealtime == mealtime)
-            .options(selectinload(Meal.meal_food_links).selectinload(MealFoodItem.food_item))  # Загружаем связанные данные
+            .options(selectinload(Meal.meal_food_links).selectinload(MealFoodItem.food_item))
         )
         result = await self._session.execute(query)
         meal = result.scalar_one_or_none()
@@ -100,36 +91,32 @@ class MealDAO(BaseDAO[Meal]):
             products=products
         )
 
-
-
-
     async def update_meal_with_food_items(
         self, meal_id: int, meal_data: MealUpdateRequest, user_id: int
     ) -> BaseMeal:
-        '''Обновить или создать прием пищи.
-        
+        '''
+        Обновить или создать прием пищи.
+
         Args:
             meal_id (int): ID приема пищи.
             meal_data (MealUpdateRequest): Данные для обновления.
             user_id (int): ID пользователя.
-        
+
         Returns:
             BaseMeal: Обновленный или созданный прием пищи.
-        
+
         Raises:
-            MealNotFound: Если прием пищи не найден и не может быть создан.
-            FoodItemNotFound: Если продукт не найден.
-            InvalidQuantity: Если количество продукта недопустимо.
+            HTTPException: Если прием пищи не найден, продукт не найден или количество недопустимо.
         '''
         # Проверяем, что количество продуктов и их названий совпадает
         if len(meal_data.names) != len(meal_data.quantities):
             raise InvalidQuantity(detail='Количество продуктов и их количеств должно совпадать')
 
         # Проверяем, что все количества больше 0
-        # if any(q <= 0 for q in meal_data.quantities):
-        #     raise InvalidQuantity(detail='Количество продукта должно быть больше 0')
+        if any(q <= 0 for q in meal_data.quantities):
+            raise InvalidQuantity(detail='Количество продукта должно быть больше 0')
 
-         # Проверяем, что в этот день у пользователя нет другого приема пищи с таким же mealtime
+        # Проверяем, что в этот день у пользователя нет другого приема пищи с таким же mealtime
         existing_meal = await self._session.execute(
             select(Meal)
             .where(Meal.user_id == user_id)
@@ -141,7 +128,7 @@ class MealDAO(BaseDAO[Meal]):
 
         if existing_meal:
             raise MealAlreadyExists(detail=f'Прием пищи ({meal_data.mealtime}) уже существует в этот день')
-    
+
         # Находим или создаем прием пищи
         meal = await self.find_one_or_none_by_id(meal_id)
         if not meal:
