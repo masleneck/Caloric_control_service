@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from typing import List
 from app.data.dao import BaseDAO
-from app.models.test_questions import TestQuestion
+from app.models import TestQuestion
 
 class QuestionDAO(BaseDAO[TestQuestion]):
     model = TestQuestion

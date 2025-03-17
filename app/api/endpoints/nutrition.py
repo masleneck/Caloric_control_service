@@ -6,12 +6,7 @@ from app.dependencies.dao_dep import get_session_with_commit
 from app.dependencies.auth_dep import get_current_user
 from app.schemas.meals import MealProductsResponse, Mealtime, MealUpdateRequest, NutritionalInfo, BaseMeal
 from app.models.users import User
-from app.core.exceptions import (
-    MealNotFound,
-    NutritionalInfoNotFound,
-    FoodItemNotFound,
-    InvalidQuantity
-)
+from app.core.exceptions import MealNotFound, NutritionalInfoNotFound, FoodItemNotFound, InvalidQuantity
 
 router = APIRouter(
     prefix='/meals',
@@ -34,8 +29,6 @@ async def get_nutritional_info(
         return nutritional_info
     except NutritionalInfoNotFound as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
-    
-    
 
 @router.get('/{meal_date}/{mealtime}', response_model=MealProductsResponse, summary='Получить прием пищи по дате')
 async def get_meal_by_date_and_type(
@@ -55,9 +48,6 @@ async def get_meal_by_date_and_type(
         return meal
     except MealNotFound as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
-
-
-    
 
 @router.put('/{meal_id}', response_model=BaseMeal, summary='Обновить или создать прием пищи')
 async def update_meal(

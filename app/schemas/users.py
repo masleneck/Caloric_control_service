@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Self
 from pydantic import (
     BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field
@@ -68,3 +68,15 @@ class UserInfo(UserBase):
     def role_name(self) -> str:
         '''Возвращает название роли.'''
         return self.role.value  # так как Role — это Enum, используем `.value`
+
+
+class ConfidentialInfoResponse(BaseModel):
+    email: str
+    password: str
+
+class UpdateConfidentialInfoRequest(BaseModel):
+    email: str
+    password: str
+    new_email: str
+    new_password: str
+    confirm_new_password: str

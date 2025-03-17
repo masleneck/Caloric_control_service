@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from sqlalchemy import ForeignKey, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
@@ -36,7 +36,7 @@ class Profile(Base):
     weight: Mapped[float]
     height: Mapped[int]
     goal: Mapped[CurrentGoal] = mapped_column(default = CurrentGoal.NOT_STATED, server_default = text("'NOT_STATED'"))
-    birthday_date: Mapped[datetime | None] = mapped_column(DateTime)
+    birthday_date: Mapped[date | None] = mapped_column(DateTime)
     activity_level: Mapped[ActivityLevel] = mapped_column(default = ActivityLevel.NOT_STATED, server_default = text("'NOT_STATED'"))
 
     

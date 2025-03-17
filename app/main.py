@@ -8,6 +8,7 @@ from app.core.config import settings
 from app.api.endpoints.auth import router as router_auth
 from app.api.endpoints.nutrition import router as router_nutrition
 from app.api.endpoints.questions import router as router_questions
+from app.api.endpoints.profile import router as router_profile
 
 # Инициализация Jinja2
 templates = Jinja2Templates(directory='app/templates')
@@ -57,6 +58,7 @@ def register_routers(app: FastAPI) -> None:
     app.include_router(root_router, tags=['root'])
     app.include_router(router_questions)
     app.include_router(router_auth)
+    app.include_router(router_profile)
     app.include_router(router_nutrition)
     
 
