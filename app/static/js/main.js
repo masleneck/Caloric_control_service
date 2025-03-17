@@ -1,28 +1,61 @@
-import { init, nextQuestion, prevQuestion } from "./navigation.js";
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("startQuizBtn").addEventListener("click", () => {
+        window.location.href = "quiz.html"; // Переход на страницу опросника
+    });
 
-document.getElementById("nextBtn").addEventListener("click", nextQuestion);
-document.getElementById("prevBtn").addEventListener("click", prevQuestion);
+    // Вызываем отрисовку формы сразу после загрузки страницы
+    showLoginForm();
+});
 
-// Загрузка вопросов из бэка
-async function loadQuestions() {
-    try {
-        const response = await fetch("/questions/");
-        if (!response.ok) throw new Error("Ошибка загрузки вопросов");
-        return await response.json();
-    } catch (error) {
-        console.error("Ошибка:", error);
-        return [];
-    }
+// Функция для отрисовки формы входа сразу при загрузке страницы
+function showLoginForm() {
+    const main = document.getElementById("start-screen");
+
+    // Проверяем, нет ли уже формы, чтобы не дублировать
+    if (document.getElementById("login-form")) return;
+
+    console.log("Отображение формы входа");
+
+    const loginFormContainer = document.createElement("div");
+    loginFormContainer.innerHTML = `
+        <h2>Авторизация</h2>
+        <form id="login-form">
+            <input type="text" id="login" placeholder="Логин" required><br>
+            <input type="password" id="login-password" placeholder="Пароль" required><br>
+            <button type="submit" class="login-btn">Войти</button>
+        </form>
+    `;
+
+    main.appendChild(loginFormContainer);
+
+    // Вешаем обработчик на отправку формы
+    document.getElementById("login-form").addEventListener("submit", loginUser);
 }
 
-// Инициализация с загрузкой вопросов
-async function initialize() {
-    const questions = await loadQuestions();
-    if (questions.length > 0) {
-        init(questions);
-    } else {
-        console.error("Вопросы не загружены");
-    }
-}
+// Функция отправки формы входа
+function loginUser(event) {
+    event.preventDefault(); 
 
-initialize();
+    const login = document.getElementById("login").value.trim();
+    const password = document.getElementById("login-password").value.trim();
+
+    if (!login || !password) {
+        alert("Введите логин и пароль!");
+        return;
+    }
+
+    console.log("Отправка данных:", { login, password });
+
+    fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ login, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Ответ от сервера:", data);
+        alert(data.message || "Успешный вход!");
+        window.location.href = "/home"; // Перенаправляем после входа
+    })
+    .catch(error => console.error("Ошибка авторизации:", error));
+}

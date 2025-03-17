@@ -1,10 +1,78 @@
 body {
   font-family: Verdana, Geneva, sans-serif;
   text-align: center;
-  background: #f9f9f9;
+  background: #e6e7d1;
   margin: 0;
   padding: 0;
-  background-color: #e6e7d1;
+}
+
+main {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.welcome-text {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.quiz-btn {
+  background-color: #b85143;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+.quiz-btn:hover {
+  background-color: #a04030;
+}
+
+.auth-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  width: 280px;
+  padding: 12px;
+  font-size: 16px;
+  margin: 10px 0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.login-btn {
+  background-color: #b85143;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #a04030;
 }
 
 header {
@@ -17,25 +85,6 @@ header {
 h1 {
   margin: 0;
   padding-left: 20px;
-}
-
-.login-btn {
-  text-decoration: none;
-  background: white;
-  color: #b85143;
-  padding: 10px 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: 0.3s;
-  position: absolute;
-  right: 20px;
-  top: 2%;
-  z-index: 10;
-}
-
-.login-btn:hover {
-  background: #f5f5f5;
 }
 
 .progress-bar {
@@ -58,10 +107,6 @@ h1 {
 
 #step-counter {
   font-size: 20px;
-}
-
-main {
-  padding: 20px;
 }
 
 .question {
@@ -145,4 +190,22 @@ button.active {
 
 .register-btn:hover {
   background: #b85143be;
+}
+
+.home-btn {
+  background-color: #a6bdad;
+  color: #b85143;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  transition: 0.3s;
+}
+
+.home-btn:hover {
+  background-color: #c3e1cc;
 }

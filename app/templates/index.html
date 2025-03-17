@@ -3,31 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Опросник</title>
+    <title>Главная страница</title>
     <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
 
-    <header>
-        <h1>Опросник</h1>
-        <a href="#" class="login-btn">Авторизация</a>
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
-        <span id="step-counter">1/5</span>
-    </header>
-
-    <main>
-      <div id="question-container">
-          <!-- Вопросы загружаются динамически -->
-      </div>
-      <div class="buttons">
-          <button id="prevBtn" onclick="prevQuestion()" disabled>Назад</button>
-          <button id="nextBtn" onclick="nextQuestion()" disabled>Далее</button>
-      </div>
+    <main id="start-screen">
+        <h1 class="welcome-text">Добро пожаловать! <br> Начните свой путь к лучшей версии себя</h1>
+        <button id="startQuizBtn" class="quiz-btn">Пройти опросник</button>
     </main>
-  
 
-    <script type="module" src="../static/js/main.js"></script>
+    <script src="../static/js/main.js"></script>
 </body>
 </html>

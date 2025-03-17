@@ -2,7 +2,7 @@ import { renderQuestion } from "./ui.js";
 
 let currentQuestionIndex = 0;
 let answers = {};
-let questions = [];  // Вопросы будут загружены из бэка
+let questions = [];
 
 export function init(loadedQuestions) {
     questions = loadedQuestions;
@@ -15,18 +15,21 @@ export function loadQuestion() {
         console.error("Ошибка: Вопросы не загружены");
         return;
     }
-    
-    console.log("Текущий вопрос:", questions[currentQuestionIndex]); // Проверяю грузится ли первый вопрос
+
+    console.log("Текущий вопрос:", questions[currentQuestionIndex]);
     renderQuestion(questions[currentQuestionIndex], answers);
     updateButtons();
 }
 
 export function nextQuestion() {
+    console.log(`Переход к следующему вопросу: ${currentQuestionIndex + 1} из ${questions.length}`);
+
     if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
         loadQuestion();
     } else {
-        showFinalScreen();
+        console.log("Опрос завершен. Переход к форме регистрации.");
+        setTimeout(showRegisterForm, 500);  // Небольшая задержка для вайба
     }
 }
 
@@ -48,28 +51,25 @@ export function updateButtons() {
     document.getElementById("step-counter").innerText = `${currentQuestionIndex + 1}/${questions.length}`;
 }
 
-function showFinalScreen() {
-    document.getElementById("question-container").innerHTML = "<h2>Спасибо за прохождение опроса!</h2>";
-    document.getElementById("prevBtn").style.display = "none";
-    document.getElementById("nextBtn").style.display = "none";
-
-    const registerButton = document.createElement("button");
-    registerButton.classList.add("register-btn");
-    registerButton.innerText = "Зарегистрироваться";
-    registerButton.onclick = showRegisterForm;
-
-    document.querySelector("main").appendChild(registerButton);
-}
-
+// Форма регистрации после последнего вопроса
 function showRegisterForm() {
-    const main = document.querySelector("main");
+    console.log("Переход на форму регистрации...");
+
+    const main = document.getElementById("quiz-container");
+    
+    if (!main) {
+        console.error("Ошибка: контейнер для формы регистрации не найден!");
+        return;
+    }
+
+    // Очищаем `main` перед добавлением формы
     main.innerHTML = `
         <h2>Пройдите регистрацию</h2>
         <form id="register-form">
             <input type="text" id="name" placeholder="Ваше имя" required><br>
             <input type="email" id="email" placeholder="Email" required><br>
             <input type="password" id="password" placeholder="Пароль" required><br>
-            <input type="password" id="password" placeholder="Подтвердите пароль" required><br>
+            <input type="password" id="confirm-password" placeholder="Подтвердите пароль" required><br>
             <button type="submit" class="register-btn">Зарегистрироваться</button>
         </form>
     `;
@@ -77,15 +77,22 @@ function showRegisterForm() {
     document.getElementById("register-form").addEventListener("submit", registerUser);
 }
 
+// Обработка регистрации + редирект на главную
 function registerUser(event) {
     event.preventDefault();
 
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirm-password").value.trim();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
         alert("Заполните все поля!");
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert("Пароли не совпадают!");
         return;
     }
 
@@ -99,6 +106,7 @@ function registerUser(event) {
     .then(response => response.json())
     .then(data => {
         alert(data.message || "Регистрация успешна!");
+        window.location.href = "/"; // Перенаправляем на главную страницу
     })
     .catch(error => console.error("Ошибка:", error));
 }
