@@ -1,0 +1,12 @@
+fastapi[all]
+pydantic[all]
+uvicorn
+jinja2
+pydantic_settings
+asyncpg
+alembic
+SQLAlchemy
+bcrypt
+passlib[bcrypt]
+python-jose
+loguru
