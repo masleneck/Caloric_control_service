@@ -1,41 +1,43 @@
 import { init, nextQuestion, prevQuestion } from "./navigation.js";
-import { questions as mockQuestions } from "./questions.js";
 
 document.getElementById("nextBtn").addEventListener("click", nextQuestion);
 document.getElementById("prevBtn").addEventListener("click", prevQuestion);
 
-// Загрузка вопросов
+// Функция загрузки вопросов с сервера
 async function loadQuestions() {
     try {
-        const response = await fetch("/questions/");
-        if (!response.ok) throw new Error("Ошибка загрузки вопросов");
-        return await response.json();
+        console.log("Запрашиваем вопросы с сервера...");
+        const response = await fetch("http://127.0.0.1:8000/questions"); // Полный URL
+
+        if (!response.ok) throw new Error(`Ошибка загрузки вопросов: ${response.status}`);
+
+        const questions = await response.json();
+        console.log("Получены вопросы:", questions);
+        return questions;
     } catch (error) {
-        console.error("Ошибка загрузки, используем моковые данные:", error);
-        return mockQuestions; // Используем моковые вопросы
+        console.error("Ошибка загрузки вопросов:", error);
+        return []; // Возвращаем пустой массив при ошибке
     }
 }
 
-// Инициализация опросника
+// Функция инициализации опросника
 async function initializeQuiz() {
     const questions = await loadQuestions();
     
     if (questions.length > 0) {
         init(questions); // Запускаем опросник
     } else {
-        console.error("Вопросы не загружены");
+        console.error("Вопросы не загружены!");
     }
 }
 
+// Ждем загрузку DOM и запускаем опросник
 document.addEventListener("DOMContentLoaded", () => {
     const homeBtn = document.getElementById("homeBtn");
-
     if (homeBtn) {
         homeBtn.addEventListener("click", () => {
-            window.location.href = "index.html";
+            window.location.href = "/";
         });
     }
+    initializeQuiz();
 });
-
-// Запускаем опросник
-initializeQuiz();

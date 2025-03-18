@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("startQuizBtn").addEventListener("click", () => {
-        window.location.href = "quiz.html"; // Переход на страницу опросника
+        window.location.href = "/quiz"; // Переход на страницу опросника
     });
 
     // Вызываем отрисовку формы сразу после загрузки страницы
@@ -26,7 +26,7 @@ function showLoginForm() {
     console.log("Отображение формы входа");
 
     // Очищаем содержимое main перед добавлением формы
-    main.innerHTML = "";
+    // main.innerHTML = "";
 
     const loginFormContainer = document.createElement("div");
     loginFormContainer.innerHTML = `

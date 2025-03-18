@@ -71,7 +71,9 @@ def register_routers(app: FastAPI) -> None:
     @root_router.get('/quiz', tags=['quiz'])
     async def show_quiz(request: Request):
         '''Отображает страницу quiz.html.'''
+        print("Вызван маршрут /quiz")
         return templates.TemplateResponse('quiz.html', {'request': request})
+
 
     # Подключение роутеров
     app.include_router(root_router)
@@ -86,4 +88,4 @@ def register_routers(app: FastAPI) -> None:
 # Создание экземпляра приложения
 app = create_app()
 
-# uvicorn app.main:app --port 8000 --reload  
+# uvicorn app.main:app --port 8000 --reload
