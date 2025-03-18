@@ -1,5 +1,5 @@
 import { init, nextQuestion, prevQuestion } from "./navigation.js";
-import { questions as mockQuestions } from "./questions.js";
+import { questions as mockQuestions } from "../questions.js";
 
 document.getElementById("nextBtn").addEventListener("click", nextQuestion);
 document.getElementById("prevBtn").addEventListener("click", prevQuestion);
@@ -7,7 +7,7 @@ document.getElementById("prevBtn").addEventListener("click", prevQuestion);
 // Загрузка вопросов
 async function loadQuestions() {
     try {
-        const response = await fetch("/questions/");
+        const response = await fetch("/questions");
         if (!response.ok) throw new Error("Ошибка загрузки вопросов");
         return await response.json();
     } catch (error) {
