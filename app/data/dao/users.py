@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy.orm import object_session
 from app.data.dao import BaseDAO
 from app.models import User
 from app.schemas.users import UserRegister, UserAuth, UserInfo, ConfidentialInfoResponse, UpdateConfidentialInfoRequest
@@ -9,11 +10,11 @@ class UserDAO(BaseDAO[User]):
     model = User
 
     async def get_user_by_email(self, email: str) -> User | None:
-        """Найти пользователя по email."""
+        '''Найти пользователя по email.'''
         return await self.find_one_by_fields(email=email)
 
     async def register_user(self, user_data: UserRegister) -> dict:
-        """Зарегистрировать нового пользователя."""
+        '''Зарегистрировать нового пользователя.'''
         existing_user = await self.find_one_by_fields(email=user_data.email)
         if existing_user:
             raise UserAlreadyExistsException
@@ -32,14 +33,14 @@ class UserDAO(BaseDAO[User]):
         return {'message': 'Вы успешно зарегистрированы!'}
 
     async def authenticate_user(self, user_data: UserAuth) -> User:
-        """Аутентифицировать пользователя."""
+        '''Аутентифицировать пользователя.'''
         user = await self.find_one_by_fields(email=user_data.email)
         if not user or not verify_password(user_data.password, user.password):
             raise IncorrectEmailOrPasswordException
         return user
 
     async def get_all_users(self) -> list[UserInfo]:
-        """Получить информацию о всех пользователях."""
+        '''Получить информацию о всех пользователях.'''
         users = await self.find_all()
         return [UserInfo.model_validate(user) for user in users]
 
@@ -47,24 +48,27 @@ class UserDAO(BaseDAO[User]):
         '''Получить конфиденциальную информацию пользователя.'''
         return ConfidentialInfoResponse(email=user.email, password='******')
     
-    # async def update_confidential_info(
-    #     self,
-    #     user: User,
-    #     credentials: UpdateConfidentialInfoRequest
-    # ) -> dict:
-    #     '''Обновить конфиденциальную информацию пользователя.'''
-    #     if user.email != credentials.email or not verify_password(credentials.password, user.password):
-    #         raise HTTPException(status_code=400, detail='Неверный email или password!')
+    async def update_confidential_info(
+        self,
+        user: User,
+        credentials: UpdateConfidentialInfoRequest
+    ) -> dict:
+        '''Обновить конфиденциальную информацию пользователя.'''
+        if user.email != credentials.email or not verify_password(credentials.password, user.password):
+            raise HTTPException(status_code=400, detail='Неверный email или password!')
     
-    #     if credentials.new_password != credentials.confirm_new_password:
-    #         raise HTTPException(status_code=400, detail='Пароли не совпадают!')
-    
-    #     user.email = credentials.new_email
-    #     user.password = get_password_hash(credentials.new_password)
+        if credentials.new_password != credentials.confirm_new_password:
+            raise HTTPException(status_code=400, detail='Пароли не совпадают!')
+   
+        # Обновляем email и пароль
+        user.email = credentials.new_email
+        user.password = get_password_hash(credentials.new_password)
 
-    #     # Сессия уже передана в DAO, поэтому не нужно вызывать add()
-    #     # self._session.add(user)
+        # Явно добавляем объект в текущую сессию
+        merged_user = await self._session.merge(user)
 
-    #     await self._session.commit()
-    
-    #     return {'message': 'Конфиденциальные данные изменены успешно!'}
+        # Фиксируем изменения в базе данных
+        await self._session.commit()
+
+
+        return {'message': 'Конфиденциальные данные изменены успешно!'}

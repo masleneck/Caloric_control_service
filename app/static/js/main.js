@@ -7,14 +7,26 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoginForm();
 });
 
-// Функция для отрисовки формы входа сразу при загрузке страницы
+// Функция для отрисовки формы входа
 function showLoginForm() {
     const main = document.getElementById("start-screen");
 
+    // Проверяем, существует ли элемент main
+    if (!main) {
+        console.error("Элемент с id 'start-screen' не найден!");
+        return;
+    }
+
     // Проверяем, нет ли уже формы, чтобы не дублировать
-    if (document.getElementById("login-form")) return;
+    if (document.getElementById("login-form")) {
+        console.log("Форма входа уже отображена");
+        return;
+    }
 
     console.log("Отображение формы входа");
+
+    // Очищаем содержимое main перед добавлением формы
+    main.innerHTML = "";
 
     const loginFormContainer = document.createElement("div");
     loginFormContainer.innerHTML = `
@@ -23,6 +35,7 @@ function showLoginForm() {
             <input type="text" id="login" placeholder="Логин" required><br>
             <input type="password" id="login-password" placeholder="Пароль" required><br>
             <button type="submit" class="login-btn">Войти</button>
+            <div id="error-message"></div> <!-- Контейнер для ошибок -->
         </form>
     `;
 
@@ -33,29 +46,58 @@ function showLoginForm() {
 }
 
 // Функция отправки формы входа
-function loginUser(event) {
-    event.preventDefault(); 
+async function loginUser(event) {
+    event.preventDefault(); // Предотвращаем стандартное поведение формы
 
-    const login = document.getElementById("login").value.trim();
+    const email = document.getElementById("login").value.trim(); // Используем email, а не login
     const password = document.getElementById("login-password").value.trim();
 
-    if (!login || !password) {
-        alert("Введите логин и пароль!");
+    if (!email || !password) {
+        showError("Введите email и пароль!");
         return;
     }
 
-    console.log("Отправка данных:", { login, password });
+    try {
+        const response = await fetch("/auth/login/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }) // Отправляем email и пароль
+        });
 
-    fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ login, password })
-    })
-    .then(response => response.json())
-    .then(data => {
+        console.log("Статус ответа:", response.status); 
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || "Ошибка авторизации");
+        }
+
+        const data = await response.json();
         console.log("Ответ от сервера:", data);
-        alert(data.message || "Успешный вход!");
-        window.location.href = "/home"; // Перенаправляем после входа
-    })
-    .catch(error => console.error("Ошибка авторизации:", error));
+
+        // Перенаправляем пользователя на главную страницу после успешной авторизации
+        window.location.href = "/home";
+    } catch (error) {
+        console.error("Ошибка авторизации:", error);
+        showError(error.message || "Ошибка авторизации");
+    }
 }
+
+// Функция для отображения ошибок
+function showError(message) {
+    const errorContainer = document.getElementById("error-message");
+
+    // Если контейнера для ошибок нет, создаем его
+    if (!errorContainer) {
+        const errorDiv = document.createElement("div");
+        errorDiv.id = "error-message";
+        errorDiv.style.color = "red";
+        errorDiv.style.marginTop = "10px";
+        document.getElementById("login-form").appendChild(errorDiv);
+    }
+
+    // Отображаем сообщение об ошибке
+    document.getElementById("error-message").textContent = message;
+}
+
+// Вызываем функцию отображения формы при загрузке страницы
+showLoginForm();
