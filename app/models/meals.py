@@ -29,14 +29,16 @@ class Meal(Base):
     food_items: Mapped[list['FoodItem']] = relationship(
         'FoodItem',
         secondary='meal_food_items',  # имя промежуточной таблицы
-        back_populates='meals'
+        back_populates='meals',
+        overlaps='meal_food_links'
     )
 
     # Связь один-ко-многим с MealFoodItem 
     meal_food_links: Mapped[list['MealFoodItem']] = relationship(
         'MealFoodItem',
         back_populates='meal',
-        cascade='all, delete-orphan'
+        cascade='all, delete-orphan',
+        overlaps='food_items'
     )
 
 

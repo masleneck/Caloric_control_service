@@ -42,7 +42,7 @@ async def add_test_questions():
             TestQuestion(
                 text='Вредные привычки:',
                 type='options',
-                options=['Их нет', 'Люблю Амаля', 'HQD-монстр', 'Наркоман', 'Алкоголик']
+                options=['Нет', 'Люблю Амаля', 'HQD-монстр', 'Наркоман', 'Алкоголик']
             ),
         ]
 

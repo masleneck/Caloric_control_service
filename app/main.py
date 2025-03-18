@@ -67,6 +67,11 @@ def register_routers(app: FastAPI) -> None:
     async def show_home(request: Request):
         '''Отображает страницу home.html.'''
         return templates.TemplateResponse('home.html', {'request': request})
+    
+    @root_router.get('/quiz', tags=['quiz'])
+    async def show_quiz(request: Request):
+        '''Отображает страницу quiz.html.'''
+        return templates.TemplateResponse('quiz.html', {'request': request})
 
     # Подключение роутеров
     app.include_router(root_router)

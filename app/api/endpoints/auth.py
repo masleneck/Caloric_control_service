@@ -43,6 +43,7 @@ async def logout(response: Response) -> dict:
     response.delete_cookie('user_refresh_token')
     return {'message': 'Пользователь успешно вышел из системы'}
 
+
 @router.get('/all_users/', summary='🚨 Получить информацию о всех пользователях')
 async def get_all_users(
     session: AsyncSession = Depends(get_session_with_commit),
@@ -51,6 +52,7 @@ async def get_all_users(
     '''Получить информацию о всех пользователях.'''
     dao = UserDAO(session)
     return await dao.get_all_users()
+
 
 @router.post('/refresh', summary='Обновить токены')
 async def process_refresh_token(

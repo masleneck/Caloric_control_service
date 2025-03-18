@@ -26,10 +26,9 @@ class UserRegister(UserBase):
 
     @model_validator(mode='after')
     def check_password(self) -> Self:
-        '''Проверяет совпадение паролей и хеширует их перед сохранением.'''
+        '''Проверяет совпадение паролей.'''
         if self.password != self.confirm_password:
             raise ValueError('Пароли не совпадают')
-        self.password = get_password_hash(self.password)
         return self
 
 

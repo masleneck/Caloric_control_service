@@ -14,11 +14,13 @@ class MealFoodItem(Base):
     # Связь с Meal
     meal: Mapped['Meal'] = relationship(
         'Meal',
-        back_populates='meal_food_links'
+        back_populates='meal_food_links',
+        overlaps='food_items'
     )
 
     # Связь с FoodItem
     food_item: Mapped['FoodItem'] = relationship(
         'FoodItem',
-        back_populates='meal_food_links'
+        back_populates='meal_food_links',
+        overlaps='meals, food_items'
     )

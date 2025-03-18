@@ -12,14 +12,16 @@ class FoodItem(Base):
     fats: Mapped[float] 
     carbs: Mapped[float] 
 
-     # Связь многие-ко-многим с Meal через MealFoodItem
+    # Связь многие-ко-многим с Meal через MealFoodItem
     meals: Mapped[list['Meal']] = relationship(
         'Meal',
         secondary='meal_food_items',
-        back_populates='food_items'
+        back_populates='food_items',
+        overlaps='meal_food_links, meal'
     )
 
     meal_food_links: Mapped[list['MealFoodItem']] = relationship(
     'MealFoodItem',
-    back_populates='food_item'
+    back_populates='food_item',
+    overlaps='meals, food_items'
     )

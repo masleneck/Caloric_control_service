@@ -1,3 +1,4 @@
+from loguru import logger
 from fastapi import HTTPException
 from sqlalchemy.orm import object_session
 from app.data.dao import BaseDAO
@@ -13,6 +14,7 @@ class UserDAO(BaseDAO[User]):
         '''Найти пользователя по email.'''
         return await self.find_one_by_fields(email=email)
 
+
     async def register_user(self, user_data: UserRegister) -> dict:
         '''Зарегистрировать нового пользователя.'''
         existing_user = await self.find_one_by_fields(email=user_data.email)
@@ -20,11 +22,15 @@ class UserDAO(BaseDAO[User]):
             raise UserAlreadyExistsException
 
         # Хэшируем пароль
+        logger.info('Хэширование пароля для нового пользователя')
         hashed_password = get_password_hash(user_data.password)
+        logger.info(f'Хэшированный пароль: {hashed_password}')
+
         user_data_dict = user_data.model_dump(exclude={'confirm_password'})
         user_data_dict['password'] = hashed_password
 
         # Создаем пользователя
+        logger.info('Создание нового пользователя')
         new_user = self.model(**user_data_dict)
         self._session.add(new_user)
         await self._session.commit()
@@ -32,12 +38,27 @@ class UserDAO(BaseDAO[User]):
 
         return {'message': 'Вы успешно зарегистрированы!'}
 
+
     async def authenticate_user(self, user_data: UserAuth) -> User:
         '''Аутентифицировать пользователя.'''
+        logger.info(f'Поиск пользователя по email: {user_data.email}')
+
         user = await self.find_one_by_fields(email=user_data.email)
-        if not user or not verify_password(user_data.password, user.password):
+
+        if not user:
+            logger.error('Пользователь не найден')
             raise IncorrectEmailOrPasswordException
+        else:
+            logger.info('Пользователь найден!')
+    
+        if not verify_password(user_data.password, user.password):
+            logger.error('Неверный пароль')
+            raise IncorrectEmailOrPasswordException
+    
+        logger.info(f'Пользователь {user.id} успешно аутентифицирован')
         return user
+ 
+ 
 
     async def get_all_users(self) -> list[UserInfo]:
         '''Получить информацию о всех пользователях.'''
