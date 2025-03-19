@@ -1,9 +1,8 @@
-from datetime import datetime, date
+from datetime import datetime
 from typing import Self
 from pydantic import (
     BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field
 )
-from app.utils.auth_utils import get_password_hash
 from app.models.users import Role
 from app.models.profiles import Gender, CurrentGoal, ActivityLevel
 
@@ -23,6 +22,7 @@ class UserRegister(UserBase):
     '''Модель для регистрации пользователя.'''
     password: str = Field(min_length=5, max_length=50, description='Пароль, от 5 до 50 знаков')
     confirm_password: str = Field(min_length=5, max_length=50, description='Повторите пароль')
+    fullname: str = Field(min_length=3, max_length=101, description='Полное имя (имя и фамилия через пробел)')
 
     @model_validator(mode='after')
     def check_password(self) -> Self:
@@ -30,6 +30,17 @@ class UserRegister(UserBase):
         if self.password != self.confirm_password:
             raise ValueError('Пароли не совпадают')
         return self
+    
+    @property
+    def name(self) -> str:
+        '''Извлекает имя из fullname.'''
+        return self.fullname.split()[0]
+
+    @property
+    def last_name(self) -> str | None:
+        '''Извлекает фамилию из fullname.'''
+        parts = self.fullname.split()
+        return parts[1] if len(parts) > 1 else None
 
 
 class UserAuth(EmailModel):

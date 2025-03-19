@@ -2,12 +2,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from fastapi import FastAPI
-
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from app.core.config import settings
 from app.api.routers import main_router 
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:

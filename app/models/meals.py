@@ -7,10 +7,10 @@ from app.data.db import Base
 
 class Mealtime(enum.Enum):
     '''Тип приема пищи'''
-    BREAKFAST = 'breakfast'
-    LUNCH = 'lunch'
-    DINNER = 'dinner'
-    NOT_STATED = 'not stated'
+    BREAKFAST = 'BREAKFAST'
+    LUNCH = 'LUNCH'
+    DINNER = 'DINNER'
+    NOT_STATED = 'NOT_STATED'
 
 class Meal(Base):
     '''Хранит приемы пищи'''
@@ -40,23 +40,3 @@ class Meal(Base):
         cascade='all, delete-orphan',
         overlaps='food_items'
     )
-
-
-    def to_pydantic(self):
-        '''Преобразует объект SQLAlchemy в словарь, совместимый с MealSimple'''
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'mealtime': self.mealtime.value,  # Преобразуем Enum в строку
-            'meal_date': self.meal_date, # <-- Преобразуем datetime в date
-            'food_items': [
-                {
-                    'food_item': {
-                        'id': link.food_item.id,
-                        'name': link.food_item.name,  # Только id и name
-                    },
-                    'quantity': link.quantity,
-                }
-                for link in self.meal_food_links
-            ],
-        }

@@ -1,14 +1,14 @@
 from loguru import logger
 from fastapi import HTTPException
-from sqlalchemy.orm import object_session
 from app.data.dao import BaseDAO
-from app.models import User
+from app.models import User, Gender, CurrentGoal, ActivityLevel, Profile
 from app.schemas.users import UserRegister, UserAuth, UserInfo, ConfidentialInfoResponse, UpdateConfidentialInfoRequest
 from app.core.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
 from app.utils.auth_utils import get_password_hash, verify_password
 
 class UserDAO(BaseDAO[User]):
     model = User
+
 
     async def get_user_by_email(self, email: str) -> User | None:
         '''Найти пользователя по email.'''
@@ -26,7 +26,7 @@ class UserDAO(BaseDAO[User]):
         hashed_password = get_password_hash(user_data.password)
         logger.info(f'Хэшированный пароль: {hashed_password}')
 
-        user_data_dict = user_data.model_dump(exclude={'confirm_password'})
+        user_data_dict = user_data.model_dump(exclude={'confirm_password', 'fullname'})
         user_data_dict['password'] = hashed_password
 
         # Создаем пользователя
@@ -35,6 +35,27 @@ class UserDAO(BaseDAO[User]):
         self._session.add(new_user)
         await self._session.commit()
         await self._session.refresh(new_user)
+
+        # Разделяем fullname на name и last_name
+        name = user_data.name.capitalize()
+        last_name = user_data.last_name.capitalize()
+
+        # Создаем профиль пользователя
+        logger.info('Создание профиля пользователя')
+        profile_data = {
+        'user_id': new_user.id,
+        'name': name,
+        'last_name': last_name,
+        'gender': Gender.NOT_STATED,
+        'weight': 0.0,
+        'height': 0,
+        'goal': CurrentGoal.NOT_STATED,
+        'birthday_date': None,
+        'activity_level': ActivityLevel.NOT_STATED,
+        }
+        new_profile = Profile(**profile_data)
+        self._session.add(new_profile)
+        await self._session.commit()
 
         return {'message': 'Вы успешно зарегистрированы!'}
 
@@ -65,10 +86,12 @@ class UserDAO(BaseDAO[User]):
         users = await self.find_all()
         return [UserInfo.model_validate(user) for user in users]
 
+
     async def get_confidential_info(self, user: User) -> ConfidentialInfoResponse:
         '''Получить конфиденциальную информацию пользователя.'''
         return ConfidentialInfoResponse(email=user.email, password='******')
     
+
     async def update_confidential_info(
         self,
         user: User,
@@ -80,16 +103,12 @@ class UserDAO(BaseDAO[User]):
     
         if credentials.new_password != credentials.confirm_new_password:
             raise HTTPException(status_code=400, detail='Пароли не совпадают!')
-   
         # Обновляем email и пароль
         user.email = credentials.new_email
         user.password = get_password_hash(credentials.new_password)
-
         # Явно добавляем объект в текущую сессию
         merged_user = await self._session.merge(user)
-
         # Фиксируем изменения в базе данных
         await self._session.commit()
-
 
         return {'message': 'Конфиденциальные данные изменены успешно!'}
