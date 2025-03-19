@@ -28,18 +28,24 @@ class BaseMeal(BaseModel):
 
 class NutritionalInfo(BaseModel):
     '''Схема для информации о питательной ценности.'''
-    calories: Annotated[float, Field(ge=0)] = Field(..., description='Калории (ккал)', example=250.0)
-    proteins: Annotated[float, Field(ge=0)] = Field(..., description='Белки (г)', example=10.0)
-    fats: Annotated[float, Field(ge=0)] = Field(..., description='Жиры (г)', example=5.0)
-    carbs: Annotated[float, Field(ge=0)] = Field(..., description='Углеводы (г)', example=30.0)
+    calories: Annotated[float, Field(ge=0)] 
+    proteins: Annotated[float, Field(ge=0)] 
+    fats: Annotated[float, Field(ge=0)] 
+    carbs: Annotated[float, Field(ge=0)] 
     model_config = ConfigDict(from_attributes=True)
 
 class MealProductsResponse(BaseModel):
     '''Схема для возврата информации о приеме пищи.'''
-    meal_id: int = Field(..., description='Уникальный идентификатор приема пищи', example=1)
-    mealtime: Mealtime = Field(..., description='Тип приема пищи', example=Mealtime.BREAKFAST)
-    products: List[str] = Field(..., description='Список названий продуктов', example=['Банан', 'Творог 5%'])
-    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+    meal_id: int 
+    mealtime: Mealtime
+    products: List[str]
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True, json_schema_extra={
+        'example': {
+            'meal_id': 1,
+            'mealtime': Mealtime.BREAKFAST,
+            'products': ['Банан','Творог 5%'],
+        }
+    })
 
 class MealUpdateRequest(BaseModel):
     '''Схема для обновления или создания приема пищи.'''

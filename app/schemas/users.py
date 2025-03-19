@@ -9,7 +9,7 @@ from app.models.profiles import Gender, CurrentGoal, ActivityLevel
 
 class EmailModel(BaseModel):
     '''Базовая модель для хранения электронной почты.'''
-    email: EmailStr = Field(description='Электронная почта')
+    email: EmailStr 
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -20,9 +20,17 @@ class UserBase(EmailModel):
 
 class UserRegister(UserBase):
     '''Модель для регистрации пользователя.'''
-    password: str = Field(min_length=5, max_length=50, description='Пароль, от 5 до 50 знаков')
-    confirm_password: str = Field(min_length=5, max_length=50, description='Повторите пароль')
-    fullname: str = Field(min_length=3, max_length=101, description='Полное имя (имя и фамилия через пробел)')
+    password: str = Field(min_length=5, max_length=50)
+    confirm_password: str = Field(min_length=5, max_length=50)
+    fullname: str = Field(min_length=3, max_length=101)
+    model_config = ConfigDict(from_attributes=True, json_schema_extra={
+        'example': {
+            'email': 'Введите валидный email',
+            'password': 'Пароль, от 5 до 50 знаков',
+            'confirm_password': 'Повторите пароль',
+            'fullname': 'Полное имя (имя и фамилия через пробел)'
+        }
+    })
 
     @model_validator(mode='after')
     def check_password(self) -> Self:
@@ -45,34 +53,34 @@ class UserRegister(UserBase):
 
 class UserAuth(EmailModel):
     '''Модель для авторизации пользователя.'''
-    password: str = Field(min_length=5, max_length=50, description='Пароль, от 5 до 50 знаков')
-
+    password: str
+    model_config = ConfigDict(from_attributes=True)
 
 class UserAddDB(UserBase):
     '''Модель для хранения данных пользователя в базе данных.'''
-    password: str = Field(min_length=5, description='Пароль в формате HASH-строки')
-
+    password: str
+    model_config = ConfigDict(from_attributes=True)
 
 class ProfileModel(BaseModel):
     '''Модель профиля пользователя.'''
-    user_id: int = Field(description='Идентификатор пользователя')
-    name: str = Field(min_length=3, max_length=50, description='Имя, от 3 до 50 символов')
-    last_name: str | None = Field(None, min_length=3, max_length=50, description='Фамилия, от 3 до 50 символов')
-    gender: Gender = Field(default=Gender.NOT_STATED, description='Пол пользователя')
-    weight: float = Field(gt=0, description='Вес пользователя в кг')
-    height: int = Field(gt=0, description='Рост пользователя в см')
-    goal: CurrentGoal = Field(default=CurrentGoal.NOT_STATED, description='Цель пользователя')
-    birthday_date: datetime | None = Field(None, description='Дата рождения')
-    activity_level: ActivityLevel = Field(default=ActivityLevel.NOT_STATED, description='Уровень активности')
-
+    user_id: int
+    name: str 
+    last_name: str | None 
+    gender: Gender 
+    weight: float
+    height: int 
+    goal: CurrentGoal 
+    birthday_date: datetime | None 
+    activity_level: ActivityLevel
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
 
 class UserInfo(UserBase):
     '''Расширенная модель информации о пользователе.'''
-    id: int = Field(description='Идентификатор пользователя')
-    role: Role = Field(description='Роль пользователя', exclude=True)
-    profile: ProfileModel | None = Field(description='Профиль пользователя', exclude=True)
+    id: int 
+    role: Role
+    profile: ProfileModel | None 
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     @computed_field
     def role_name(self) -> str:
@@ -83,6 +91,7 @@ class UserInfo(UserBase):
 class ConfidentialInfoResponse(BaseModel):
     email: str
     password: str
+    model_config = ConfigDict(from_attributes=True)
 
 class UpdateConfidentialInfoRequest(BaseModel):
     email: str
@@ -90,3 +99,4 @@ class UpdateConfidentialInfoRequest(BaseModel):
     new_email: str
     new_password: str
     confirm_new_password: str
+    model_config = ConfigDict(from_attributes=True)
