@@ -66,7 +66,7 @@ async def process_refresh_token(
 
 
 
-@profile_router.get('/confidential_info', response_model=ConfidentialInfoResponse)
+@profile_router.get('/confidential_info', response_model=ConfidentialInfoResponse, summary='Получить конфиденциальную информацию текущего пользователя')
 async def get_confidential_info(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_without_commit)
@@ -76,7 +76,7 @@ async def get_confidential_info(
     return await dao.get_confidential_info(current_user)
 
 
-@profile_router.put('/update_confidential_info')
+@profile_router.put('/update_confidential_info',summary='Обновить конфиденциальную информацию текущего пользователя')
 async def update_confidential_info(
     credentials: UpdateConfidentialInfoRequest,
     current_user: User = Depends(get_current_user),

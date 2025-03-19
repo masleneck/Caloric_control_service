@@ -6,8 +6,8 @@ from app.data.db import Base
 
 class Role(enum.Enum):
     '''Роли'''
-    USER = 'user'
-    ADMIN = 'admin'
+    USER = 'USER'
+    ADMIN = 'ADMIN'
 
 class User(Base):
     '''Хранит информацию для авторизации'''

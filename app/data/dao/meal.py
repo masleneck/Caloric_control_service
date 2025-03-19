@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 from datetime import date
 from app.data.dao import BaseDAO
 from app.models import Meal, MealFoodItem, FoodItem, Mealtime
-from app.schemas.meals import MealProductsResponse, NutritionalInfo, BaseMeal, MealUpdateRequest
+from app.schemas.meals import MealProductsResponse, NutritionalInfo, BaseMeal, MealUpdateRequest, BaseFoodItem
 from app.core.exceptions import MealNotFound, InvalidQuantity, FoodItemNotFound, MealAlreadyExists
 
 class MealDAO(BaseDAO[Meal]):
@@ -160,15 +160,33 @@ class MealDAO(BaseDAO[Meal]):
                 raise FoodItemNotFound(detail=f'Продукт "{name}" не найден')
             food_items.append(food_item)
 
-        # Добавляем новые связи
+        # Создаем связи `MealFoodItem`
+        meal_food_items = []
         for food_item, quantity in zip(food_items, meal_data.quantities):
             meal_food_item = MealFoodItem(
-                meal_id=meal_id,
+                meal_id=meal.id,
                 food_item_id=food_item.id,
                 quantity=quantity
             )
             self._session.add(meal_food_item)
+            meal_food_items.append(meal_food_item)
 
         await self._session.flush()
-        await self._session.refresh(meal, ['meal_food_links'])
-        return BaseMeal(**meal.to_pydantic())
+        # Явно загружаем связанные данные
+        await self._session.refresh(meal, ['food_items'])
+        # Преобразуем ORM-объект в Pydantic-модель
+        meal_data = {
+            "id": meal.id,
+            "user_id": meal.user_id,
+            "mealtime": meal.mealtime,
+            "meal_date": meal.meal_date,
+            "food_items": [
+                {
+                    "food_item": BaseFoodItem.model_validate(food_item),
+                    "quantity": meal_food_item.quantity
+                }
+                for food_item, meal_food_item in zip(food_items, meal_food_items)
+            ]
+        }
+
+        return BaseMeal.model_validate(meal_data)

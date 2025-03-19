@@ -1,5 +1,5 @@
-from .users import User
-from .profiles import Profile
+from .users import User, Role
+from .profiles import Profile, Gender, CurrentGoal, ActivityLevel
 from .workouts import Workout
 from .workout_info import WorkoutInfo
 from .meals import Meal, Mealtime

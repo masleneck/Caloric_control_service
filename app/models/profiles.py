@@ -7,25 +7,25 @@ from app.data.db import Base
 
 class Gender(enum.Enum):
     '''Пол пользователя'''
-    MALE = 'male'
-    FEMALE = 'female'
-    NOT_STATED = 'not stated'
+    MALE = 'MALE'
+    FEMALE = 'FEMALE'
+    NOT_STATED = 'NOT_STATED'
 
 class CurrentGoal(enum.Enum):
     '''Цели пользователя'''
-    LOSE_WEIGHT = 'lose weight' # похудение
-    KEEPING_FIT = 'keeping fit' # поддержание формы
-    GAIN_MUSCLE_MASS = 'gain muscle mass' # набрать мышечную массу
-    NOT_STATED = 'not stated'
+    LOSE_WEIGHT = 'LOSE_WEIGHT' # похудение
+    KEEPING_FIT = 'KEEPING_FIT' # поддержание формы
+    GAIN_MUSCLE_MASS = 'GAIN_MUSCLE_MASS' # набрать мышечную массу
+    NOT_STATED = 'NOT_STATED'
 
 class ActivityLevel(enum.Enum):
     '''Уровень активности пользователя'''
-    SEDENTARY = 'sedentary'  # Малоподвижный образ жизни
-    LIGHT = 'light'  # Легкая активность (1-3 тренировки в неделю)
-    MODERATE = 'moderate'  # Средняя активность (3-5 тренировок в неделю)
-    ACTIVE = 'active'  # Высокая активность (6-7 тренировок в неделю)
-    ATHLETE = 'athlete'  # Спортсмен
-    NOT_STATED= 'not stated'
+    SEDENTARY = 'SEDENTARY'  # Малоподвижный образ жизни
+    LIGHT = 'LIGHT'  # Легкая активность (1-3 тренировки в неделю)
+    MODERATE = 'MODERATE'  # Средняя активность (3-5 тренировок в неделю)
+    ACTIVE = 'ACTIVE'  # Высокая активность (6-7 тренировок в неделю)
+    ATHLETE = 'ATHLETE'  # Спортсмен
+    NOT_STATED= 'NOT_STATED'
 
 class Profile(Base):
     '''Хранит информацию пользователя'''

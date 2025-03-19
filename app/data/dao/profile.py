@@ -1,19 +1,19 @@
 from fastapi import HTTPException
 from app.models import Profile, User
 from app.data.dao import BaseDAO
-from app.schemas.profiles import ProfileInfoResponse, UpdateProfileRequest
+from app.schemas.profiles import ProfileInfoResponse, UpdateProfileRequest, FullNameResponse
 
 class ProfileDAO(BaseDAO[Profile]):
     model = Profile
 
 
-    async def get_role_and_fullname(self, user: User) -> dict:
+    async def get_role_and_fullname(self, user: User) -> FullNameResponse:
         '''Получить полное имя (name + lastname) текущего пользователя в формате JSON.'''
         if not user.profile:
             raise HTTPException(status_code=404, detail='Profile not found')
     
         full_name = f'{user.profile.name} {user.profile.last_name}'
-        return {'full_name': full_name}  # Возвращаем словарь с ключом full_name
+        return FullNameResponse(full_name=full_name)  
     
 
     async def get_profile_info(self, user: User) -> ProfileInfoResponse:

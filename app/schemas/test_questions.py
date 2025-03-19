@@ -6,5 +6,4 @@ class TestQuestionResponse(BaseModel):
     text: str
     type: str
     options: Optional[List[str]]
-    
     model_config = ConfigDict(from_attributes=True)
