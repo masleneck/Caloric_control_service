@@ -66,10 +66,10 @@ function showRegisterForm() {
     main.innerHTML = `
         <h2>Пройдите регистрацию</h2>
         <form id="register-form">
-            <input type="text" id="name" placeholder="Ваше имя" required><br>
+            <input type="text" id="fullname" placeholder="Ваше имя" required><br>
             <input type="email" id="email" placeholder="Email" required><br>
             <input type="password" id="password" placeholder="Пароль" required><br>
-            <input type="password" id="confirm-password" placeholder="Подтвердите пароль" required><br>
+            <input type="password" id="confirm_password" placeholder="Подтвердите пароль" required><br>
             <button type="submit" class="register-btn">Зарегистрироваться</button>
         </form>
     `;
@@ -78,15 +78,15 @@ function showRegisterForm() {
 }
 
 // Обработка регистрации + редирект на главную
-function registerUser(event) {
+async function registerUser(event) {
     event.preventDefault();
 
-    const name = document.getElementById("name").value.trim();
+    const fullname = document.getElementById("fullname").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
-    const confirmPassword = document.getElementById("confirm-password").value.trim();
+    const confirmPassword = document.getElementById("confirm_password").value.trim();
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!fullname || !email || !password || !confirmPassword) {
         alert("Заполните все поля!");
         return;
     }
@@ -96,17 +96,25 @@ function registerUser(event) {
         return;
     }
 
-    console.log("Отправка данных:", { name, email, password });
+    console.log("Отправка данных:", { fullname, email, password, confirmPassword });
 
-    fetch("/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const response = await fetch("/auth/register/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fullname, email, password, confirm_password: confirmPassword })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Ошибка при регистрации");
+        }
+
+        const data = await response.json();
         alert(data.message || "Регистрация успешна!");
         window.location.href = "/"; // Перенаправляем на главную страницу
-    })
-    .catch(error => console.error("Ошибка:", error));
+    } catch (error) {
+        console.error("Ошибка:", error);
+        alert(error.message || "Произошла ошибка при регистрации");
+    }
 }
