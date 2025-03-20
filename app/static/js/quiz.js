@@ -7,7 +7,7 @@ document.getElementById("prevBtn").addEventListener("click", prevQuestion);
 async function loadQuestions() {
     try {
         console.log("Запрашиваем вопросы с сервера...");
-        const response = await fetch("http://127.0.0.1:8000/questions"); // Полный URL
+        const response = await fetch("/questions");
 
         if (!response.ok) throw new Error(`Ошибка загрузки вопросов: ${response.status}`);
 

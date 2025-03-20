@@ -9,7 +9,6 @@ router = APIRouter(
     tags=['Страницы 📄']
 )
 
-
 @router.get('/', summary='root')
 async def index(request: Request):
     '''Рендеринг главной страницы'''
