@@ -15,37 +15,56 @@ async def add_test_questions():
         # Добавляем новые вопросы
         questions = [
             TestQuestion(
-                text='Как часто вы занимаетесь спортом?',
+                text='Ваш пол?',
                 type='options',
-                options=['Не занимаюсь', 'Редко', 'Два раза в неделю', 'Каждый день', 'Спортсмен']
+                options=None # ['Мужской', 'Женский']
             ),
             TestQuestion(
-                text='Сколько литров воды Вы пьете в день:',
+                text='Дата вашего рождения?',
                 type='input',
-                options=None
+                options=None # '2003-05-22'
             ),
             TestQuestion(
-                text='Сколько часов Вы спите в сутки?',
-                type='options',
-                options=['Менее 5', '5-6', '7-8', 'Более 8']
-            ),
-            TestQuestion(
-                text='Ваш вес (кг):',
+                text='Каков ваш рост?',
                 type='input',
-                options=None
+                options=None # 168
             ),
             TestQuestion(
-                text='Ваш уровень активности:',
-                type='options',
-                options=['На чиле', 'Лёгкая активность', 'Средняя активность', 'Высокая активность', 'Чемпик']
+                text='Каков ваш текущий вес(кг)?',
+                type='input',
+                options=None # 52
             ),
             TestQuestion(
-                text='Вредные привычки:',
+                text='Выбери свою цель',
                 type='options',
-                options=['Нет', 'Люблю Амаля', 'HQD-монстр', 'Наркоман', 'Алкоголик']
+                options=['Снизить вес', 'Поддержание формы', 'Набрать мышечную массу'] # LOSE_WEIGHT,KEEPING_FIT,GAIN_MUSCLE_MASS
             ),
+            TestQuestion(
+                text='Есть ли у вас вредные привычки ?',
+                type='options',
+                options=['Да','Нет']
+            ),
+            TestQuestion(
+                text='Сколько часов вы в среднем спите в день?',
+                type='input',
+                options=None # 7
+            ),
+            TestQuestion(
+                text='Сколько воды вы в среднем пьете в день?',
+                type='options',
+                options=['Менее 0,5л','0,5-1,5л','1.5-3','Более 3л'] # менее 2стаканов; 2-6стаканов; 7-12 стаканов
+            ),
+            TestQuestion(
+                text='Есть ли у вас гормональные нарушения?',
+                type='options',
+                options=['Нет / Никогда не сдавал анализы',
+                         'Гипотиреоз',
+                         'Лептинорезистентность/Инсулинорезистентность',
+                         'Дефициты половых гормонов и различные активные компенсаторные механизмы',
+                         'Различные эндокринные нарушения'
+                         ]
+            )   
         ]
-
         session.add_all(questions)
         await session.commit()
         print('Вопросы успешно обновлены в БД!')
