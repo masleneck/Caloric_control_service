@@ -76,16 +76,16 @@ async function processResults() {
 
     // Преобразуем ответы в корректный формат
     const formattedAnswers = {
-        gender: genderMap[answers[7]] || "UNKNOWN",
-        birthday_date: answers[8] || "Ошибка: не указана",
-        height: Number(answers[9]) || 0,
-        weight: Number(answers[10]) || 0,
-        goal: goalMap[answers[11]] || "UNKNOWN",
-        bad_habits: answers[12] || "Не указано",
-        steps_per_day: Number(answers[13]) || 0,
-        sleep_hours: Number(answers[14]) || 0,
-        water_intake: answers[15] || "Не указано",
-        hormone_issues: answers[16] || "Не указано"
+        gender: genderMap[answers[27]] || "UNKNOWN",
+        birthday_date: answers[28] || "Ошибка: не указана",
+        height: Number(answers[29]) || 0,
+        weight: Number(answers[30]) || 0,
+        goal: goalMap[answers[31]] || "UNKNOWN",
+        bad_habits: answers[32] || "Не указано",
+        steps_per_day: Number(answers[33]) || 0,
+        sleep_hours: Number(answers[34]) || 0,
+        water_intake: answers[35] || "Не указано",
+        hormone_issues: answers[36] || "Не указано"
     };
 
     console.log("Исправленный объект перед отправкой:", formattedAnswers);
