@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Response, Depends, Cookie, HTTPException
+from loguru import logger
+from fastapi import APIRouter, Response, Depends, Cookie, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import User
 from app.utils.token_utils import set_tokens
@@ -22,6 +23,8 @@ async def register_user(
     session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
     '''Зарегистрировать нового пользователя.'''
+    if not session_id:
+        raise HTTPException(status_code=400, detail='Требуется идентификатор сеанса')
     # Передаем session_id в DAO
     result = await UserDAO(session).register_user(user_data, session_id)
     # Удаляем куку session_id
@@ -40,7 +43,10 @@ async def auth_user(
     dao = UserDAO(session)
     user = await dao.authenticate_user(user_data)
     set_tokens(response, user.id)
-    return {'ok': True, 'message': 'Авторизация успешна!'}
+    return {'ok': True, 
+            'message': 'Авторизация успешна!',
+            'user_id': user.id
+    }
 
 
 @router.post('/logout', summary='Выйти из системы')
@@ -49,16 +55,6 @@ async def logout(response: Response) -> dict:
     response.delete_cookie('user_access_token')
     response.delete_cookie('user_refresh_token')
     return {'message': 'Пользователь успешно вышел из системы'}
-
-
-@router.get('/all_users/', summary='🚨 Получить информацию о всех пользователях')
-async def get_all_users(
-    session: AsyncSession = Depends(get_session_with_commit),
-    current_user: User = Depends(get_current_admin_user)
-) -> list[UserInfo]:
-    '''Получить информацию о всех пользователях.'''
-    dao = UserDAO(session)
-    return await dao.get_all_users()
 
 
 @router.post('/refresh', summary='Обновить токены')
@@ -71,11 +67,30 @@ async def process_refresh_token(
     return {'message': 'Токены успешно обновлены'}
 
 
+@router.get('/all_users/', summary='🚨 Получить информацию о всех пользователях')
+async def get_all_users(
+    skip: int = Query(0, description='Количество записей для пропуска'),
+    limit: int = Query(100, description='Лимит записей на странице'),
+    sort_by: str = Query('id', description='Поле для сортировки (id, email, name)'),
+    session: AsyncSession = Depends(get_session_without_commit),
+    current_user: User = Depends(get_current_admin_user)
+) -> list[UserInfo]:
+    '''
+    Получить информацию о всех пользователях.
+    Доступно только для администраторов.
+    '''
+    # Логируем запрос
+    logger.info(f'Администратор {current_user.id} запросил список пользователей')
+
+    dao = UserDAO(session)
+    return await dao.get_all_users(skip=skip, limit=limit, sort_by=sort_by)
+
+
 @profile_router.get('/confidential_info', response_model=ConfidentialInfoResponse, summary='Получить конфиденциальную информацию текущего пользователя')
 async def get_confidential_info(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_without_commit)
-):
+) -> ConfidentialInfoResponse:
     '''Получить конфиденциальную информацию текущего пользователя.'''
     dao = UserDAO(session)
     return await dao.get_confidential_info(current_user)
@@ -86,7 +101,7 @@ async def update_confidential_info(
     credentials: UpdateConfidentialInfoRequest,
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session_with_commit)
-):
+) -> dict:
     '''Обновить конфиденциальную информацию текущего пользователя.'''
     dao = UserDAO(session)
     return await dao.update_confidential_info(current_user, credentials)

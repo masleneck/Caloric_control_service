@@ -23,8 +23,7 @@ class User(Base):
     'Profile',
     back_populates='user', # Указывает на атрибут обратной связи в модели Profile. 
     # Это значит, что при доступе к профилю можно также получить связанного пользователя.
-    uselist=False,  # Ключевой параметр для связи один-к-одному
-    lazy='joined'  # Автоматически подгружает profile при запросе user
+    uselist=False  # Ключевой параметр для связи один-к-одному
     )
 
     # Связь один-к-одному с TestResult
@@ -32,14 +31,13 @@ class User(Base):
     'TestResult',
     back_populates='user', 
     uselist=False, 
-    lazy='joined'  
     )
 
     # Связь один-ко-многим с Meal
     meals: Mapped[list['Meal']] = relationship(
         'Meal',
         back_populates='user',
-        cascade="all, delete-orphan"  # При удалении User удаляются и связанные Post
+        cascade="all, delete-orphan",  # При удалении User удаляются и связанные Post
     )
 
     # Связь один-ко-многим с Workout

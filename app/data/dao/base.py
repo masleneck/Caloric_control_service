@@ -25,7 +25,7 @@ class BaseDAO(Generic[T]):
             query = select(self.model).filter_by(id=data_id)
             result = await self._session.execute(query)
             record = result.scalar_one_or_none()
-            log_message = f'Запись {self.model.__name__} с ID {data_id} {'найдена' if record else 'не найдена'}.'
+            log_message = f"Запись {self.model.__name__} с ID {data_id} {'найдена' if record else 'не найдена'}."
             # logger.info(log_message)
             return record
         except SQLAlchemyError as e:
@@ -58,7 +58,7 @@ class BaseDAO(Generic[T]):
             query = select(self.model).filter_by(**filter_dict)
             result = await self._session.execute(query)
             record = result.scalar_one_or_none()
-            log_message = f'Запись {'найдена' if record else 'не найдена'} по фильтрам: {filter_dict}'
+            log_message = f"Запись {'найдена' if record else 'не найдена'} по фильтрам: {filter_dict}"
             # logger.info(log_message)
             return record
         except SQLAlchemyError as e:

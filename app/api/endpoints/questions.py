@@ -17,7 +17,8 @@ async def get_questions(
     session: AsyncSession = Depends(get_session_without_commit),
 ) -> List[TestQuestionResponse]:
     '''Возвращает список всех вопросов для опросника, отсортированных по ID'''
-    questions = await QuestionDAO(session).find_all()
+    dao = QuestionDAO(session)
+    questions = await dao.find_all()
     return questions
 
 

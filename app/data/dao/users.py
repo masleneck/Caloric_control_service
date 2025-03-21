@@ -1,5 +1,6 @@
 from loguru import logger
 from sqlalchemy import select
+from sqlalchemy.orm import load_only
 from fastapi import HTTPException
 from app.data.dao import BaseDAO
 from app.models import User, Gender, CurrentGoal, ActivityLevel, Profile, TestResult
@@ -10,17 +11,8 @@ from app.utils.auth_utils import get_password_hash, verify_password
 class UserDAO(BaseDAO[User]):
     model = User
 
-
-    async def get_user_by_email(self, email: str) -> User | None:
-        '''Найти пользователя по email.'''
-        return await self.find_one_by_fields(email=email)
-
-
     async def register_user(self, user_data: UserRegister, session_id: str) -> dict:
         '''Зарегистрировать нового пользователя.'''
-        if not session_id:
-            raise HTTPException(status_code=400, detail='Требуется идентификатор сеанса')
-        
         # Проверяем, существует ли TestResult с таким session_id
         test_result = await self._session.execute(
             select(TestResult).where(TestResult.session_id == session_id)
@@ -29,7 +21,7 @@ class UserDAO(BaseDAO[User]):
         
         if not test_result:
             raise HTTPException(status_code=400, detail='Неверный идентификатор сеанса')
-        
+
         # Проверяем, существует ли пользователь с таким email
         existing_user = await self.find_one_by_fields(email=user_data.email)
         if existing_user:
@@ -48,8 +40,7 @@ class UserDAO(BaseDAO[User]):
         # logger.info('Создание нового пользователя')
         new_user = self.model(**user_data_dict)
         self._session.add(new_user)
-        await self._session.commit()
-        await self._session.refresh(new_user)
+        await self._session.flush()  # Получаем ID нового пользователя
 
         # Разделяем fullname на name и last_name
         name = user_data.name.capitalize()
@@ -68,26 +59,21 @@ class UserDAO(BaseDAO[User]):
         'birthday_date': test_result.birthday_date,
         'activity_level': ActivityLevel.NOT_STATED,  # По умолчанию
         }
-        # Связываем TestResult с пользователем
-        test_result.user_id = new_user.id
-        await self._session.commit()
-
-        # Удаляем запись из test_results
-        await self._session.delete(test_result)
-        await self._session.commit()
-
         new_profile = Profile(**profile_data)
         self._session.add(new_profile)
-        await self._session.commit()
 
+        # Связываем TestResult с пользователем
+        test_result.user_id = new_user.id
+        
+        # Удаляем запись из test_results
+        await self._session.delete(test_result)
+        
         return {'message': 'Вы успешно зарегистрированы!'}
-
 
 
     async def authenticate_user(self, user_data: UserAuth) -> User:
         '''Аутентифицировать пользователя.'''
-        logger.info(f'Поиск пользователя по email: {user_data.email}')
-
+        # logger.info(f'Поиск пользователя по email: {user_data.email}')
         user = await self.find_one_by_fields(email=user_data.email)
 
         if not user:
@@ -104,13 +90,6 @@ class UserDAO(BaseDAO[User]):
         return user
  
  
-
-    async def get_all_users(self) -> list[UserInfo]:
-        '''Получить информацию о всех пользователях.'''
-        users = await self.find_all()
-        return [UserInfo.model_validate(user) for user in users]
-
-
     async def get_confidential_info(self, user: User) -> ConfidentialInfoResponse:
         '''Получить конфиденциальную информацию пользователя.'''
         return ConfidentialInfoResponse(email=user.email, password='******')
@@ -130,9 +109,43 @@ class UserDAO(BaseDAO[User]):
         # Обновляем email и пароль
         user.email = credentials.new_email
         user.password = get_password_hash(credentials.new_password)
-        # Явно добавляем объект в текущую сессию
+        
         merged_user = await self._session.merge(user)
-        # Фиксируем изменения в базе данных
         await self._session.commit()
 
         return {'message': 'Конфиденциальные данные изменены успешно!'}
+    
+
+    async def get_all_users(
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        sort_by: str = 'id'
+    ) -> list[UserInfo]:
+        '''
+        Получить информацию о всех пользователях.
+
+        Args:
+            skip (int): Количество записей для пропуска (пагинация).
+            limit (int): Лимит записей на странице (пагинация).
+            sort_by (str): Поле для сортировки (id, email, name).
+
+        Returns:
+            list[UserInfo]: Список пользователей.
+        '''
+        # Определяем поле для сортировки
+        sort_field = getattr(User, sort_by, User.id)
+
+        # Формируем запрос с пагинацией и сортировкой
+        query = (
+            select(User)
+            .order_by(sort_field)
+            .offset(skip)
+            .limit(limit)
+        )
+        # Выполняем запрос
+        result = await self._session.execute(query)
+        users = result.scalars().all()
+
+        # Преобразуем в список UserInfo
+        return [UserInfo.model_validate(user) for user in users]

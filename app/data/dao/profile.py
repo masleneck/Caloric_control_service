@@ -1,4 +1,6 @@
 from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.models import Profile, User
 from app.data.dao import BaseDAO
 from app.schemas.profiles import ProfileInfoResponse, UpdateProfileRequest, FullNameResponse
@@ -6,30 +8,48 @@ from app.schemas.profiles import ProfileInfoResponse, UpdateProfileRequest, Full
 class ProfileDAO(BaseDAO[Profile]):
     model = Profile
 
-
     async def get_role_and_fullname(self, user: User) -> FullNameResponse:
         '''Получить полное имя (name + lastname) текущего пользователя в формате JSON.'''
-        if not user.profile:
-            raise HTTPException(status_code=404, detail='Profile not found')
-    
-        full_name = f'{user.profile.name} {user.profile.last_name}'
-        return FullNameResponse(full_name=full_name)  
+        # Загружаем пользователя с профилем
+        query = (
+            select(User)
+            .options(selectinload(User.profile))  # Загружаем связанный профиль
+            .where(User.id == user.id)
+        )
+        result = await self._session.execute(query)
+        user_with_profile = result.scalars().first()
+
+        if not user_with_profile or not user_with_profile.profile:
+            raise HTTPException(status_code=404, detail='Профиль пользователя не найден')
+
+        full_name = f'{user_with_profile.profile.name} {user_with_profile.profile.last_name}'
+        return FullNameResponse(full_name=full_name) 
     
 
     async def get_profile_info(self, user: User) -> ProfileInfoResponse:
         '''Получить информацию о профиле пользователя.'''
-        if not user.profile:
-            raise HTTPException(status_code=404, detail='Profile not found')
-        
-        return ProfileInfoResponse(
-            name=user.profile.name,
-            last_name=user.profile.last_name,
-            gender=user.profile.gender.value,
-            weight=user.profile.weight,
-            height=user.profile.height,
-            goal=user.profile.goal,
-            birthday_date=user.profile.birthday_date
+        # Загружаем пользователя с профилем
+        query = (
+            select(User)
+            .options(selectinload(User.profile))  # Загружаем связанный профиль
+            .where(User.id == user.id)
         )
+        result = await self._session.execute(query)
+        user_with_profile = result.scalars().first()
+
+        if not user_with_profile or not user_with_profile.profile:
+            raise HTTPException(status_code=404, detail='Профиль пользователя не найден')
+
+        return ProfileInfoResponse(
+            name=user_with_profile.profile.name,
+            last_name=user_with_profile.profile.last_name,
+            gender=user_with_profile.profile.gender.value,
+            weight=user_with_profile.profile.weight,
+            height=user_with_profile.profile.height,
+            goal=user_with_profile.profile.goal,
+            birthday_date=user_with_profile.profile.birthday_date
+        )
+
 
     async def update_profile(
         self,
@@ -37,12 +57,20 @@ class ProfileDAO(BaseDAO[Profile]):
         profile_data: UpdateProfileRequest
     ) -> dict:
         '''Обновить информацию профиля пользователя.'''
-        profile = await self.find_one_by_fields(user_id=user.id)
-        if not profile:
+        # Загружаем пользователя с профилем
+        query = (
+            select(User)
+            .options(selectinload(User.profile))  # Загружаем связанный профиль
+            .where(User.id == user.id)
+        )
+        result = await self._session.execute(query)
+        user_with_profile = result.scalars().first()
+
+        if not user_with_profile or not user_with_profile.profile:
             raise HTTPException(status_code=404, detail='Профиль не найден!')
-        
+
+        # Обновляем только переданные поля
         for key, value in profile_data.model_dump(exclude_unset=True).items():
-            setattr(profile, key, value)
-        
-        await self._session.commit()
+            setattr(user_with_profile.profile, key, value)
+
         return {'message': 'Профиль успешно обновлен!'}
