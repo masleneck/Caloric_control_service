@@ -8,11 +8,3 @@ class TestQuestion(Base):
     type: Mapped[str]  # 'options' или 'input'
     options: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
     
-    # Связь один-к-одному с TestResult
-    testresult: Mapped['TestResult'] = relationship(  
-    'TestResult',
-    back_populates='testquestion',
-    uselist=False,  
-    lazy='joined'  
-    )
-

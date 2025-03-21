@@ -1,15 +1,24 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, func
+from sqlalchemy import String, func, ForeignKey, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
 from app.data.db import Base
+from app.models import Gender, CurrentGoal
 
 class TestResult(Base):
-    '''Хранит результаты тестирования пользователя'''
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    question_id: Mapped[int] = mapped_column(ForeignKey('testquestions.id'))
-    answer: Mapped[str]
-    created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
+    '''Хранит результаты тестирования до регистрации'''
+    session_id: Mapped[str] = mapped_column(String(128), index=True, nullable=False)  # Сессия теста
+    
+    birthday_date: Mapped[datetime] = mapped_column(nullable=True)
+    gender: Mapped[Gender] 
+    goal: Mapped[CurrentGoal]
+    height: Mapped[float] = mapped_column(nullable=True)
+    weight: Mapped[float] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
+
+    def __repr__(self):
+        return f"<TestResult(session_id={self.session_id})>"
     
     # Обратная связь один-к-одному с User
     user: Mapped['User'] = relationship(
@@ -17,11 +26,3 @@ class TestResult(Base):
     back_populates='testresult',
     uselist=False
     )
-
-    # Обратная связь один-к-одному с TestQuestion
-    testquestion: Mapped['TestQuestion'] = relationship(
-    'TestQuestion',
-    back_populates='testresult',
-    uselist=False
-    )
-

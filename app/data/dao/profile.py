@@ -27,6 +27,7 @@ class ProfileDAO(BaseDAO[Profile]):
             gender=user.profile.gender.value,
             weight=user.profile.weight,
             height=user.profile.height,
+            goal=user.profile.goal,
             birthday_date=user.profile.birthday_date
         )
 

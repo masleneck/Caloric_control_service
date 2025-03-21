@@ -1,14 +1,15 @@
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel, Field, field_validator, ConfigDict
-from app.models import Gender
+from pydantic import BaseModel, field_validator, ConfigDict
+from app.models import Gender, CurrentGoal
 class ProfileInfoResponse(BaseModel):
     name: str 
     last_name: str 
     gender: Gender 
     weight: float 
     height: int 
-    birthday_date: Optional[date] 
+    goal: CurrentGoal 
+    birthday_date: Optional[date]
     model_config = ConfigDict(from_attributes=True, use_enum_values=True, json_schema_extra={
         'example': {
             'name': 'Амаль',
@@ -16,6 +17,7 @@ class ProfileInfoResponse(BaseModel):
             'gender': Gender.MALE,
             'weight': 59,
             'height': 178,
+            'goal': CurrentGoal.GAIN_MUSCLE_MASS,
             'birthday_date': '2002-08-01'
         }
     })
@@ -25,6 +27,7 @@ class UpdateProfileRequest(BaseModel):
     gender: Gender 
     weight: float 
     height: int 
+    goal: CurrentGoal 
     birthday_date: Optional[date] 
     model_config = ConfigDict(from_attributes=True, use_enum_values=True, json_schema_extra={
         'example': {
@@ -33,6 +36,7 @@ class UpdateProfileRequest(BaseModel):
             'gender': Gender.MALE,
             'weight': 59,
             'height': 178,
+            'goal': CurrentGoal.GAIN_MUSCLE_MASS,
             'birthday_date': '2002-08-01'
         }
     })

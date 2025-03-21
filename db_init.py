@@ -17,7 +17,7 @@ async def add_test_questions():
             TestQuestion(
                 text='Ваш пол?',
                 type='options',
-                options=None # ['Мужской', 'Женский']
+                options=['Мужской', 'Женский'] # MALE, FEMALE
             ),
             TestQuestion(
                 text='Дата вашего рождения?',
@@ -45,6 +45,11 @@ async def add_test_questions():
                 options=['Да','Нет']
             ),
             TestQuestion(
+                text='Сколько вы примерно проходите шагов за день?',
+                type='input',
+                options=None # 5000
+            ),
+            TestQuestion(
                 text='Сколько часов вы в среднем спите в день?',
                 type='input',
                 options=None # 7
@@ -52,7 +57,7 @@ async def add_test_questions():
             TestQuestion(
                 text='Сколько воды вы в среднем пьете в день?',
                 type='options',
-                options=['Менее 0,5л','0,5-1,5л','1.5-3','Более 3л'] # менее 2стаканов; 2-6стаканов; 7-12 стаканов
+                options=['Менее 0,5л','0,5-1,5л','1.5-3л','Более 3л'] # менее 2стаканов; 2-6стаканов; 7-12 стаканов; Более 12
             ),
             TestQuestion(
                 text='Есть ли у вас гормональные нарушения?',

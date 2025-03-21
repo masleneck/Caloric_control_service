@@ -100,3 +100,4 @@ class UpdateConfidentialInfoRequest(BaseModel):
     new_password: str
     confirm_new_password: str
     model_config = ConfigDict(from_attributes=True)
+

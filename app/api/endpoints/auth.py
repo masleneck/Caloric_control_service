@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, Cookie, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import User
 from app.utils.token_utils import set_tokens
@@ -16,11 +16,15 @@ router = APIRouter(
 @router.post('/register/', summary='Регистрация пользователя')
 async def register_user(
     user_data: UserRegister,
+    session_id: str | None = Cookie(default=None),  # Извлекаем session_id из cookies
     session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
     '''Зарегистрировать нового пользователя.'''
-    dao = UserDAO(session)
-    return await dao.register_user(user_data)
+    if not session_id:
+        raise HTTPException(status_code=400, detail='Требуется идентификатор сеанса')
+
+    # Передаем session_id в DAO
+    return await UserDAO(session).register_user(user_data, session_id)
 
 
 @router.post('/login/', summary='Аутентификация пользователя')

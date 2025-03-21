@@ -1,7 +1,8 @@
 from loguru import logger
+from sqlalchemy import select
 from fastapi import HTTPException
 from app.data.dao import BaseDAO
-from app.models import User, Gender, CurrentGoal, ActivityLevel, Profile
+from app.models import User, Gender, CurrentGoal, ActivityLevel, Profile, TestResult
 from app.schemas.users import UserRegister, UserAuth, UserInfo, ConfidentialInfoResponse, UpdateConfidentialInfoRequest
 from app.core.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
 from app.utils.auth_utils import get_password_hash, verify_password
@@ -15,22 +16,23 @@ class UserDAO(BaseDAO[User]):
         return await self.find_one_by_fields(email=email)
 
 
-    async def register_user(self, user_data: UserRegister) -> dict:
+    async def register_user(self, user_data: UserRegister, session_id: str) -> dict:
         '''Зарегистрировать нового пользователя.'''
         existing_user = await self.find_one_by_fields(email=user_data.email)
         if existing_user:
             raise UserAlreadyExistsException
 
         # Хэшируем пароль
-        logger.info('Хэширование пароля для нового пользователя')
+        # logger.info('Хэширование пароля для нового пользователя')
         hashed_password = get_password_hash(user_data.password)
-        logger.info(f'Хэшированный пароль: {hashed_password}')
+        # logger.info(f'Хэшированный пароль: {hashed_password}')
 
+        # Создаем словарь для данных пользователя, исключая confirm_password и fullname
         user_data_dict = user_data.model_dump(exclude={'confirm_password', 'fullname'})
         user_data_dict['password'] = hashed_password
 
         # Создаем пользователя
-        logger.info('Создание нового пользователя')
+        # logger.info('Создание нового пользователя')
         new_user = self.model(**user_data_dict)
         self._session.add(new_user)
         await self._session.commit()
@@ -38,10 +40,10 @@ class UserDAO(BaseDAO[User]):
 
         # Разделяем fullname на name и last_name
         name = user_data.name.capitalize()
-        last_name = user_data.last_name.capitalize()
+        last_name = user_data.last_name.capitalize() if user_data.last_name else None
 
         # Создаем профиль пользователя
-        logger.info('Создание профиля пользователя')
+        # logger.info('Создание профиля пользователя')
         profile_data = {
         'user_id': new_user.id,
         'name': name,
@@ -53,11 +55,34 @@ class UserDAO(BaseDAO[User]):
         'birthday_date': None,
         'activity_level': ActivityLevel.NOT_STATED,
         }
+        # Ищем результаты теста по session_id
+        test_result = await self._session.execute(
+            select(TestResult).where(TestResult.session_id == session_id)
+        )
+        test_result = test_result.scalars().first()
+
+        if test_result:
+            profile_data.update({
+                'gender': test_result.gender,
+                'weight': test_result.weight,
+                'height': test_result.height,
+                'goal': test_result.goal,
+                'birthday_date': test_result.birthday_date,
+            })
+            # Связываем TestResult с пользователем
+            test_result.user_id = new_user.id
+            await self._session.commit()
+
+            # Удаляем запись из test_results
+            await self._session.delete(test_result)
+            await self._session.commit()
+
         new_profile = Profile(**profile_data)
         self._session.add(new_profile)
         await self._session.commit()
 
         return {'message': 'Вы успешно зарегистрированы!'}
+
 
 
     async def authenticate_user(self, user_data: UserAuth) -> User:
