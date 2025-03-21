@@ -1,4 +1,4 @@
-import { init, nextQuestion, prevQuestion } from "./navigation.js";
+import { init, nextQuestion, prevQuestion } from "/static/js/navigation.js";
 
 document.getElementById("nextBtn").addEventListener("click", nextQuestion);
 document.getElementById("prevBtn").addEventListener("click", prevQuestion);
@@ -16,22 +16,22 @@ async function loadQuestions() {
         return questions;
     } catch (error) {
         console.error("Ошибка загрузки вопросов:", error);
-        return []; // Возвращаем пустой массив при ошибке
+        return [];
     }
 }
 
-// Функция инициализации опросника
+// Функция инициализации теста
 async function initializeQuiz() {
     const questions = await loadQuestions();
     
     if (questions.length > 0) {
-        init(questions); // Запускаем опросник
+        init(questions);
     } else {
         console.error("Вопросы не загружены!");
     }
 }
 
-// Ждем загрузку DOM и запускаем опросник
+// Запуск теста после загрузки страницы
 document.addEventListener("DOMContentLoaded", () => {
     const homeBtn = document.getElementById("homeBtn");
     if (homeBtn) {

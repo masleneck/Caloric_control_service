@@ -1,8 +1,9 @@
 import { renderQuestion } from "./ui.js";
 
 let currentQuestionIndex = 0;
-let answers = {};
+export let answers = {};  // Экспортируем answers
 let questions = [];
+let sessionId = null; // Добавляем sessionId для сохранения теста
 
 export function init(loadedQuestions) {
     questions = loadedQuestions;
@@ -16,8 +17,13 @@ export function loadQuestion() {
         return;
     }
 
+    if (currentQuestionIndex >= questions.length) {
+        processResults();
+        return;
+    }
+
     console.log("Текущий вопрос:", questions[currentQuestionIndex]);
-    renderQuestion(questions[currentQuestionIndex], answers);
+    renderQuestion(questions[currentQuestionIndex], answers);  // Передаём answers в renderQuestion
     updateButtons();
 }
 
@@ -28,8 +34,8 @@ export function nextQuestion() {
         currentQuestionIndex++;
         loadQuestion();
     } else {
-        console.log("Опрос завершен. Переход к форме регистрации.");
-        setTimeout(showRegisterForm, 500);  // Небольшая задержка для вайба
+        console.log("Опрос завершен. Рассчитываем результаты...");
+        processResults();
     }
 }
 
@@ -51,18 +57,109 @@ export function updateButtons() {
     document.getElementById("step-counter").innerText = `${currentQuestionIndex + 1}/${questions.length}`;
 }
 
-// Форма регистрации после последнего вопроса
+// Функция обработки и отправки результатов
+async function processResults() {
+    console.log("Отправка данных для расчёта...");
+    console.log("Проверка сохранённых ответов перед отправкой:", answers);
+
+    // Маппинг значений, чтобы они соответствовали API
+    const genderMap = {
+        "Мужской": "MALE",
+        "Женский": "FEMALE"
+    };
+
+    const goalMap = {
+        "Снизить вес": "LOSE_WEIGHT",
+        "Поддерживать форму": "KEEPING_FIT",
+        "Набрать мышечную массу": "GAIN_MUSCLE_MASS"
+    };
+
+    // Преобразуем ответы в корректный формат
+    const formattedAnswers = {
+        gender: genderMap[answers[27]] || "UNKNOWN",
+        birthday_date: answers[28] || "Ошибка: не указана",
+        height: Number(answers[29]) || 0,
+        weight: Number(answers[30]) || 0,
+        goal: goalMap[answers[31]] || "UNKNOWN",
+        bad_habits: answers[32] || "Не указано",
+        steps_per_day: Number(answers[33]) || 0,
+        sleep_hours: Number(answers[34]) || 0,
+        water_intake: answers[35] || "Не указано",
+        hormone_issues: answers[36] || "Не указано"
+    };
+
+    console.log("Исправленный объект перед отправкой:", formattedAnswers);
+
+    try {
+        // Отправляем данные в `/questions/calculate`
+        const response = await fetch("/questions/calculate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formattedAnswers),
+        });
+
+        if (!response.ok) throw new Error(`Ошибка расчёта: ${response.status}`);
+
+        const results = await response.json();
+        console.log("Рассчитанные данные:", results);
+
+        // Сохраняем результат теста в `/save_test_result/`
+        await saveTestResult(formattedAnswers);
+
+        // Показываем результаты пользователю
+        showResults(results);
+    } catch (error) {
+        console.error("Ошибка расчёта:", error);
+    }
+}
+
+// Функция сохранения теста в `/save_test_result/`
+async function saveTestResult(data) {
+    console.log("Сохранение результатов теста...");
+
+    try {
+        const response = await fetch("/questions/save_test_result/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) throw new Error(`Ошибка сохранения: ${response.status}`);
+
+        const responseData = await response.json();
+        console.log("Тест успешно сохранён! Session ID:", responseData.session_id);
+        sessionId = responseData.session_id; // Сохраняем sessionId
+    } catch (error) {
+        console.error("Ошибка сохранения теста:", error);
+    }
+}
+
+// Функция отображения результатов
+function showResults(results) {
+    console.log("Вывод результатов...");
+
+    const main = document.getElementById("quiz-container");
+    main.innerHTML = `
+        <h2>Ваши результаты</h2>
+        <div id="results">
+            <p><strong>Калорийность:</strong> ${results["Калорийность"]} ккал</p>
+            <p><strong>Белки:</strong> ${results["Белки (г)"]} г</p>
+            <p><strong>Жиры:</strong> ${results["Жиры (г)"]} г</p>
+            <p><strong>Углеводы:</strong> ${results["Углеводы (г)"]} г</p>
+            <p><strong>ИМТ:</strong> ${results["ИМТ"]}</p>
+            <p><strong>Рекомендуемое потребление воды:</strong> ${results["Рекомендуемое потребление воды (л)"]} л</p>
+        </div>
+        <button id="registerBtn" class="register-btn">Зарегистрироваться</button>
+    `;
+
+    document.getElementById("registerBtn").addEventListener("click", showRegisterForm);
+}
+
+// Функция отображения формы регистрации
 function showRegisterForm() {
     console.log("Переход на форму регистрации...");
 
     const main = document.getElementById("quiz-container");
-    
-    if (!main) {
-        console.error("Ошибка: контейнер для формы регистрации не найден!");
-        return;
-    }
-
-    // Очищаем `main` перед добавлением формы
     main.innerHTML = `
         <h2>Пройдите регистрацию</h2>
         <form id="register-form">
@@ -77,44 +174,34 @@ function showRegisterForm() {
     document.getElementById("register-form").addEventListener("submit", registerUser);
 }
 
-// Обработка регистрации + редирект на главную
+// Функция регистрации пользователя
 async function registerUser(event) {
     event.preventDefault();
 
-    const fullname = document.getElementById("fullname").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const confirmPassword = document.getElementById("confirm_password").value.trim();
-
-    if (!fullname || !email || !password || !confirmPassword) {
-        alert("Заполните все поля!");
-        return;
-    }
+    const fullname = document.getElementById("fullname").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
 
     if (password !== confirmPassword) {
         alert("Пароли не совпадают!");
         return;
     }
 
-    console.log("Отправка данных:", { fullname, email, password, confirmPassword });
-
     try {
-        const response = await fetch("/auth/register/", {
+        const response = await fetch("/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ fullname, email, password, confirm_password: confirmPassword })
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Ошибка при регистрации");
-        }
+        if (!response.ok) throw new Error("Ошибка регистрации");
 
-        const data = await response.json();
-        alert(data.message || "Регистрация успешна!");
-        window.location.href = "/"; // Перенаправляем на главную страницу
+        alert("Регистрация успешна! Войдите в систему.");
+        window.location.href = "/login";
     } catch (error) {
-        console.error("Ошибка:", error);
-        alert(error.message || "Произошла ошибка при регистрации");
+        console.error("Ошибка регистрации:", error);
     }
 }
+
+export { processResults };
