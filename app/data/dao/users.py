@@ -18,10 +18,23 @@ class UserDAO(BaseDAO[User]):
 
     async def register_user(self, user_data: UserRegister, session_id: str) -> dict:
         '''Зарегистрировать нового пользователя.'''
+        if not session_id:
+            raise HTTPException(status_code=400, detail='Требуется идентификатор сеанса')
+        
+        # Проверяем, существует ли TestResult с таким session_id
+        test_result = await self._session.execute(
+            select(TestResult).where(TestResult.session_id == session_id)
+        )
+        test_result = test_result.scalars().first()
+        
+        if not test_result:
+            raise HTTPException(status_code=400, detail='Неверный идентификатор сеанса')
+        
+        # Проверяем, существует ли пользователь с таким email
         existing_user = await self.find_one_by_fields(email=user_data.email)
         if existing_user:
             raise UserAlreadyExistsException
-
+        
         # Хэшируем пароль
         # logger.info('Хэширование пароля для нового пользователя')
         hashed_password = get_password_hash(user_data.password)
@@ -48,34 +61,20 @@ class UserDAO(BaseDAO[User]):
         'user_id': new_user.id,
         'name': name,
         'last_name': last_name,
-        'gender': Gender.NOT_STATED,
-        'weight': 0.0,
-        'height': 0,
-        'goal': CurrentGoal.NOT_STATED,
-        'birthday_date': None,
-        'activity_level': ActivityLevel.NOT_STATED,
+        'gender': test_result.gender,  # Используем данные из TestResult
+        'weight': test_result.weight,
+        'height': test_result.height,
+        'goal': test_result.goal,
+        'birthday_date': test_result.birthday_date,
+        'activity_level': ActivityLevel.NOT_STATED,  # По умолчанию
         }
-        # Ищем результаты теста по session_id
-        test_result = await self._session.execute(
-            select(TestResult).where(TestResult.session_id == session_id)
-        )
-        test_result = test_result.scalars().first()
+        # Связываем TestResult с пользователем
+        test_result.user_id = new_user.id
+        await self._session.commit()
 
-        if test_result:
-            profile_data.update({
-                'gender': test_result.gender,
-                'weight': test_result.weight,
-                'height': test_result.height,
-                'goal': test_result.goal,
-                'birthday_date': test_result.birthday_date,
-            })
-            # Связываем TestResult с пользователем
-            test_result.user_id = new_user.id
-            await self._session.commit()
-
-            # Удаляем запись из test_results
-            await self._session.delete(test_result)
-            await self._session.commit()
+        # Удаляем запись из test_results
+        await self._session.delete(test_result)
+        await self._session.commit()
 
         new_profile = Profile(**profile_data)
         self._session.add(new_profile)

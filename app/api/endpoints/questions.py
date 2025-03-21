@@ -1,6 +1,6 @@
 from typing import List
 import uuid
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies.dao_dep import get_session_without_commit, get_session_with_commit
 from app.data.dao import QuestionDAO
@@ -31,6 +31,7 @@ async def calculate_metrics_api(data: MetricsRequest):
 @router.post('/save_test_result/', summary='Сохранить результаты теста')
 async def save_test_result(
     data: MetricsRequest,
+    response: Response,
     session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
     '''Сохранить результаты теста для неавторизованного пользователя.'''
@@ -45,4 +46,6 @@ async def save_test_result(
     )
     session.add(test_result)
     await session.commit()
+    # Устанавливаем куку с session_id
+    response.set_cookie(key='session_id', value=session_id, httponly=True)
     return {'session_id': session_id}
