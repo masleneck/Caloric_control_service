@@ -13,18 +13,21 @@ router = APIRouter(
     tags=['Аутентификация 🛡️']
 )
 
+
 @router.post('/register/', summary='Регистрация пользователя')
 async def register_user(
     user_data: UserRegister,
+    response: Response,
     session_id: str | None = Cookie(default=None),  # Извлекаем session_id из cookies
     session: AsyncSession = Depends(get_session_with_commit)
 ) -> dict:
     '''Зарегистрировать нового пользователя.'''
-    if not session_id:
-        raise HTTPException(status_code=400, detail='Требуется идентификатор сеанса')
-
     # Передаем session_id в DAO
-    return await UserDAO(session).register_user(user_data, session_id)
+    result = await UserDAO(session).register_user(user_data, session_id)
+    # Удаляем куку session_id
+    response.delete_cookie(key='session_id')
+
+    return result
 
 
 @router.post('/login/', summary='Аутентификация пользователя')
@@ -66,8 +69,6 @@ async def process_refresh_token(
     '''Обновить токены.'''
     set_tokens(response, user.id)
     return {'message': 'Токены успешно обновлены'}
-
-
 
 
 @profile_router.get('/confidential_info', response_model=ConfidentialInfoResponse, summary='Получить конфиденциальную информацию текущего пользователя')
