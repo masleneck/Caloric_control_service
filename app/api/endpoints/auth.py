@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post('/register/', summary='Регистрация пользователя')
+@router.post('/register', summary='Регистрация пользователя')
 async def register_user(
     user_data: UserRegister,
     response: Response,
@@ -33,7 +33,7 @@ async def register_user(
     return result
 
 
-@router.post('/login/', summary='Аутентификация пользователя')
+@router.post('/login', summary='Аутентификация пользователя')
 async def auth_user(
     response: Response,
     user_data: UserAuth,
@@ -67,7 +67,7 @@ async def process_refresh_token(
     return {'message': 'Токены успешно обновлены'}
 
 
-@router.get('/all_users/', summary='🚨 Получить информацию о всех пользователях')
+@router.get('/all_users', summary='🚨 Получить информацию о всех пользователях')
 async def get_all_users(
     skip: int = Query(0, description='Количество записей для пропуска'),
     limit: int = Query(100, description='Лимит записей на странице'),

@@ -29,7 +29,7 @@ async def calculate_metrics_api(data: MetricsRequest):
     return result
 
 
-@router.post('/save_test_result/', summary='Сохранить результаты теста')
+@router.post('/save_test_result', summary='Сохранить результаты теста')
 async def save_test_result(
     data: MetricsRequest,
     response: Response,
