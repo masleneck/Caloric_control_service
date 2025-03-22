@@ -1,6 +1,4 @@
-import { answers } from "./navigation.js"; // Импортируем answers
-
-// Рендер вопроса
+// Отрисовка текущего вопроса
 export function renderQuestion(questionData, answers) {
     const container = document.getElementById("question-container");
     container.innerHTML = "";
@@ -20,7 +18,6 @@ export function renderQuestion(questionData, answers) {
             div.innerText = option;
             div.setAttribute("data-question-name", questionData.name);
 
-            // Передаём answers в selectOption
             div.onclick = () => selectOption(div, option, questionData.name, answers);
 
             if (answers[questionData.name] === option) {
@@ -46,28 +43,27 @@ export function renderQuestion(questionData, answers) {
     }
 }
 
-// Обновление кнопки "Далее"
+// Обновление состояния кнопки "Далее"
 export function updateNextButton(value) {
     const nextBtn = document.getElementById("nextBtn");
     nextBtn.disabled = !value;
     nextBtn.classList.toggle("active", !!value);
 }
 
-// Сохраняем ответ и активируем кнопку "Далее"
+// Выбор опции
 export function selectOption(element, value, questionName, answers) {
     console.log(`Выбран вариант: ${value} для вопроса "${questionName}"`);
 
-    // Убираем выделение только у текущего вопроса
-    document.querySelectorAll(`[data-question-name="${questionName}"]`).forEach(opt => opt.classList.remove("selected"));
+    document.querySelectorAll(`[data-question-name="${questionName}"]`).forEach(opt => {
+        opt.classList.remove("selected");
+    });
 
-    // Добавляем выделение выбранному варианту
     element.classList.add("selected");
 
-    // Сохраняем ответ в answers
     answers[questionName] = value;
     console.log("Текущие сохранённые ответы:", answers);
 
-    // Активируем кнопку "Далее"
-    document.getElementById("nextBtn").disabled = false;
-    document.getElementById("nextBtn").classList.add("active");
+    const nextBtn = document.getElementById("nextBtn");
+    nextBtn.disabled = false;
+    nextBtn.classList.add("active");
 }
