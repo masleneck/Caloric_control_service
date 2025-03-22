@@ -3,7 +3,11 @@ import { renderQuestion } from "./ui.js";
 let currentQuestionIndex = 0;
 export let answers = {};  // Экспортируем answers
 let questions = [];
-let sessionId = null; // Добавляем sessionId для сохранения теста
+let sessionId = null;
+
+function getAnswerByName(name) {
+    return answers[name] || null;
+}
 
 export function init(loadedQuestions) {
     questions = loadedQuestions;
@@ -23,7 +27,7 @@ export function loadQuestion() {
     }
 
     console.log("Текущий вопрос:", questions[currentQuestionIndex]);
-    renderQuestion(questions[currentQuestionIndex], answers);  // Передаём answers в renderQuestion
+    renderQuestion(questions[currentQuestionIndex], answers);
     updateButtons();
 }
 
@@ -51,18 +55,16 @@ export function updateButtons() {
     const nextBtn = document.getElementById("nextBtn");
 
     prevBtn.disabled = currentQuestionIndex === 0;
-    nextBtn.disabled = !answers[questions[currentQuestionIndex]?.id];
+    nextBtn.disabled = !answers[questions[currentQuestionIndex]?.name];
 
     document.querySelector(".progress").style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
     document.getElementById("step-counter").innerText = `${currentQuestionIndex + 1}/${questions.length}`;
 }
 
-// Функция обработки и отправки результатов
 async function processResults() {
     console.log("Отправка данных для расчёта...");
     console.log("Проверка сохранённых ответов перед отправкой:", answers);
 
-    // Маппинг значений, чтобы они соответствовали API
     const genderMap = {
         "Мужской": "MALE",
         "Женский": "FEMALE"
@@ -70,28 +72,26 @@ async function processResults() {
 
     const goalMap = {
         "Снизить вес": "LOSE_WEIGHT",
-        "Поддерживать форму": "KEEPING_FIT",
+        "Поддержание формы": "KEEPING_FIT",
         "Набрать мышечную массу": "GAIN_MUSCLE_MASS"
     };
 
-    // Преобразуем ответы в корректный формат
     const formattedAnswers = {
-        gender: genderMap[answers] || "UNKNOWN",
-        birthday_date: answers || "Ошибка: не указана",
-        height: Number(answers) || 0,
-        weight: Number(answers) || 0,
-        goal: goalMap[answers] || "UNKNOWN",
-        bad_habits: answers || "Не указано",
-        steps_per_day: Number(answers) || 0,
-        sleep_hours: Number(answers) || 0,
-        water_intake: answers || "Не указано",
-        hormone_issues: answers || "Не указано"
+        gender: genderMap[getAnswerByName("gender")] || "UNKNOWN",
+        birthday_date: getAnswerByName("birthday_date") || "",
+        height: Number(getAnswerByName("height")) || 0,
+        weight: Number(getAnswerByName("weight")) || 0,
+        goal: goalMap[getAnswerByName("goal")] || "UNKNOWN",
+        bad_habits: getAnswerByName("bad_habits") || "",
+        steps_per_day: Number(getAnswerByName("steps_per_day")) || 0,
+        sleep_hours: Number(getAnswerByName("sleep_hours")) || 0,
+        water_intake: getAnswerByName("water_intake") || "",
+        hormone_issues: getAnswerByName("hormone_issues") || ""
     };
 
     console.log("Исправленный объект перед отправкой:", formattedAnswers);
 
     try {
-        // Отправляем данные в `/questions/calculate`
         const response = await fetch("/questions/calculate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -103,17 +103,13 @@ async function processResults() {
         const results = await response.json();
         console.log("Рассчитанные данные:", results);
 
-        // Сохраняем результат теста в `/save_test_result/`
         await saveTestResult(formattedAnswers);
-
-        // Показываем результаты пользователю
         showResults(results);
     } catch (error) {
         console.error("Ошибка расчёта:", error);
     }
 }
 
-// Функция сохранения теста в `/save_test_result/`
 async function saveTestResult(data) {
     console.log("Сохранение результатов теста...");
 
@@ -128,13 +124,12 @@ async function saveTestResult(data) {
 
         const responseData = await response.json();
         console.log("Тест успешно сохранён! Session ID:", responseData.session_id);
-        sessionId = responseData.session_id; // Сохраняем sessionId
+        sessionId = responseData.session_id;
     } catch (error) {
         console.error("Ошибка сохранения теста:", error);
     }
 }
 
-// Функция отображения результатов
 function showResults(results) {
     console.log("Вывод результатов...");
 
@@ -155,7 +150,6 @@ function showResults(results) {
     document.getElementById("registerBtn").addEventListener("click", showRegisterForm);
 }
 
-// Функция отображения формы регистрации
 function showRegisterForm() {
     console.log("Переход на форму регистрации...");
 
@@ -174,7 +168,6 @@ function showRegisterForm() {
     document.getElementById("register-form").addEventListener("submit", registerUser);
 }
 
-// Функция регистрации пользователя
 async function registerUser(event) {
     event.preventDefault();
 
