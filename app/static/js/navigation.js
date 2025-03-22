@@ -191,7 +191,7 @@ async function registerUser(event) {
         if (!response.ok) throw new Error("Ошибка регистрации");
 
         alert("Регистрация успешна! Войдите в систему.");
-        window.location.href = "/login";
+        window.location.href = "/";
     } catch (error) {
         console.error("Ошибка регистрации:", error);
     }

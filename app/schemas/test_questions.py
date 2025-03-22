@@ -5,6 +5,7 @@ from app.models import Gender, CurrentGoal
 
 class TestQuestionResponse(BaseModel):
     id: int
+    name: str
     text: str
     type: str
     options: Optional[List[str]]

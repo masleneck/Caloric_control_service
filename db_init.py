@@ -84,7 +84,7 @@ async def add_test_questions():
 
         session.add_all(questions)
         await session.commit()
-        print('✅ Вопросы успешно обновлены в БД!')
+        print('Вопросы успешно обновлены в БД!')
 
 if __name__ == '__main__':
     asyncio.run(add_test_questions())
