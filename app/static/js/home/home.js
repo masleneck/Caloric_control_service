@@ -1,7 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-      console.log("Logging out...");
-      window.location.href = "/";
+import { setupLogout } from './logout.js';
+
+  document.addEventListener("DOMContentLoaded", () => {
+      setupLogout();
   });
 
   // Заглушки
@@ -24,4 +24,3 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("nav-training").addEventListener("click", () => {
       alert("Training clicked");
   });
-});
