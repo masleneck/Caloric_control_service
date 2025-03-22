@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import Annotated
 from sqlalchemy import func, Integer, inspect
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, declared_attr
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
@@ -10,7 +9,12 @@ from app.core.config import settings
 
 DATABASE_URL = settings.DATABASE_URL
 
-engine = create_async_engine(url=DATABASE_URL)
+engine = create_async_engine(
+    url=DATABASE_URL,
+    # echo = True, # отображение запросов в консоли
+    # pool_size= 5, # максимальное количество соединений с базой данных
+    # max_overflow= 10 # максимальное количество соединений, которые можно разрешить в пуле соединений сверх значения pool_size
+    )
 
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=True)
 
