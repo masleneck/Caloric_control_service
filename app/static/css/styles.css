@@ -209,3 +209,124 @@ button.active {
 .home-btn:hover {
   background-color: #c3e1cc;
 }
+
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+.sidebar {
+  width: 60px;
+  background-color: #fef4dc;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #c3e1cc;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar:hover {
+  width: 220px;
+  padding: 20px;
+}
+
+.sidebar-section {
+  margin-bottom: 20px;
+}
+
+.sidebar-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sidebar:hover .sidebar-title {
+  opacity: 1;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-btn {
+  background-color: #b85143;
+  color: white;
+  border: none;
+  text-align: left;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s, padding 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar:hover .nav-btn {
+  padding: 12px 20px;
+}
+
+.nav-btn i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.label {
+  display: inline-block;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-10px);
+  transition: 
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: #a04030;
+}
+
+.logout-btn {
+  background-color: transparent;
+  color: #b85143;
+  font-weight: bold;
+  border: 2px solid #b85143;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sidebar:hover .logout-btn {
+  opacity: 1;
+}
+
+.logout-btn:hover {
+  background-color: #b85143;
+  color: white;
+}
+
+.sidebar:hover .label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+  text-align: left;
+}

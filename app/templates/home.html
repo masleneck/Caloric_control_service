@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Домашняя страница</title>
+    <link rel="stylesheet" href="../static/css/styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Добро пожаловать на страницу Home!</h1>
-    <p>...</p>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <p class="sidebar-title">User</p>
+                <p class="sidebar-title">Status</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-btn" id="nav-home"><i class="ri-home-line"></i> <span class="label">Home</span></button>
+                <button class="nav-btn" id="nav-profile"><i class="ri-user-line"></i> <span class="label">Profile</span></button>
+                <button class="nav-btn" id="nav-options"><i class="ri-settings-3-line"></i> <span class="label">Options</span></button>
+                <button class="nav-btn" id="nav-meals"><i class="ri-restaurant-line"></i> <span class="label">Meals</span></button>
+                <button class="nav-btn" id="nav-training"><i class="ri-run-line"></i> <span class="label">Training</span></button>
+              </nav>
+              
+              <div class="sidebar-bottom">
+                <button class="nav-btn logout-btn" id="logoutBtn">
+                  <i class="ri-logout-box-r-line"></i> <span class="label">Logout</span>
+                </button>
+              </div>              
+        </aside>
+
+        <main class="main-content">
+            <h1>Всем общий салам!</h1>
+            <p>Всем приветы!</p>
+        </main>
+    </div>
+
+    <script type="module" src="/static/js/home/home.js"></script>
 </body>
 </html>
