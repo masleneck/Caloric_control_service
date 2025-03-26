@@ -1,9 +1,9 @@
-import { init, nextQuestion, prevQuestion } from "/static/js/navigation.js";
+import { init, nextQuestion, prevQuestion } from "./navigation.js";
 
 document.getElementById("nextBtn").addEventListener("click", nextQuestion);
 document.getElementById("prevBtn").addEventListener("click", prevQuestion);
 
-// Функция загрузки вопросов с сервера
+// Загрузка вопросов с сервера
 async function loadQuestions() {
     try {
         console.log("Запрашиваем вопросы с сервера...");
@@ -20,10 +20,10 @@ async function loadQuestions() {
     }
 }
 
-// Функция инициализации теста
+// Инициализация теста
 async function initializeQuiz() {
     const questions = await loadQuestions();
-    
+
     if (questions.length > 0) {
         init(questions);
     } else {
@@ -31,7 +31,7 @@ async function initializeQuiz() {
     }
 }
 
-// Запуск теста после загрузки страницы
+// Запуск квиза после загрузки страницы
 document.addEventListener("DOMContentLoaded", () => {
     const homeBtn = document.getElementById("homeBtn");
     if (homeBtn) {
