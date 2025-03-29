@@ -6,7 +6,7 @@ from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete,
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.data.db import Base
+from app.core.database import Base
 
 T = TypeVar('T', bound=Base)
 

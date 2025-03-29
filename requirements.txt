@@ -10,3 +10,4 @@ bcrypt
 passlib[bcrypt]
 python-jose
 loguru
+faker

@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models import Profile, User
-from app.data.dao import BaseDAO
-from app.schemas.profiles import ProfileInfoResponse, UpdateProfileRequest, FullNameResponse
+from app.repositories.base import BaseDAO
+from app.schemas.profile import ProfileInfoResponse, UpdateProfileRequest, FullNameResponse
 
 class ProfileDAO(BaseDAO[Profile]):
     model = Profile

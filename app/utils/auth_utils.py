@@ -11,13 +11,13 @@ def get_password_hash(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     '''Проверяет пароль.'''
-    logger.info('Проверка пароля')
+    # logger.info('Проверка пароля')
     res = pwd_context.verify(plain_password, hashed_password)
 
-    if res:
-        logger.info('Пароль верный')
-    else:
-        logger.info('Пароль неверный')
+    # if res:
+    #     logger.info('Пароль верный')
+    # else:
+    #     logger.info('Пароль неверный')
 
     return res
 
