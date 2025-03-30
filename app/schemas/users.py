@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Self
+from datetime import date, datetime
+from typing import Optional, Self
 from pydantic import (
     BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field
 )
@@ -55,10 +55,6 @@ class UserAuth(EmailModel):
     password: str
     model_config = ConfigDict(from_attributes=True)
 
-class UserAddDB(UserBase):
-    '''Модель для хранения данных пользователя в базе данных.'''
-    password: str
-    model_config = ConfigDict(from_attributes=True)
 
 class ProfileModel(BaseModel):
     '''Модель профиля пользователя.'''
@@ -79,7 +75,7 @@ class UserInfo(UserBase):
     id: int 
     is_superuser: bool
     profile: ProfileModel | None 
-    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ConfidentialInfoResponse(BaseModel):
@@ -90,12 +86,27 @@ class ConfidentialInfoResponse(BaseModel):
 class UpdateConfidentialInfoRequest(BaseModel):
     current_email: EmailStr
     current_password: str
-    new_email: EmailStr | None = None
+    new_email: EmailStr | None = None # Принимает только null или валидный email
     new_password: str | None = None
     confirm_new_password: str | None = None
 
     @model_validator(mode='after')
     def validate_passwords(self) -> Self:
         if self.new_password and self.new_password != self.confirm_new_password:
-            raise ValueError('Новый пароль и подтверждение не совпадают')
+            raise ValueError('Пароли не совпадают')
         return self
+    
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+class ProfileCreate(BaseModel):
+    user_id: int
+    name: str
+    last_name: Optional[str]
+    gender: str
+    weight: float
+    height: int
+    goal: str
+    birthday_date: Optional[date]
+    activity_level: str

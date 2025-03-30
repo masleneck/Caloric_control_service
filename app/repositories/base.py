@@ -15,7 +15,7 @@ class BaseDAO(Generic[T]):
     model: Type[T] = None
 
     def __init__(self, session: AsyncSession):
-        self._session = session
+        self._session = session # хранит переданную сессию
         if self.model is None:
             raise ValueError('Модель должна быть указана в дочернем классе')
     

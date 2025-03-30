@@ -15,7 +15,6 @@ router = APIRouter(
     tags=['Аутентификация 🛡️']
 )
 
-
 @router.post('/register', summary='Регистрация пользователя')
 async def register_user(
     user_data: UserRegister,
@@ -25,13 +24,9 @@ async def register_user(
 ) -> dict:
     if not session_id:
         raise HTTPException(status_code=400, detail='Требуется session_id')
-    
-    try:
-        result = await UserDAO(session).register_user(user_data, session_id)
-        response.delete_cookie(key='session_id')
-        return result
-    finally:
-        await session.close()  # Гарантированное закрытие сессии
+    result = await UserDAO(session).register_user(user_data, session_id)
+    response.delete_cookie(key='session_id')
+    return result
 
 
 @router.post('/login', summary='Аутентификация пользователя')
@@ -40,18 +35,13 @@ async def auth_user(
     user_data: UserAuth,
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:  
-    try:
-        dao = UserDAO(session)
-        user = await dao.authenticate_user(user_data)
-        set_tokens(response, user.id)
-        
-        return {
-            'ok': True,
-            'message': 'Авторизация успешна!',
-            'user_id': user.id
-        }
-    finally:
-        await session.close()
+    user = await UserDAO(session).authenticate_user(user_data)
+    set_tokens(response, user.id)
+    return {
+        'ok': True,
+        'message': 'Авторизация успешна!',
+        'user_id': user.id
+    }
 
 
 @router.post('/logout', summary='Выйти из системы')
@@ -89,21 +79,13 @@ async def get_confidential_info(
     )
 
 
-@profile_router.put('/update_confidential_info')
+@profile_router.patch('/update_confidential_info', summary='Обновление email/пароля')
 async def update_confidential_info(
     update_data: UpdateConfidentialInfoRequest,
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session)
 ) -> dict:
-    try:
-        return await UserDAO(session).update_credentials(current_user, update_data)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Update error: {e}")
-        raise HTTPException(500, "Ошибка сервера")
-    finally:
-        await session.close()
+    return await UserDAO(session).update_credentials(current_user, update_data)
 
 
 @router.get(
@@ -114,7 +96,8 @@ async def update_confidential_info(
 async def admin_get_users(
     skip: Annotated[int, Query(ge=0, description="Смещение")] = 0,
     limit: Annotated[int, Query(le=200, description="Лимит")] = 100,
-    sort_by: Annotated[str, Query(description="Сортировка (id/email/name)")] = 'id',
+    sort_by: Annotated[str, Query(description="Сортировка (id/email/is_superuser)")] = 'id',
+    sort_desc:Annotated[bool, Query(description="Сортировка по убыванию (по умолчанию False)")] = False,
     current_admin: User = Depends(get_current_admin_user),
     session: AsyncSession = Depends(get_async_session)
 ) -> list[UserInfo]:
@@ -123,5 +106,6 @@ async def admin_get_users(
     return await UserDAO(session).get_all_users(
         skip=skip,
         limit=limit,
-        sort_by=sort_by
+        sort_by=sort_by,
+        sort_desc=sort_desc
     )
