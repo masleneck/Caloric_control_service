@@ -17,9 +17,7 @@ async def get_questions(
     session: AsyncSession = Depends(get_async_session),
 ) -> List[TestQuestionResponse]:
     '''Возвращает список всех вопросов для опросника, отсортированных по ID'''
-    dao = QuestionDAO(session)
-    questions = await dao.find_all()
-    return questions
+    return await QuestionDAO(session).find_all()
 
 
 @router.post('/calculate', summary='Результат теста')

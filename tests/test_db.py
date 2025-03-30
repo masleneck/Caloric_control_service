@@ -64,7 +64,7 @@ async def reset_db():
         logger.success("Tables created")
     
     # Создаем тестовых пользователей
-    # await create_test_users(50)
+    await create_test_users(50)
 
 if __name__ == "__main__":
     asyncio.run(reset_db())

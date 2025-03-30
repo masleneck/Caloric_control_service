@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies.database_dep import get_async_session
 from app.dependencies.auth_dep import get_current_user
@@ -7,18 +7,18 @@ from app.models.users import User
 from app.schemas.profile import FullNameResponse, ProfileInfoResponse, UpdateProfileRequest
 
 
-router = APIRouter(prefix='/profiles', tags=['Профиль 👥'])
+router = APIRouter(prefix='/profile', tags=['Профиль 👥'])
 
 
-@router.get('/r_fullname', response_model=FullNameResponse, summary='Получить полное имя (name + lastname)')
+@router.get('/r_fullname', response_model=FullNameResponse, summary='Получить полное имя')
 async def get_fullname(
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session)
+    current_user: User = Depends(get_current_user)
 ) -> FullNameResponse:
-    '''Получить полное имя (name + lastname) текущего пользователя в формате JSON.'''
-    dao = ProfileDAO(session)
-    return await dao.get_role_and_fullname(current_user)
-
+    if not current_user.profile:
+        raise HTTPException(404, 'Профиль пользователя не найден')
+    return FullNameResponse(
+        full_name=f'{current_user.profile.name} {current_user.profile.last_name}'
+    )
 
 @router.get('/profile_info', response_model=ProfileInfoResponse, summary='Получить информацию о профиле текущего пользователя')
 async def get_profile_info(
