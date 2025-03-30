@@ -1,38 +1,17 @@
-from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from app.models import Profile, User
+from fastapi import HTTPException
+from app.models import Profile
+from app.models.users import User
 from app.repositories.base import BaseDAO
-from app.schemas.profile import ProfileInfoResponse, UpdateProfileRequest
+from app.schemas.profile import UpdateProfileRequest
+from loguru import logger
 
 class ProfileDAO(BaseDAO[Profile]):
     model = Profile
 
-
-    async def get_profile_info(self, user: User) -> ProfileInfoResponse:
-        '''Получить информацию о профиле пользователя.'''
-        # Загружаем пользователя с профилем
-        query = (
-            select(User)
-            .options(selectinload(User.profile))  # Загружаем связанный профиль
-            .where(User.id == user.id)
-        )
-        result = await self._session.execute(query)
-        user_with_profile = result.scalars().first()
-
-        if not user_with_profile or not user_with_profile.profile:
-            raise HTTPException(status_code=404, detail='Профиль пользователя не найден')
-
-        return ProfileInfoResponse(
-            name=user_with_profile.profile.name,
-            last_name=user_with_profile.profile.last_name,
-            gender=user_with_profile.profile.gender.value,
-            weight=user_with_profile.profile.weight,
-            height=user_with_profile.profile.height,
-            goal=user_with_profile.profile.goal,
-            birthday_date=user_with_profile.profile.birthday_date
-        )
-
+class ProfileDAO(BaseDAO[Profile]):
+    model = Profile
 
     async def update_profile(
         self,
@@ -57,3 +36,4 @@ class ProfileDAO(BaseDAO[Profile]):
             setattr(user_with_profile.profile, key, value)
 
         return {'message': 'Профиль успешно обновлен!'}
+

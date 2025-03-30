@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies.database_dep import get_async_session
 from app.dependencies.auth_dep import get_current_user
@@ -20,14 +21,14 @@ async def get_fullname(
         full_name=f'{current_user.profile.name} {current_user.profile.last_name}'
     )
 
-@router.get('/profile_info', response_model=ProfileInfoResponse, summary='Получить информацию о профиле текущего пользователя')
+
+@router.get('/profile_info', response_model=ProfileInfoResponse,summary='Получить информацию о профиле')
 async def get_profile_info(
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session)
+    current_user: User = Depends(get_current_user)
 ) -> ProfileInfoResponse:
-    '''Получить информацию о профиле текущего пользователя.'''
-    dao = ProfileDAO(session)
-    return await dao.get_profile_info(current_user)
+    if not current_user.profile:
+        raise HTTPException(404, 'Профиль пользователя не найден')
+    return ProfileInfoResponse.model_validate(current_user.profile)
 
 
 @router.put('/update_profile', summary='Обновить информацию профиля текущего пользователя')

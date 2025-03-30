@@ -60,16 +60,16 @@ async function loginUser(event) {
   }
 }
 
-function showError(message) {
-  let errorContainer = document.getElementById("error-message");
+// function showError(message) {
+//   let errorContainer = document.getElementById("error-message");
 
-  if (!errorContainer) {
-      errorContainer = document.createElement("div");
-      errorContainer.id = "error-message";
-      errorContainer.style.color = "red";
-      errorContainer.style.marginTop = "10px";
-      document.getElementById("login-form").appendChild(errorContainer);
-  }
+//   if (!errorContainer) {
+//       errorContainer = document.createElement("div");
+//       errorContainer.id = "error-message";
+//       errorContainer.style.color = "red";
+//       errorContainer.style.marginTop = "10px";
+//       document.getElementById("login-form").appendChild(errorContainer);
+//   }
 
-  errorContainer.textContent = message;
-}
+//   errorContainer.textContent = message;
+// }

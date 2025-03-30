@@ -22,13 +22,13 @@ class ProfileInfoResponse(BaseModel):
         }
     })
 class UpdateProfileRequest(BaseModel):
-    name: str 
-    last_name: str 
-    gender: Gender 
-    weight: float 
-    height: int 
-    goal: CurrentGoal 
-    birthday_date: Optional[date] 
+    name: str | None 
+    last_name: str | None 
+    gender: Gender | None 
+    weight: float | None 
+    height: int | None 
+    goal: CurrentGoal | None 
+    birthday_date: Optional[date | None ] 
     model_config = ConfigDict(from_attributes=True, use_enum_values=True, json_schema_extra={
         'example': {
             'name': 'Амаль',
@@ -41,19 +41,6 @@ class UpdateProfileRequest(BaseModel):
         }
     })
 
-    @field_validator('weight')
-    def validate_weight(cls, value):
-        '''Проверяет, что вес положительный.'''
-        if value <= 0:
-            raise ValueError('Вес должен быть положительным числом')
-        return value
-
-    @field_validator('height')
-    def validate_height(cls, value):
-        '''Проверяет, что рост положительный.'''
-        if value <= 0:
-            raise ValueError('Рост должен быть положительным числом')
-        return value
 
 class FullNameResponse(BaseModel):
     '''Схема для ответа с полным именем пользователя.'''

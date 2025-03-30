@@ -85,6 +85,8 @@ async def update_confidential_info(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session)
 ) -> dict:
+    logger.info(f"Session ID in route: {id(session)}")
+    logger.info(f"Session in user: {id(getattr(current_user, '_session', None))}")
     return await UserDAO(session).update_credentials(current_user, update_data)
 
 
