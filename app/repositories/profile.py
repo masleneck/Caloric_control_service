@@ -3,28 +3,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models import Profile, User
 from app.repositories.base import BaseDAO
-from app.schemas.profile import ProfileInfoResponse, UpdateProfileRequest, FullNameResponse
+from app.schemas.profile import ProfileInfoResponse, UpdateProfileRequest
 
 class ProfileDAO(BaseDAO[Profile]):
     model = Profile
 
-    async def get_role_and_fullname(self, user: User) -> FullNameResponse:
-        '''Получить полное имя (name + lastname) текущего пользователя в формате JSON.'''
-        # Загружаем пользователя с профилем
-        query = (
-            select(User)
-            .options(selectinload(User.profile))  # Загружаем связанный профиль
-            .where(User.id == user.id)
-        )
-        result = await self._session.execute(query)
-        user_with_profile = result.scalars().first()
-
-        if not user_with_profile or not user_with_profile.profile:
-            raise HTTPException(status_code=404, detail='Профиль пользователя не найден')
-
-        full_name = f'{user_with_profile.profile.name} {user_with_profile.profile.last_name}'
-        return FullNameResponse(full_name=full_name) 
-    
 
     async def get_profile_info(self, user: User) -> ProfileInfoResponse:
         '''Получить информацию о профиле пользователя.'''

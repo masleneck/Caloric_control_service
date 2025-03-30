@@ -21,9 +21,14 @@ async def show_home(request: Request):
     logger.info('Вызван маршрут /home')
     return templates.TemplateResponse('home.html', {'request': request})
     
-
 @router.get('/quiz', summary='quiz')
 async def show_quiz(request: Request):
     '''Отображает страницу quiz.html.'''
     logger.info('Вызван маршрут /quiz')
     return templates.TemplateResponse('quiz.html', {'request': request})
+
+@router.get('/profile', summary='profile')
+async def show_profile(request: Request):
+    '''Отображает страницу profile.html.'''
+    logger.info('Вызван маршрут /quiz')
+    return templates.TemplateResponse('profile.html', {'request': request})
