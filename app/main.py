@@ -1,4 +1,4 @@
-from app.newApp import create_app
+from app.core.newApp import create_app
 
 # Создание экземпляра приложения
 app = create_app()

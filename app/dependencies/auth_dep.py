@@ -3,10 +3,10 @@ from fastapi import Request, Depends
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.data.dao.users import UserDAO
-from app.models.users import User, Role
+from app.repositories.user import UserDAO
+from app.models.users import User
 from app.core.config import settings
-from app.dependencies.dao_dep import get_session_without_commit
+from app.dependencies.database_dep import get_async_session
 from app.core.exceptions import TokenNotFoundException, InvalidJwtTokenException, TokenExpiredException, UserIdNotFoundException, ForbiddenException, UserNotFoundException
 
 
@@ -28,7 +28,7 @@ def get_refresh_token(request: Request) -> str:
 
 async def check_refresh_token(
         token: str = Depends(get_refresh_token),
-        session: AsyncSession = Depends(get_session_without_commit)
+        session: AsyncSession = Depends(get_async_session)
 ) -> User:
     ''' Проверяем refresh_token и возвращаем пользователя.'''
     try:
@@ -52,7 +52,7 @@ async def check_refresh_token(
 
 async def get_current_user(
         token: str = Depends(get_access_token),
-        session: AsyncSession = Depends(get_session_without_commit)
+        session: AsyncSession = Depends(get_async_session)
 ) -> User:
     '''Проверяем access_token и возвращаем пользователя.'''
     try:
@@ -81,6 +81,6 @@ async def get_current_user(
 
 async def get_current_admin_user(current_user: User = Depends(get_current_user)) -> User:
     '''Проверяем права пользователя как администратора.'''
-    if current_user.role in [Role.ADMIN]:  # Проверяем, что роль пользователя — ADMIN
+    if current_user.is_superuser:   # Проверяем, что роль пользователя — ADMIN
         return current_user
     raise ForbiddenException

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from typing import List
-from app.data.dao import BaseDAO
+from app.repositories.base import BaseDAO
 from app.models import TestQuestion
 
 class QuestionDAO(BaseDAO[TestQuestion]):

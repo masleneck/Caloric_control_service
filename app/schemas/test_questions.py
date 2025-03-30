@@ -42,5 +42,3 @@ class MetricsRequest(BaseModel):
             'hormone_issues': 'Нет / Никогда не сдавал анализы'
         }
     })
-
-

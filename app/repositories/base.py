@@ -6,7 +6,7 @@ from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete,
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.data.db import Base
+from app.core.database import Base
 
 T = TypeVar('T', bound=Base)
 
@@ -15,7 +15,7 @@ class BaseDAO(Generic[T]):
     model: Type[T] = None
 
     def __init__(self, session: AsyncSession):
-        self._session = session
+        self._session = session # хранит переданную сессию
         if self.model is None:
             raise ValueError('Модель должна быть указана в дочернем классе')
     

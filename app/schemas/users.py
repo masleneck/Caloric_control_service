@@ -1,9 +1,8 @@
-from datetime import datetime
-from typing import Self
+from datetime import date, datetime
+from typing import Optional, Self
 from pydantic import (
     BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator, computed_field
 )
-from app.models.users import Role
 from app.models.profiles import Gender, CurrentGoal, ActivityLevel
 
 
@@ -56,10 +55,6 @@ class UserAuth(EmailModel):
     password: str
     model_config = ConfigDict(from_attributes=True)
 
-class UserAddDB(UserBase):
-    '''Модель для хранения данных пользователя в базе данных.'''
-    password: str
-    model_config = ConfigDict(from_attributes=True)
 
 class ProfileModel(BaseModel):
     '''Модель профиля пользователя.'''
@@ -78,14 +73,9 @@ class ProfileModel(BaseModel):
 class UserInfo(UserBase):
     '''Расширенная модель информации о пользователе.'''
     id: int 
-    role: Role
+    is_superuser: bool
     profile: ProfileModel | None 
-    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
-
-    @computed_field
-    def role_name(self) -> str:
-        '''Возвращает название роли.'''
-        return self.role.value  # так как Role — это Enum, используем `.value`
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ConfidentialInfoResponse(BaseModel):
@@ -94,10 +84,29 @@ class ConfidentialInfoResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UpdateConfidentialInfoRequest(BaseModel):
-    email: str
-    password: str
-    new_email: str
-    new_password: str
-    confirm_new_password: str
-    model_config = ConfigDict(from_attributes=True)
+    current_email: EmailStr
+    current_password: str
+    new_email: EmailStr | None = None # Принимает только null или валидный email
+    new_password: str | None = None
+    confirm_new_password: str | None = None
 
+    @model_validator(mode='after')
+    def validate_passwords(self) -> Self:
+        if self.new_password and self.new_password != self.confirm_new_password:
+            raise ValueError('Пароли не совпадают')
+        return self
+    
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+class ProfileCreate(BaseModel):
+    user_id: int
+    name: str
+    last_name: Optional[str]
+    gender: str
+    weight: float
+    height: int
+    goal: str
+    birthday_date: Optional[date]
+    activity_level: str
