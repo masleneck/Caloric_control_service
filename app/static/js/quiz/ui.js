@@ -30,16 +30,36 @@ export function renderQuestion(questionData, answers) {
         container.appendChild(optionsContainer);
     } else if (questionData.type === "input") {
         const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = questionData.placeholder || "";
-        input.value = answers[questionData.name] || "";
 
-        input.oninput = () => {
-            answers[questionData.name] = input.value;
-            updateNextButton(input.value);
-        };
+        if (questionData.name === "birthday_date") {
+            input.type = "text"; // для Flatpickr нужен text
+            input.placeholder = "Выберите дату рождения";
+            input.readOnly = true;
 
-        container.appendChild(input);
+            container.appendChild(input);
+
+            flatpickr(input, {
+                locale: "ru",
+                dateFormat: "Y-m-d",
+                maxDate: "today",
+                defaultDate: answers[questionData.name] || null,
+                onChange: function (selectedDates, dateStr) {
+                    answers[questionData.name] = dateStr;
+                    updateNextButton(dateStr);
+                }
+            });
+        } else {
+            input.type = "text";
+            input.placeholder = questionData.placeholder || "";
+            input.value = answers[questionData.name] || "";
+
+            input.oninput = () => {
+                answers[questionData.name] = input.value;
+                updateNextButton(input.value);
+            };
+
+            container.appendChild(input);
+        }
     }
 }
 

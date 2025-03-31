@@ -383,3 +383,86 @@ button.active {
 .form-box button:hover {
   background-color: #a04030;
 }
+
+.flatpickr-calendar {
+  background-color: #fffaf1;
+  border: 2px solid #b85143;
+  border-radius: 10px;
+  font-family: Verdana, Geneva, sans-serif;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.flatpickr-months {
+  background-color: #b85143;
+  color: white;
+  border-radius: 10px 10px 0 0;
+}
+
+.flatpickr-current-month .numInputWrapper {
+  position: relative;
+  padding-right: 20px;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  color: white;
+  padding: 10px;
+  margin: 0 8px;
+}
+
+.flatpickr-weekday {
+  color: #b85143;
+  font-weight: bold;
+}
+
+.flatpickr-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  width: 36px;
+  margin: 2px;
+  font-size: 14px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.flatpickr-day.today {
+  border: 2px dashed #b85143;
+  color: #b85143;
+}
+
+.flatpickr-day:hover {
+  background-color: #f2dfd9;
+  cursor: pointer;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background-color: #b85143 !important;
+  color: white !important;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flatpickr-day:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.flatpickr-input {
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 16px;
+  width: 250px;
+  text-align: center;
+  box-sizing: border-box;
+}
