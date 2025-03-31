@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const editForm = document.getElementById("edit-form");
   const confidentialForm = document.getElementById("confidential-form");
   const formWrapper = document.getElementById("form-wrapper");
-  const emailInput = document.getElementById("edit-email");
   const homeBtn = document.getElementById("homeBtn");
 
   let isEditing = false;
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       editBtn.textContent = "Отменить";
       formWrapper.style.display = "flex";
       await loadProfile();
-      await loadEmail();
     } else {
       editBtn.textContent = "Редактировать";
       formWrapper.style.display = "none";
@@ -94,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.preventDefault();
 
     const confidentialData = {
-      current_email: emailInput.value,
+      current_email: document.getElementById("edit-email").value,
       current_password: document.getElementById("current-password").value,
       new_password: document.getElementById("new-password").value,
       confirm_new_password: document.getElementById("confirm-new-password").value
@@ -111,7 +109,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       alert("Пароль обновлён!");
       confidentialForm.reset();
-      await loadEmail();
     } catch (err) {
       console.error(err);
       alert("Не удалось обновить пароль");
@@ -127,5 +124,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   await loadProfile();
-  await loadEmail();
 });
