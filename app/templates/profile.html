@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Профиль пользователя</title>
-  <link rel="stylesheet" href="/static/css/styles.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="/static/css/styles.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
 <body>
 
@@ -36,77 +36,100 @@
   </aside>
 
   <main class="main-content" id="profile-page">
-    <section id="user-info">
-      <h2>Профиль</h2>
-      <p><strong>Имя:</strong> <span id="name">Имя</span></p>
-      <p><strong>Фамилия:</strong> <span id="last-name">Фамилия</span></p>
-      <p><strong>Пол:</strong> <span id="gender">--</span></p>
-      <p><strong>Дата рождения:</strong> <span id="birthday">--</span></p>
-      <button id="edit-btn">Редактировать</button>
-    </section>
 
-    <div class="form-wrapper" style="display: none;" id="form-wrapper">
+    <div class="profile-wrapper">
+      <section id="user-info" class="profile-box">
+        <div id="avatar-section">
+          <div id="avatar-preview-wrapper">
+            <img id="selected-avatar" src="/static/images/avatar-default.png" alt="Аватар" />
+            <p class="avatar-label">Нажмите, чтобы выбрать аватар</p>
+          </div>
 
-      <form id="edit-form" class="form-box">
-        <h3>Редактировать профиль</h3>
+          <div id="avatar-dropdown">
+            <p>Выберите аватар:</p>
+            <div class="avatar-list">
+              <img class="avatar-choice" src="/static/images/avatar-default.png" alt="avatar1">
+              <img class="avatar-choice" src="/static/images/avatar-default2.png" alt="avatar2">
+              <img class="avatar-choice" src="/static/images/avatar-default3.png" alt="avatar3">
+              <img class="avatar-choice" src="/static/images/avatar-default4.png" alt="avatar4">
+            </div>
+          </div>
+        </div>
 
-        <label>Имя:
-          <input type="text" id="edit-name">
-        </label>
+        <h2>Профиль</h2>
 
-        <label>Фамилия:
-          <input type="text" id="edit-last-name">
-        </label>
+        <p><strong>Имя:</strong> <span id="name">Имя</span></p>
+        <p><strong>Фамилия:</strong> <span id="last-name">Фамилия</span></p>
+        <p><strong>Пол:</strong> <span id="gender">--</span></p>
+        <p><strong>Дата рождения:</strong> <span id="birthday">--</span></p>
+        <button id="edit-btn">Редактировать</button>
+      </section>
 
-        <label>Пол:
-          <select id="edit-gender">
-            <option value="MALE">Мужской</option>
-            <option value="FEMALE">Женский</option>
-          </select>
-        </label>
-
-        <label>Дата рождения:
-          <input type="text" id="edit-birthday" placeholder="Выберите дату рождения" readonly>
-        </label>
-
-        <button type="submit">Сохранить профиль</button>
-      </form>
-
-      <form id="confidential-form" class="form-box">
-        <h3>Сменить пароль</h3>
-
-        <label>Email:
-          <input type="email" id="edit-email">
-        </label>
-
-        <label>Текущий пароль:
-          <input type="password" id="current-password">
-        </label>
-
-        <label>Новый пароль:
-          <input type="password" id="new-password">
-        </label>
-
-        <label>Подтвердите новый пароль:
-          <input type="password" id="confirm-new-password">
-        </label>
-
-        <button type="submit">Сохранить новый пароль</button>
-      </form>
-
+      <section id="physical-data" class="profile-box">
+        <h3>Физические данные</h3>
+        <p><strong>Вес:</strong> <span id="weight">--</span> кг</p>
+        <p><strong>Рост:</strong> <span id="height">--</span> см</p>
+        <p><strong>Цель:</strong> <span id="goal">--</span></p>
+        <p><strong>ИМТ:</strong> <span id="bmi-value">--</span></p>
+        <div id="bmi-indicator"></div>
+      </section>
     </div>
 
-    <hr>
+    <div class="modal" id="edit-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        
+        <div class="form-wrapper">
+          <form id="edit-form" class="form-box">
+            <h3>Редактировать профиль</h3>
 
-    <section id="physical-data">
-      <h3>Физические данные</h3>
-      <p><strong>Вес:</strong> <span id="weight">--</span> кг</p>
-      <p><strong>Рост:</strong> <span id="height">--</span> см</p>
-      <p><strong>Цель:</strong> <span id="goal">--</span></p>
-      <p><strong>ИМТ:</strong> <span id="bmi-value">--</span></p>
+            <label>Имя:
+              <input type="text" id="edit-name">
+            </label>
 
-      <div id="bmi-indicator"></div>
-    </section>
+            <label>Фамилия:
+              <input type="text" id="edit-last-name">
+            </label>
+
+            <label>Пол:
+              <select id="edit-gender">
+                <option value="MALE">Мужской</option>
+                <option value="FEMALE">Женский</option>
+              </select>
+            </label>
+
+            <label>Дата рождения:
+              <input type="text" id="edit-birthday" placeholder="Выберите дату рождения" readonly>
+            </label>
+
+            <button type="submit">Сохранить профиль</button>
+          </form>
+
+          <form id="confidential-form" class="form-box">
+            <h3>Сменить пароль</h3>
+
+            <label>Email:
+              <input type="email" id="edit-email">
+            </label>
+
+            <label>Текущий пароль:
+              <input type="password" id="current-password">
+            </label>
+
+            <label>Новый пароль:
+              <input type="password" id="new-password">
+            </label>
+
+            <label>Подтвердите новый пароль:
+              <input type="password" id="confirm-new-password">
+            </label>
+
+            <button type="submit">Сохранить новый пароль</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </main>
 
 </div>

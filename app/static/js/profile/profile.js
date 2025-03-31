@@ -10,10 +10,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const editBtn = document.getElementById("edit-btn");
   const editForm = document.getElementById("edit-form");
   const confidentialForm = document.getElementById("confidential-form");
-  const formWrapper = document.getElementById("form-wrapper");
+  const editModal = document.getElementById("edit-modal");
+  const closeModal = document.querySelector(".close-modal");
   const homeBtn = document.getElementById("homeBtn");
 
-  let isEditing = false;
+  const avatarPreview = document.getElementById('selected-avatar');
+  const avatarDropdown = document.getElementById('avatar-dropdown');
+  const avatarChoices = document.querySelectorAll('.avatar-choice');
 
   if (homeBtn) {
     homeBtn.addEventListener("click", () => {
@@ -22,15 +25,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   editBtn.addEventListener("click", async () => {
-    isEditing = !isEditing;
+    editModal.style.display = "block";
+    await loadProfile();
+  });
 
-    if (isEditing) {
-      editBtn.textContent = "Отменить";
-      formWrapper.style.display = "flex";
-      await loadProfile();
-    } else {
-      editBtn.textContent = "Редактировать";
-      formWrapper.style.display = "none";
+  closeModal.addEventListener("click", () => {
+    editModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (e) => {
+    if (e.target === editModal) {
+      editModal.style.display = "none";
     }
   });
 
@@ -82,6 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       alert("Профиль обновлён!");
       await loadProfile();
+      editModal.style.display = "none";
     } catch (err) {
       console.error(err);
       alert("Не удалось обновить профиль");
@@ -109,6 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       alert("Пароль обновлён!");
       confidentialForm.reset();
+      editModal.style.display = "none";
     } catch (err) {
       console.error(err);
       alert("Не удалось обновить пароль");
@@ -121,6 +128,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     maxDate: "today",
     altInput: true,
     altFormat: "Y.m.d",
+  });
+
+  document.getElementById("avatar-preview-wrapper").addEventListener('click', () => {
+    const isVisible = avatarDropdown.style.display === 'block';
+    avatarDropdown.style.display = isVisible ? 'none' : 'block';
+  });
+
+  avatarChoices.forEach(choice => {
+    choice.addEventListener('click', () => {
+      avatarPreview.src = choice.src;
+      avatarDropdown.style.display = 'none';
+  
+      avatarChoices.forEach(c => c.classList.remove('selected'));
+      choice.classList.add('selected');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (
+      !avatarDropdown.contains(e.target) &&
+      !avatarPreview.contains(e.target)
+    ) {
+      avatarDropdown.style.display = 'none';
+    }
   });
 
   await loadProfile();
