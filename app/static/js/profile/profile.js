@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (bmi <= 16)
             return { label: "Выраженный дефицит массы тела", color: "#ff0000" };
           if (bmi > 16 && bmi <= 18.5)
-            return { label: "Недостаточная масса тела", color: "#4a90e2" };
+            return { label: "Недостаточная масса тела", color: "#f9a825" };
           if (bmi > 18.5 && bmi <= 24.99)
             return { label: "Норма", color: "#2ecc71" };
           if (bmi >= 25 && bmi <= 29.99)
@@ -101,7 +101,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
       
         const category = getBmiCategory(bmi);
-        bmiIndicatorEl.innerHTML = `<span style="color:${category.color}; font-weight: bold;">${bmi} — ${category.label}</span>`;
+        bmiIndicatorEl.innerHTML = `<span style="color:${category.color}; font-style: italic;"><strong>${bmi}</strong> — ${category.label}</span>`;
+        const bmiLegendEl = document.getElementById("bmi-legend");
+            bmiLegendEl.innerHTML = `
+              <strong>Интерпретация показателей:</strong><br>
+              <span style="color:#ff0000;"><strong>16 и менее</strong> — Выраженный дефицит массы тела</span>
+              <span style="color:#f9a825;"><strong>16–18.5</strong> — Недостаточная (дефицит) масса тела</span>
+              <span style="color:#2ecc71;"><strong>18.5–24.99</strong> — Норма</span>
+              <span style="color:#ffa500;"><strong>25–30</strong> — Избыточная масса тела (предожирение)</span>
+              <span style="color:#e94e3c;"><strong>30–35</strong> — Ожирение</span>
+              <span style="color:#d80027;"><strong>35–40</strong> — Ожирение резкое</span>
+              <span style="color:#a40000;"><strong>40 и более</strong> — Очень резкое ожирение</span>
+            `;
       } else {
         bmiValueEl.textContent = "--";
         bmiIndicatorEl.textContent = "";
