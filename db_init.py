@@ -34,7 +34,7 @@ async def add_test_questions():
             ),
             TestQuestion(
                 name='weight',
-                text='Каков ваш текущий вес(кг)?',
+                text='Каков ваш текущий вес?',
                 type='input',
                 options=None  # 52
             ),

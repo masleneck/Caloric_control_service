@@ -30,9 +30,9 @@ export function renderQuestion(questionData, answers) {
         container.appendChild(optionsContainer);
     } else if (questionData.type === "input") {
         const input = document.createElement("input");
+        input.type = "text";
 
         if (questionData.name === "birthday_date") {
-            input.type = "text"; // для Flatpickr нужен text
             input.placeholder = "Выберите дату рождения";
             input.readOnly = true;
 
@@ -48,17 +48,30 @@ export function renderQuestion(questionData, answers) {
                     updateNextButton(dateStr);
                 }
             });
-        } else {
-            input.type = "text";
-            input.placeholder = questionData.placeholder || "";
-            input.value = answers[questionData.name] || "";
+            return;
+        } else if (questionData.name === "height") {
+            input.placeholder = "Указать рост в см";
+        } else if (questionData.name === "weight") {
+            input.placeholder = "Указать вес в кг";
+        }
 
-            input.oninput = () => {
-                answers[questionData.name] = input.value;
-                updateNextButton(input.value);
-            };
+        input.value = answers[questionData.name] || "";
 
-            container.appendChild(input);
+        input.oninput = () => {
+            answers[questionData.name] = input.value;
+            updateNextButton(input.value);
+        };
+
+        container.appendChild(input);
+
+        // Подсказка под полем для water_intake
+        if (questionData.name === "water_intake") {
+            const hint = document.createElement("div");
+            hint.textContent = "1 стакан ≈ 250 мл";
+            hint.style.fontSize = "12px";
+            hint.style.color = "gray";
+            hint.style.marginTop = "4px";
+            container.appendChild(hint);
         }
     }
 }
