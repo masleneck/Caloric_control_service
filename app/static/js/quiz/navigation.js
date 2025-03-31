@@ -5,10 +5,6 @@ let currentQuestionIndex = 0;
 export let answers = {}; 
 let questions = [];
 
-function getAnswerByName(name) {
-    return answers[name] || null;
-}
-
 export function init(loadedQuestions) {
     questions = loadedQuestions;
     console.log("Опросник инициализирован с вопросами:", questions);

@@ -466,3 +466,8 @@ button.active {
   text-align: center;
   box-sizing: border-box;
 }
+
+.nav-btn.active {
+  background-color: #a6bdad;
+  font-weight: bold;
+}

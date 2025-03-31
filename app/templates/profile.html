@@ -8,12 +8,34 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
 
-  <div class="container" id="profile-page">
-    <button id="homeBtn" class="home-btn">Домой</button>
+<div class="dashboard">
 
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <p class="sidebar-title">User</p>
+      <p class="sidebar-title">Status</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn" id="nav-home"><i class="ri-home-line"></i> <span class="label">Home</span></button>
+      <button class="nav-btn" id="nav-profile"><i class="ri-user-line"></i> <span class="label">Profile</span></button>
+      <button class="nav-btn" id="nav-options"><i class="ri-settings-3-line"></i> <span class="label">Options</span></button>
+      <button class="nav-btn" id="nav-meals"><i class="ri-restaurant-line"></i> <span class="label">Meals</span></button>
+      <button class="nav-btn" id="nav-training"><i class="ri-run-line"></i> <span class="label">Training</span></button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="nav-btn logout-btn" id="logoutBtn">
+        <i class="ri-logout-box-r-line"></i> <span class="label">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content" id="profile-page">
     <section id="user-info">
       <h2>Профиль</h2>
       <p><strong>Имя:</strong> <span id="name">Имя</span></p>
@@ -52,26 +74,26 @@
 
       <form id="confidential-form" class="form-box">
         <h3>Сменить пароль</h3>
-      
+
         <label>Email:
           <input type="email" id="edit-email">
         </label>
-      
+
         <label>Текущий пароль:
           <input type="password" id="current-password">
         </label>
-      
+
         <label>Новый пароль:
           <input type="password" id="new-password">
         </label>
-      
+
         <label>Подтвердите новый пароль:
           <input type="password" id="confirm-new-password">
         </label>
-      
+
         <button type="submit">Сохранить новый пароль</button>
       </form>
-      
+
     </div>
 
     <hr>
@@ -83,15 +105,19 @@
       <p><strong>Цель:</strong> <span id="goal">--</span></p>
       <p><strong>ИМТ:</strong> <span id="bmi-value">--</span></p>
 
-      <div id="bmi-indicator">
-
-      </div>
+      <div id="bmi-indicator"></div>
     </section>
+  </main>
 
-  </div>
+</div>
 
-  <script src="/static/js/home/logout.js"></script>
-  <script src="/static/js/profile/profile.js"></script>
+<script src="/static/js/sidebar.js"></script>
+<script src="/static/js/home/logout.js"></script>
+<script src="/static/js/profile/profile.js"></script>
+<script type="module">
+  import { setupLogout } from '/static/js/home/logout.js';
+  setupLogout();
+</script>
 
 </body>
 </html>
