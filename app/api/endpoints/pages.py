@@ -30,5 +30,5 @@ async def show_quiz(request: Request):
 @router.get('/profile', summary='profile')
 async def show_profile(request: Request):
     '''Отображает страницу profile.html.'''
-    logger.info('Вызван маршрут /quiz')
+    logger.info('Вызван маршрут /profile')
     return templates.TemplateResponse('profile.html', {'request': request})

@@ -76,3 +76,11 @@ def calculate_metrics(data: dict):
         'ИМТ': bmi,
         'Рекомендуемое потребление воды (л)': recommended_water
     }
+
+def calculate_bmi(data: dict):
+    height = data['height']
+    weight = data['weight']
+    # Индекс массы тела
+    bmi = round(weight / ((height / 100) ** 2), 1)
+    return bmi
+

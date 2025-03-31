@@ -23,8 +23,7 @@ async def get_questions(
 @router.post('/calculate', summary='Результат теста')
 async def calculate_metrics_api(data: MetricsRequest):
     '''Эндпоинт для расчёта метрик'''
-    result = calculate_metrics(data.model_dump())  # Преобразуем в словарь
-    return result
+    return calculate_metrics(data.model_dump())  # Преобразуем в словарь
 
 
 @router.post('/save_test_result', summary='Сохранить результаты теста')

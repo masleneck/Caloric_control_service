@@ -5,8 +5,8 @@ from app.dependencies.database_dep import get_async_session
 from app.dependencies.auth_dep import get_current_user
 from app.repositories.profile import ProfileDAO
 from app.models.users import User
-from app.schemas.profile import FullNameResponse, ProfileInfoResponse, UpdateProfileRequest
-
+from app.schemas.profile import BmiRequest, FullNameResponse, ProfileInfoResponse, UpdateProfileRequest
+from app.core.calculations import calculate_bmi
 
 router = APIRouter(prefix='/profile', tags=['Профиль 👥'])
 
@@ -45,3 +45,9 @@ async def update_profile(
         user_id=current_user.id,
         profile_data=profile_data
     )
+
+
+@router.post('/bmi', summary='Подсчет bmi')
+async def calculate_bmi_api(data: BmiRequest):
+    '''Эндпоинт для расчёта метрик'''
+    return calculate_bmi(data.model_dump())

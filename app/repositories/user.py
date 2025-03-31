@@ -76,7 +76,6 @@ class UserDAO(BaseDAO[User]):
         return {"message": "Данные обновлены"}
         
 
-
     async def get_all_users(
         self,
         skip: int = 0, # Пропустить N записей (по умолчанию 0)

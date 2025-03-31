@@ -41,8 +41,17 @@ class UpdateProfileRequest(BaseModel):
         }
     })
 
-
 class FullNameResponse(BaseModel):
     '''Схема для ответа с полным именем пользователя.'''
     full_name: str 
     model_config = ConfigDict(from_attributes=True)
+
+class BmiRequest(BaseModel):
+    height: int 
+    weight: int 
+    model_config = ConfigDict(from_attributes=True, json_schema_extra={
+        'example': {
+            'weight': 59,
+            'height': 178,
+        }
+    })
