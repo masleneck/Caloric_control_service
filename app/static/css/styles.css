@@ -44,7 +44,6 @@ main {
 }
 
 form {
-  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -628,4 +627,42 @@ button.active {
 .modal .form-box {
   flex: 1;
   min-width: 300px;
+}
+
+.modal .form-box input,
+.modal .form-box select,
+.modal .form-box label {
+  text-align: left;
+}
+
+.modal .form-box button {
+  align-self: flex-start;
+}
+
+.data-row {
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-label {
+  font-weight: bold;
+  color: #5a5a5a;
+}
+
+.data-value {
+  color: #333;
+}
+
+.bmi-indicator {
+  margin-top: 5px;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.error-message {
+  color: #e94e3c;
+  font-size: 14px;
+  margin-top: 5px;
 }

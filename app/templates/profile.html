@@ -67,11 +67,23 @@
 
       <section id="physical-data" class="profile-box">
         <h3>Физические данные</h3>
-        <p><strong>Вес:</strong> <span id="weight">--</span> кг</p>
-        <p><strong>Рост:</strong> <span id="height">--</span> см</p>
-        <p><strong>Цель:</strong> <span id="goal">--</span></p>
-        <p><strong>ИМТ:</strong> <span id="bmi-value">--</span></p>
-        <div id="bmi-indicator"></div>
+        <div class="data-row">
+          <span class="data-label">Вес:</span>
+          <span class="data-value" id="weight">--</span> кг
+        </div>
+        <div class="data-row">
+          <span class="data-label">Рост:</span>
+          <span class="data-value" id="height">--</span> см
+        </div>
+        <div class="data-row">
+          <span class="data-label">Цель:</span>
+          <span class="data-value" id="goal">--</span>
+        </div>
+        <div class="data-row">
+          <span class="data-label">ИМТ:</span>
+          <span class="data-value" id="bmi-value">--</span>
+          <div id="bmi-indicator" class="bmi-indicator"></div>
+        </div>
       </section>
     </div>
 
@@ -100,6 +112,14 @@
 
             <label>Дата рождения:
               <input type="text" id="edit-birthday" placeholder="Выберите дату рождения" readonly>
+            </label>
+
+            <label>Рост (см):
+              <input type="number" id="edit-height" min="50" max="300" step="1">
+            </label>
+          
+            <label>Вес (кг):
+              <input type="number" id="edit-weight" min="20" max="500" step="0.1">
             </label>
 
             <button type="submit">Сохранить профиль</button>
@@ -136,11 +156,7 @@
 
 <script src="/static/js/sidebar.js"></script>
 <script src="/static/js/home/logout.js"></script>
-<script src="/static/js/profile/profile.js"></script>
-<script type="module">
-  import { setupLogout } from '/static/js/home/logout.js';
-  setupLogout();
-</script>
+<script type="module" src="/static/js/profile/profile.js"></script>
 
 </body>
 </html>
