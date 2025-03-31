@@ -15,25 +15,30 @@ class ProfileDAO(BaseDAO[Profile]):
 
     async def update_profile(
         self,
-        user: User,
+        user_id: int,
         profile_data: UpdateProfileRequest
-    ) -> dict:
-        '''Обновить информацию профиля пользователя.'''
-        # Загружаем пользователя с профилем
-        query = (
+    ) -> dict[str, str]:
+        result = await self._session.execute(
             select(User)
-            .options(selectinload(User.profile))  # Загружаем связанный профиль
-            .where(User.id == user.id)
+            .options(selectinload(User.profile))
+            .where(User.id == user_id)
         )
-        result = await self._session.execute(query)
-        user_with_profile = result.scalars().first()
+        user = result.scalars().first()
 
-        if not user_with_profile or not user_with_profile.profile:
+        if not user or not user.profile:
             raise HTTPException(status_code=404, detail='Профиль не найден!')
 
-        # Обновляем только переданные поля
-        for key, value in profile_data.model_dump(exclude_unset=True).items():
-            setattr(user_with_profile.profile, key, value)
-
+        update_data = profile_data.model_dump(exclude_unset=True)
+        
+        for field, value in update_data.items():
+            # Игнорируем пустые строки
+            if isinstance(value, str) and not value.strip():
+                continue
+    
+            # Проверяем, отличается ли новое значение от текущего
+            current_value = getattr(user.profile, field)
+            if current_value != value:
+                setattr(user.profile, field, value)
+                
+        await self._session.commit()
         return {'message': 'Профиль успешно обновлен!'}
-

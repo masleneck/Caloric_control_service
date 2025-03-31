@@ -64,18 +64,10 @@ class UserDAO(BaseDAO[User]):
         user: User,
         update_data: UpdateConfidentialInfoRequest
     ) -> dict:
-        """Обновление email/пароля с проверкой сессии"""
+        """Обновление пароля"""
         # Валидация текущих данных
         if user.email != update_data.current_email or not verify_password(update_data.current_password, user.password):
             raise HTTPException(400, "Неверный email или пароль")
-        # Обновление email (только если передан новый валидный email)
-        if update_data.new_email:
-            if await self._session.scalar(select(User).where(
-                User.email == update_data.new_email,
-                User.id != user.id
-            )):
-                raise HTTPException(400, "Email уже используется")
-            user.email = update_data.new_email
         # Обновление пароля (только если передан новый пароль)
         if update_data.new_password:
             user.password = get_password_hash(update_data.new_password)

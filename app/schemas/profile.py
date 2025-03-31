@@ -22,13 +22,13 @@ class ProfileInfoResponse(BaseModel):
         }
     })
 class UpdateProfileRequest(BaseModel):
-    name: str | None 
-    last_name: str | None 
-    gender: Gender | None 
-    weight: float | None 
-    height: int | None 
-    goal: CurrentGoal | None 
-    birthday_date: Optional[date | None ] 
+    name: str | None = None
+    last_name: str | None = None
+    gender: Gender 
+    weight: float | None = None
+    height: int | None = None
+    goal: CurrentGoal 
+    birthday_date: Optional[date] 
     model_config = ConfigDict(from_attributes=True, use_enum_values=True, json_schema_extra={
         'example': {
             'name': 'Амаль',

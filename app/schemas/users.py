@@ -86,7 +86,6 @@ class ConfidentialInfoResponse(BaseModel):
 class UpdateConfidentialInfoRequest(BaseModel):
     current_email: EmailStr
     current_password: str
-    new_email: EmailStr | None = None # Принимает только null или валидный email
     new_password: str | None = None
     confirm_new_password: str | None = None
 

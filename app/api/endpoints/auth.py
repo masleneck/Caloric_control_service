@@ -62,23 +62,6 @@ async def process_refresh_token(
     return {'message': 'Токены успешно обновлены'}
 
 
-@profile_router.get(
-    '/confidential_info',
-    response_model=ConfidentialInfoResponse,
-    summary='Получить конфиденциальные данные',
-)
-async def get_confidential_info(
-    current_user: User = Depends(get_current_user)
-) -> ConfidentialInfoResponse:
-    """
-    Получение конфиденциальной информации пользователя
-    """
-    return ConfidentialInfoResponse(
-        email=current_user.email,
-        password='******'  
-    )
-
-
 @profile_router.patch('/update_confidential_info', summary='Обновление email/пароля')
 async def update_confidential_info(
     update_data: UpdateConfidentialInfoRequest,

@@ -31,12 +31,17 @@ async def get_profile_info(
     return ProfileInfoResponse.model_validate(current_user.profile)
 
 
-@router.put('/update_profile', summary='Обновить информацию профиля текущего пользователя')
+@router.patch(
+    "/update_profile",
+    summary="Обновить данные профиля",
+    response_model=dict[str, str],
+)
 async def update_profile(
     profile_data: UpdateProfileRequest,
     current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session)
-) -> dict:
-    '''Обновить информацию профиля текущего пользователя.'''
-    dao = ProfileDAO(session)
-    return await dao.update_profile(current_user, profile_data)
+    session: AsyncSession = Depends(get_async_session),
+) -> dict[str, str]:
+    return await ProfileDAO(session).update_profile(
+        user_id=current_user.id,
+        profile_data=profile_data
+    )
