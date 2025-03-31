@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("edit-birthday").value = data.birthday_date;
       document.getElementById("edit-height").value = data.height;
       document.getElementById("edit-weight").value = data.weight;
+      document.getElementById("edit-goal").value = data.goal;
     } catch (err) {
       console.error(err);
     }
@@ -138,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       birthday_date: document.getElementById("edit-birthday").value,
       weight: parseFloat(document.getElementById("edit-weight").value),
       height: parseFloat(document.getElementById("edit-height").value),
-      goal: goalMap[goalEl.textContent] || goalEl.textContent,
+      goal: document.getElementById("edit-goal").value,
     };
 
     try {
