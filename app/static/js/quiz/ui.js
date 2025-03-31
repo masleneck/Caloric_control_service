@@ -31,7 +31,30 @@ export function renderQuestion(questionData, answers) {
     } else if (questionData.type === "input") {
         const input = document.createElement("input");
         input.type = "text";
-        input.placeholder = questionData.placeholder || "";
+
+        if (questionData.name === "birthday_date") {
+            input.placeholder = "Выберите дату рождения";
+            input.readOnly = true;
+
+            container.appendChild(input);
+
+            flatpickr(input, {
+                locale: "ru",
+                dateFormat: "Y-m-d",
+                maxDate: "today",
+                defaultDate: answers[questionData.name] || null,
+                onChange: function (selectedDates, dateStr) {
+                    answers[questionData.name] = dateStr;
+                    updateNextButton(dateStr);
+                }
+            });
+            return;
+        } else if (questionData.name === "height") {
+            input.placeholder = "Указать рост в см";
+        } else if (questionData.name === "weight") {
+            input.placeholder = "Указать вес в кг";
+        }
+
         input.value = answers[questionData.name] || "";
 
         input.oninput = () => {
@@ -40,6 +63,16 @@ export function renderQuestion(questionData, answers) {
         };
 
         container.appendChild(input);
+
+        // Подсказка под полем для water_intake
+        if (questionData.name === "water_intake") {
+            const hint = document.createElement("div");
+            hint.textContent = "1 стакан ≈ 250 мл";
+            hint.style.fontSize = "12px";
+            hint.style.color = "gray";
+            hint.style.marginTop = "4px";
+            container.appendChild(hint);
+        }
     }
 }
 
