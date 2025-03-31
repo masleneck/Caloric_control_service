@@ -24,3 +24,8 @@ class User(Base):
         lazy='joined',
     )
 
+    # Связь один-ко-многим с Meals
+    meals: Mapped[list['Meals']] = relationship(
+        back_populates='user',
+        lazy='selectin',
+    )

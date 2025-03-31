@@ -2,7 +2,7 @@ import asyncio
 from faker import Faker
 from loguru import logger
 from app.core.database import Base, async_session_maker, check_db_connection, async_engine
-from app.models import User, Profile, TestResult
+from app.models import User, Profile, TestResult, Meals, MealFoodItem, FoodItems
 from app.utils.auth_utils import get_password_hash
 
 fake = Faker('ru_RU')
@@ -64,7 +64,7 @@ async def reset_db():
         logger.success("Tables created")
     
     # Создаем тестовых пользователей
-    await create_test_users(50)
+    # await create_test_users(50)
 
 if __name__ == "__main__":
     asyncio.run(reset_db())
