@@ -4,13 +4,12 @@ import { setupLogout } from './logout.js';
       setupLogout();
   });
 
-  // Заглушки
   document.getElementById("nav-home").addEventListener("click", () => {
       alert("Home clicked");
   });
 
   document.getElementById("nav-profile").addEventListener("click", () => {
-      alert("Profile clicked");
+    window.location.href = "/profile";
   });
 
   document.getElementById("nav-options").addEventListener("click", () => {

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Профиль пользователя</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+  <div class="container" id="profile-page">
+    <button id="homeBtn" class="home-btn">Домой</button>
+
+    <section id="user-info">
+      <h2>Профиль</h2>
+      <p><strong>Имя:</strong> <span id="name">Имя</span></p>
+      <p><strong>Фамилия:</strong> <span id="last-name">Фамилия</span></p>
+      <p><strong>Пол:</strong> <span id="gender">--</span></p>
+      <p><strong>Дата рождения:</strong> <span id="birthday">--</span></p>
+      <button id="edit-btn">Редактировать</button>
+    </section>
+
+    <div class="form-wrapper" style="display: none;" id="form-wrapper">
+
+      <form id="edit-form" class="form-box">
+        <h3>Редактировать профиль</h3>
+
+        <label>Имя:
+          <input type="text" id="edit-name">
+        </label>
+
+        <label>Фамилия:
+          <input type="text" id="edit-last-name">
+        </label>
+
+        <label>Пол:
+          <select id="edit-gender">
+            <option value="MALE">Мужской</option>
+            <option value="FEMALE">Женский</option>
+          </select>
+        </label>
+
+        <label>Дата рождения:
+          <input type="date" id="edit-birthday">
+        </label>
+
+        <button type="submit">Сохранить профиль</button>
+      </form>
+
+      <form id="confidential-form" class="form-box">
+        <h3>Сменить пароль</h3>
+      
+        <label>Email:
+          <input type="email" id="edit-email">
+        </label>
+      
+        <label>Текущий пароль:
+          <input type="password" id="current-password">
+        </label>
+      
+        <label>Новый пароль:
+          <input type="password" id="new-password">
+        </label>
+      
+        <label>Подтвердите новый пароль:
+          <input type="password" id="confirm-new-password">
+        </label>
+      
+        <button type="submit">Сохранить новый пароль</button>
+      </form>
+      
+    </div>
+
+    <hr>
+
+    <section id="physical-data">
+      <h3>Физические данные</h3>
+      <p><strong>Вес:</strong> <span id="weight">--</span> кг</p>
+      <p><strong>Рост:</strong> <span id="height">--</span> см</p>
+      <p><strong>Цель:</strong> <span id="goal">--</span></p>
+      <p><strong>ИМТ:</strong> <span id="bmi-value">--</span></p>
+
+      <div id="bmi-indicator">
+
+      </div>
+    </section>
+
+  </div>
+
+  <script src="/static/js/home/logout.js"></script>
+  <script src="/static/js/profile/profile.js"></script>
+
+</body>
+</html>
