@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const confidentialForm = document.getElementById("confidential-form");
   const formWrapper = document.getElementById("form-wrapper");
   const emailInput = document.getElementById("edit-email");
+  const homeBtn = document.getElementById("homeBtn");
 
   let isEditing = false;
 
@@ -48,23 +49,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       weightEl.textContent = data.weight;
       heightEl.textContent = data.height;
       goalEl.textContent = data.goal;
-      bmiValueEl.textContent = data.bmi ?? "--"; // bmi нету BRUUUUUUUUUUUUH
+      bmiValueEl.textContent = data.bmi ?? "--";
 
       document.getElementById("edit-name").value = data.name;
       document.getElementById("edit-last-name").value = data.last_name;
       document.getElementById("edit-gender").value = data.gender;
       document.getElementById("edit-birthday").value = data.birthday_date;
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function loadEmail() {
-    try {
-      const res = await fetch("/profile/confidential_info");
-      if (!res.ok) throw new Error("Не удалось загрузить email");
-      const data = await res.json();
-      emailInput.value = data.email;
     } catch (err) {
       console.error(err);
     }
@@ -85,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const res = await fetch("/profile/update_profile", {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profileData)
       });
@@ -126,6 +116,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error(err);
       alert("Не удалось обновить пароль");
     }
+  });
+
+  flatpickr("#edit-birthday", {
+    locale: "ru",
+    dateFormat: "Y-m-d",
+    maxDate: "today",
+    altInput: true,
+    altFormat: "Y.m.d",
   });
 
   await loadProfile();
