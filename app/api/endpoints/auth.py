@@ -6,7 +6,7 @@ from app.dependencies.database_dep import get_async_session
 from app.models import User
 from app.utils.token_utils import set_tokens
 from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
-from app.schemas.users import UserRegister, UserAuth, UserInfo, ConfidentialInfoResponse, UpdateConfidentialInfoRequest
+from app.schemas.users import UserRegister, UserAuth, UserInfo, UpdateConfidentialInfoRequest
 from app.repositories.user import UserDAO
 from app.api.endpoints.profile import router as profile_router
 
