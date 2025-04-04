@@ -1,7 +1,6 @@
 from datetime import date
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.food_items import FoodItems
 from app.models.users import User
 from app.repositories.food_item import FoodItemDAO
 from app.repositories.meal import MealDAO
@@ -51,7 +50,7 @@ async def get_daily_meals(
     return await MealDAO(session).get_daily_meals(user.id, target_date)
 
 
-@router.post("/food-items",summary="Добавить новый продукт(is_superuser)")
+@router.post("/food_items",summary="Добавить новый продукт(is_superuser)")
 async def create_food_item(
     food_data: FoodItemCreate,
     admin: User = Depends(get_current_admin_user),

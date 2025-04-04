@@ -35,7 +35,6 @@ async_session_maker = async_sessionmaker(
     )
 
 
-
 async def check_db_connection():
     """Проверка подключения к БД"""
     try:
