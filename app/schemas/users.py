@@ -77,12 +77,6 @@ class UserInfo(UserBase):
     profile: ProfileModel | None 
     model_config = ConfigDict(from_attributes=True)
 
-
-class ConfidentialInfoResponse(BaseModel):
-    email: str
-    password: str
-    model_config = ConfigDict(from_attributes=True)
-
 class UpdateConfidentialInfoRequest(BaseModel):
     current_email: EmailStr
     current_password: str
