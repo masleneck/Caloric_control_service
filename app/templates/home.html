@@ -32,44 +32,50 @@
         </aside>
 
         <main class="main-content">
-          <div class="calendar">
-            <div class="calendar-header">
-              <span class="calendar-prev" id="prevMonth">
-                <i class="ri-arrow-left-s-line"></i>
-              </span>
-              <span class="calendar-title" id="monthDisplay">Апрель 2025</span>
-              <span class="calendar-next" id="nextMonth">
-                <i class="ri-arrow-right-s-line"></i>
-              </span>
+          <div class="calendar-wrapper-full">
+            <div class="calendar">
+              <div class="calendar-header">
+                <span class="calendar-prev" id="prevMonth">
+                  <i class="ri-arrow-left-s-line"></i>
+                </span>
+                <span class="calendar-title" id="monthDisplay">Апрель 2025</span>
+                <span class="calendar-next" id="nextMonth">
+                  <i class="ri-arrow-right-s-line"></i>
+                </span>
+              </div>
+        
+              <div class="calendar-body">
+                <div class="calendar-container" id="calendarDays">
+
+                </div>
+        
+                <div class="calendar-sidebar" id="calendarSidebar">
+                  <h2 id="selectedDate">Сегодня</h2>
+        
+                  <div class="calendar-section">
+                    <h3>Питание</h3>
+                    <ul id="mealList" class="calendar-list"></ul>
+                    <button id="addMealBtn" class="add-btn">
+                      <i class="ri-add-line"></i> Добавить еду
+                    </button>
+                  </div>
+        
+                  <div class="calendar-section">
+                    <h3>Тренировки</h3>
+                    <ul id="trainingList" class="calendar-list"></ul>
+                    <button id="addTrainingBtn" class="add-btn">
+                      <i class="ri-add-line"></i> Добавить тренировку
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
         
-            <div class="calendar-body">
-              <div class="calendar-container" id="calendarDays">
-                
-              </div>
-        
-              <div class="calendar-sidebar" id="calendarSidebar">
-                <h2 id="selectedDate">Сегодня</h2>
-        
-                <div class="calendar-section">
-                  <h3>Питание</h3>
-                  <ul id="mealList" class="calendar-list"></ul>
-                  <button id="addMealBtn" class="add-btn">
-                    <i class="ri-add-line"></i> Добавить еду
-                  </button>
-                </div>
-        
-                <div class="calendar-section">
-                  <h3>Тренировки</h3>
-                  <ul id="trainingList" class="calendar-list"></ul>
-                  <button id="addTrainingBtn" class="add-btn">
-                    <i class="ri-add-line"></i> Добавить тренировку
-                  </button>
-                </div>
-              </div>
+            <div class="calendar-side-image">
+              <img src="/static/images/calendar-guy.png" alt="calendar guy" />
             </div>
           </div>
-        </main>
+        </main> 
                 
     </div>
     <script src="/static/js/sidebar.js"></script>

@@ -135,3 +135,26 @@
 .add-btn:hover {
   background-color: #a04030;
 }
+
+.calendar-wrapper-full {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: nowrap;
+  padding: 20px;
+}
+
+.calendar-side-image {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.calendar-side-image img {
+  max-height: 420px;
+  height: auto;
+  width: auto;
+  opacity: 0.95;
+}
