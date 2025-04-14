@@ -1,20 +1,22 @@
 export function showRegisterForm() {
-  console.log("Переход на форму регистрации...");
-
-  const main = document.getElementById("quiz-container");
-  main.innerHTML = `
-      <h2>Пройдите регистрацию</h2>
-      <form id="register-form">
-          <input type="text" id="fullname" placeholder="Ваше имя" required><br>
-          <input type="email" id="email" placeholder="Email" required><br>
-          <input type="password" id="password" placeholder="Пароль" required><br>
-          <input type="password" id="confirm_password" placeholder="Подтвердите пароль" required><br>
-          <button type="submit" class="register-btn">Зарегистрироваться</button>
-      </form>
-  `;
-
-  document.getElementById("register-form").addEventListener("submit", registerUser);
-}
+    console.log("Переход на форму регистрации...");
+  
+    const main = document.getElementById("quiz-container");
+    main.innerHTML = `
+        <div class="register-card">
+            <h2 class="results-title">Пройдите регистрацию</h2>
+            <form id="register-form" class="register-form">
+                <input type="text" id="fullname" placeholder="Ваше имя" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Пароль" required>
+                <input type="password" id="confirm_password" placeholder="Подтвердите пароль" required>
+                <button type="submit" class="register-btn">Зарегистрироваться</button>
+            </form>
+        </div>
+    `;
+  
+    document.getElementById("register-form").addEventListener("submit", registerUser);
+  }  
 
 async function registerUser(event) {
   event.preventDefault();

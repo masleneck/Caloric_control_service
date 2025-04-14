@@ -12,11 +12,11 @@ export function renderQuestion(questionData, answers) {
         const tooltip = createTooltip("Например: курение, алкоголь, переедание", "right");
         questionTitle.appendChild(tooltip);
     }
-    
+
     if (questionData.name === "water_intake") {
         const tooltip = createTooltip("1 стакан ≈ 250 мл", "bottom");
         questionTitle.appendChild(tooltip);
-    }    
+    }
 
     container.appendChild(questionTitle);
 
@@ -43,13 +43,13 @@ export function renderQuestion(questionData, answers) {
     } else if (questionData.type === "input") {
         const input = document.createElement("input");
         input.type = "text";
-
+    
         if (questionData.name === "birthday_date") {
             input.placeholder = "Выберите дату рождения";
             input.readOnly = true;
-
+    
             container.appendChild(input);
-
+    
             flatpickr(input, {
                 locale: "ru",
                 dateFormat: "Y-m-d",
@@ -61,21 +61,61 @@ export function renderQuestion(questionData, answers) {
                 }
             });
             return;
-        } else if (questionData.name === "height") {
+        }
+    
+        const errorDiv = document.createElement("div");
+        errorDiv.classList.add("error-message");
+    
+        if (questionData.name === "height") {
             input.placeholder = "Указать рост в см";
+            input.dataset.min = 120;
+            input.dataset.max = 280;
+            errorDiv.innerHTML = `<i class="ri-error-warning-line"></i> Рост должен быть от 120 до 280 см`;
         } else if (questionData.name === "weight") {
             input.placeholder = "Указать вес в кг";
+            input.dataset.min = 40;
+            input.dataset.max = 300;
+            errorDiv.innerHTML = `<i class="ri-error-warning-line"></i> Вес должен быть от 40 до 300 кг`;
+        } else if (questionData.name === "steps_per_day") {
+            input.placeholder = "Шагов в день";
+            input.dataset.min = 0;
+            input.dataset.max = 50000;
+            errorDiv.innerHTML = `<i class="ri-error-warning-line"></i> Введите число от 0 до 50000`;
+        } else if (questionData.name === "sleep_hours") {
+            input.placeholder = "Часов сна в день";
+            input.dataset.min = 0;
+            input.dataset.max = 24;
+            errorDiv.innerHTML = `<i class="ri-error-warning-line"></i> Введите число от 0 до 24`;
         }
-
+    
+        errorDiv.style.display = "none";
+    
         input.value = answers[questionData.name] || "";
-
+    
         input.oninput = () => {
-            answers[questionData.name] = input.value;
-            updateNextButton(input.value);
+            const val = Number(input.value);
+            const min = Number(input.dataset.min);
+            const max = Number(input.dataset.max);
+    
+            const isValid =
+                !isNaN(val) &&
+                (min === undefined || val >= min) &&
+                (max === undefined || val <= max);
+    
+            if (isValid || (!min && !max)) {
+                answers[questionData.name] = input.value;
+                errorDiv.style.display = "none";
+            } else {
+                delete answers[questionData.name];
+                errorDiv.style.display = "block";
+            }
+    
+            updateNextButton(isValid || (!min && !max));
         };
-
+    
         container.appendChild(input);
-    }
+        container.appendChild(errorDiv);
+    }    
 }
 
 // tooltip генератор

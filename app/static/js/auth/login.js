@@ -13,14 +13,16 @@ export function showLoginForm() {
 
   const loginFormContainer = document.createElement("div");
   loginFormContainer.innerHTML = `
-      <h2>Авторизация</h2>
-      <form id="login-form">
-          <input type="text" id="login" placeholder="Логин" required><br>
-          <input type="password" id="login-password" placeholder="Пароль" required><br>
+  <div class="login-card">
+      <h2 class="results-title">Авторизация</h2>
+      <form id="login-form" class="register-form">
+          <input type="text" id="login" placeholder="Email" required>
+          <input type="password" id="login-password" placeholder="Пароль" required>
           <button type="submit" class="login-btn">Войти</button>
-          <div id="error-message"></div>
+          <div id="error-message" class="error-message" style="display: none;"></div>
       </form>
-  `;
+  </div>
+`;
 
   main.appendChild(loginFormContainer);
 
@@ -60,16 +62,11 @@ async function loginUser(event) {
   }
 }
 
-// function showError(message) {
-//   let errorContainer = document.getElementById("error-message");
+function showError(message) {
+    let errorContainer = document.getElementById("error-message");
 
-//   if (!errorContainer) {
-//       errorContainer = document.createElement("div");
-//       errorContainer.id = "error-message";
-//       errorContainer.style.color = "red";
-//       errorContainer.style.marginTop = "10px";
-//       document.getElementById("login-form").appendChild(errorContainer);
-//   }
+    if (!errorContainer) return;
 
-//   errorContainer.textContent = message;
-// }
+    errorContainer.innerHTML = `<i class="ri-error-warning-line"></i> ${message}`;
+    errorContainer.style.display = "block";
+}
