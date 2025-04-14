@@ -1,18 +1,43 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная страница</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Главная страница</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
 <body>
+    
+  <main id="start-screen" class="start-container">
 
-    <main id="start-screen">
-        <h1 class="welcome-text">Добро пожаловать! <br> Начните свой путь к лучшей версии себя</h1>
-        <button id="startQuizBtn" class="quiz-btn">Пройти опросник</button>
-    </main>
+    <div class="character-layout">
+      <img src="/static/images/fitness-guy-pink.png" class="home-character flipped" alt="Слева" />
 
-    <script type="module" src="/static/js/main.js"></script>
+      <div class="start-card">
+        <h1 class="welcome-text">Приветствуем тебя!</h1>
+        <p class="start-subtext">
+          Если ты ещё не зарегистрирован, начни с короткого опроса — это поможет нам подобрать тебе персональный план
+        </p>
+        <button id="startQuizBtn" class="quiz-btn">Пройти опрос</button>
+        <p class="start-login-hint">Уже есть аккаунт? Просто войди <i class="ri-arrow-down-line"></i></p>
+      </div>
+
+      <img src="/static/images/fitness-guy-orange.png" class="home-character" alt="Справа" />
+    </div>
+
+    <div class="login-card">
+      <h2 class="results-title">Авторизация</h2>
+      <form id="login-form" class="register-form">
+        <input type="text" id="login" placeholder="Email" required />
+        <input type="password" id="login-password" placeholder="Пароль" required />
+        <button type="submit" class="login-btn">Войти</button>
+        <div id="error-message" class="error-message" style="display: none;"></div>
+      </form>
+    </div>
+
+  </main>
+
+  <script type="module" src="/static/js/main.js"></script>
 </body>
 </html>
