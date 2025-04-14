@@ -6,6 +6,18 @@ export function renderQuestion(questionData, answers) {
     const questionTitle = document.createElement("div");
     questionTitle.classList.add("question");
     questionTitle.innerText = questionData.text;
+
+    // Добавление tooltip
+    if (questionData.name === "bad_habits") {
+        const tooltip = createTooltip("Например: курение, алкоголь, переедание", "right");
+        questionTitle.appendChild(tooltip);
+    }
+    
+    if (questionData.name === "water_intake") {
+        const tooltip = createTooltip("1 стакан ≈ 250 мл", "bottom");
+        questionTitle.appendChild(tooltip);
+    }    
+
     container.appendChild(questionTitle);
 
     if (questionData.type === "options") {
@@ -63,17 +75,24 @@ export function renderQuestion(questionData, answers) {
         };
 
         container.appendChild(input);
-
-        // Подсказка под полем для water_intake
-        if (questionData.name === "water_intake") {
-            const hint = document.createElement("div");
-            hint.textContent = "1 стакан ≈ 250 мл";
-            hint.style.fontSize = "12px";
-            hint.style.color = "gray";
-            hint.style.marginTop = "4px";
-            container.appendChild(hint);
-        }
     }
+}
+
+// tooltip генератор
+function createTooltip(text, position = "bottom") {
+    const wrapper = document.createElement("span");
+    wrapper.classList.add("tooltip-wrapper", `tooltip-${position}`);
+
+    const icon = document.createElement("i");
+    icon.classList.add("ri-question-line", "tooltip-icon");
+
+    const tooltipText = document.createElement("span");
+    tooltipText.classList.add("tooltip-text");
+    tooltipText.innerText = text;
+
+    wrapper.appendChild(icon);
+    wrapper.appendChild(tooltipText);
+    return wrapper;
 }
 
 // Обновление состояния кнопки "Далее"

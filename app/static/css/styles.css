@@ -21,6 +21,12 @@ main {
   text-transform: uppercase;
 }
 
+#quiz-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 .quiz-btn {
   background-color: #b85143;
   color: white;
@@ -109,8 +115,13 @@ h1 {
 }
 
 .question {
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  background: #fffaf1;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
 }
 
 .options {
@@ -171,6 +182,60 @@ button:disabled {
 
 button.active {
   opacity: 1;
+}
+
+.results-card {
+  background: #fffaf1;
+  border: 2px solid #a6bdad;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 50px auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.results-title {
+  text-align: center;
+  color: #b85143;
+  margin-bottom: 30px;
+  font-size: 26px;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.result-item {
+  background: #e6e7d1;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 18px;
+  text-align: left;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.result-item span {
+  color: #b85143;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  } to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .register-btn {
@@ -677,4 +742,59 @@ button.active {
   color: #e94e3c;
   font-size: 14px;
   margin-top: 5px;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.tooltip-icon {
+  font-size: 18px;
+  color: #b85143;
+  margin-left: 6px;
+  vertical-align: middle;
+  transition: color 0.3s ease;
+}
+
+.tooltip-wrapper:hover .tooltip-icon {
+  color: #a04030;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: #b85143;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  padding: 12px 16px;
+  position: absolute;
+  z-index: 10;
+  opacity: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  transition: opacity 0.3s;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  max-width: 260px;
+  white-space: nowrap;
+}
+
+.tooltip-bottom .tooltip-text {
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-right .tooltip-text {
+  top: 50%;
+  left: 110%;
+  transform: translateY(-50%);
+  white-space: normal;
+}
+
+.tooltip-wrapper:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }

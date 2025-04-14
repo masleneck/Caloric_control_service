@@ -60,17 +60,19 @@ async function saveTestResult(data) {
 function showResults(results) {
     const main = document.getElementById("quiz-container");
     main.innerHTML = `
-        <h2>Ваши результаты</h2>
-        <div id="results">
-            <p><strong>Калорийность:</strong> ${results["Калорийность"]} ккал</p>
-            <p><strong>Белки:</strong> ${results["Белки (г)"]} г</p>
-            <p><strong>Жиры:</strong> ${results["Жиры (г)"]} г</p>
-            <p><strong>Углеводы:</strong> ${results["Углеводы (г)"]} г</p>
-            <p><strong>ИМТ:</strong> ${results["ИМТ"]}</p>
-            <p><strong>Рекомендуемое потребление воды:</strong> ${results["Рекомендуемое потребление воды (л)"]} л</p>
+    <div class="results-card">
+        <h2 class="results-title">Ваши результаты</h2>
+        <div class="results-list">
+            <div class="result-item"><span>Калорийность:</span> ${results["Калорийность"]} ккал</div>
+            <div class="result-item"><span>Белки:</span> ${results["Белки (г)"]} г</div>
+            <div class="result-item"><span>Жиры:</span> ${results["Жиры (г)"]} г</div>
+            <div class="result-item"><span>Углеводы:</span> ${results["Углеводы (г)"]} г</div>
+            <div class="result-item"><span>ИМТ:</span> ${results["ИМТ"]}</div>
+            <div class="result-item"><span>Вода:</span> ${results["Рекомендуемое потребление воды (л)"]} л</div>
         </div>
         <button id="registerBtn" class="register-btn">Зарегистрироваться</button>
-    `;
+    </div>
+`;
 
     document.getElementById("registerBtn").addEventListener("click", showRegisterForm);
 }

@@ -46,7 +46,7 @@ async def add_test_questions():
             ),
             TestQuestion(
                 name='bad_habits',
-                text='Есть ли у вас вредные привычки ?',
+                text='Есть ли у вас вредные привычки?',
                 type='options',
                 options=['Да', 'Нет']
             ),
