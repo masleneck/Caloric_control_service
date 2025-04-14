@@ -1,4 +1,5 @@
 import { showLoginForm } from "./auth/login.js";
+import { loginUser } from "./auth/login.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("startQuizBtn").addEventListener("click", () => {
@@ -6,4 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     showLoginForm();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("login-form");
+  if (loginForm) {
+    loginForm.addEventListener("submit", loginUser);
+  }
 });
