@@ -58,6 +58,7 @@ async function saveTestResult(data) {
 }
 
 function showResults(results) {
+    document.querySelector('.back-home-card')?.classList.add('hidden');
     const main = document.getElementById("quiz-container");
     main.innerHTML = `
     <div class="results-card">
@@ -74,5 +75,8 @@ function showResults(results) {
     </div>
 `;
 
-    document.getElementById("registerBtn").addEventListener("click", showRegisterForm);
+    document.getElementById("registerBtn").addEventListener("click", () => {
+        document.querySelector('.back-home-card')?.classList.add('hidden');
+        showRegisterForm();
+    });
 }

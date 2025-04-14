@@ -6,6 +6,10 @@ body {
   padding: 0;
 }
 
+.hidden {
+  display: none !important;
+}
+
 main {
   text-align: center;
   display: flex;
@@ -313,6 +317,46 @@ button.active {
   background-color: #c3e1cc;
 }
 
+.back-home-card {
+  margin-top: 80px;
+  padding: 40px 30px;
+  background: #fffaf1;
+  border: 2px solid #a6bdad;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+  margin-inline: auto;
+}
+
+.back-home-card h1 {
+  font-size: 22px;
+  margin-bottom: 30px;
+  color: #333;
+  text-align: center;
+}
+
+.home-link-btn {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #b85143;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease-in-out;
+  width: 100%;
+}
+
+.home-link-btn:hover {
+  background-color: #9f3f35;
+}
 .dashboard {
   display: flex;
   min-height: 100vh;
