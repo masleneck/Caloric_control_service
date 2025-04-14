@@ -18,7 +18,7 @@ class UserDAO(BaseDAO[User]):
             select(TestResult).where(TestResult.session_id == session_id)
         )
         if not test_result:
-            raise HTTPException(status_code=400, detail='Неверный session_id')
+            raise HTTPException(400, "Неверный session_id")
         # Проверяем email 
         if await self.find_one_by_fields(email=user_data.email):
             raise HTTPException(400, "Пользователь с таким email уже существует")
