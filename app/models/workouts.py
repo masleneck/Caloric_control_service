@@ -1,27 +1,30 @@
-# from datetime import datetime
-# from sqlalchemy import ForeignKey, func
-# from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Float, Integer, String, Text
+from sqlalchemy.orm import Mapped, relationship, mapped_column
+from app.core.database import Base
 
-# from app.core.database import Base
+class Workout(Base):
+    '''Хранит информацию о тренировках'''
+    __tablename__ = 'workouts'
 
+    name: Mapped[str] = mapped_column(
+        String(100),
+    )
+    duration_minutes: Mapped[int] = mapped_column(
+        Integer,
+    )
+    calories_burned: Mapped[float] = mapped_column(
+        Float,
+    )
+    description: Mapped[str | None] = mapped_column(
+        Text,
+        default="",
+        server_default="",
+    )
 
-# class Workout(Base):
-#     '''Связь пользователей и их тренировок'''
-#     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-#     workout_info_id: Mapped[int] = mapped_column(ForeignKey('workout_info.id'))
-#     created_at: Mapped[datetime] = mapped_column(server_default = func.now())  
-
-#     # Связь многие-к-одному с User
-#     user: Mapped['User'] = relationship(
-#         'User',
-#         back_populates='workouts'
-#     )
-
-#     # Связь многие-к-одному с WorkoutInfo
-#     workout_info: Mapped['WorkoutInfo'] = relationship(
-#         'WorkoutInfo',
-#         back_populates='workouts'
-#     )
-
-
-
+    # Связь многие-ко-многим с Users через UserWorkout
+    users: Mapped[list["User"]]= relationship(
+        back_populates="workouts",
+        secondary="user_workouts", # название таблицы, через которую связы
+        lazy="selectin",
+        viewonly=True
+    )

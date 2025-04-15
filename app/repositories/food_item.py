@@ -1,15 +1,15 @@
 
 
 from fastapi import HTTPException
-from app.models.food_items import FoodItems
+from app.models.food_items import FoodItem
 from app.repositories.base import BaseDAO
 from app.schemas.meals import FoodItemCreate
 
 
-class FoodItemDAO(BaseDAO[FoodItems]):
-    model = FoodItems
+class FoodItemDAO(BaseDAO[FoodItem]):
+    model = FoodItem
     
-    async def create_food_item(self, food_data: FoodItemCreate) -> FoodItems:
+    async def create_food_item(self, food_data: FoodItemCreate) -> FoodItem:
         """Создает новый продукт"""
         # Проверяем, не существует ли уже продукт с таким названием
         existing_item = await self.find_one_by_fields(name=food_data.name)

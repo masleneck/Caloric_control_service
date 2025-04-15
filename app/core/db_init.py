@@ -1,17 +1,18 @@
 import asyncio
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.models.test_questions import TestQuestion
+from app.models import TestQuestion, FoodItem
 from app.core.database import async_session_maker
+from loguru import logger
+from app.core.food_data import REAL_FOOD_ITEMS  
 
-async def add_test_questions():
-    '''Удаляет старые вопросы и добавляет новые'''
-    async with async_session_maker() as session:
+async def init_test_questions(session: AsyncSession) -> None:
+    '''Инициализация тестовых вопросов в базе данных'''
+    try:
         # Удаляем старые вопросы
         await session.execute(delete(TestQuestion))
         await session.commit()
-
+        logger.info("Старые тестовые вопросы удалены!")
         # Добавляем новые вопросы
         questions = [
             TestQuestion(
@@ -84,9 +85,54 @@ async def add_test_questions():
 
         session.add_all(questions)
         await session.commit()
-        print('Вопросы успешно обновлены в БД!')
+        logger.success("Тестовые вопросы успешно инициализированы")
+
+    except Exception as e:
+        logger.error(f"Ошибка при инициализации тестовых вопросов: {e}")
+        await session.rollback()
+        raise
+
+
+    
+
+async def init_food_items(session: AsyncSession) -> None:
+    try:
+        await session.execute(delete(FoodItem))
+        await session.commit()
+        
+        # Добавляем продукты партиями по 50 штук
+        for i in range(0, len(REAL_FOOD_ITEMS), 50):
+            batch = REAL_FOOD_ITEMS[i:i+50]
+            food_items = [
+                FoodItem(
+                    name=item["name"],
+                    calories=item["calories"],
+                    proteins=item["proteins"],
+                    fats=item["fats"],
+                    carbs=item["carbs"]
+                ) 
+                for item in batch
+            ]
+            session.add_all(food_items)
+            await session.commit()
+            # logger.info(f"Добавлено {i+50 if i+50 < len(REAL_FOOD_ITEMS) else len(REAL_FOOD_ITEMS)} продуктов")
+        
+        logger.success(f"Всего добавлено {len(REAL_FOOD_ITEMS)} продуктов")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при добавлении продуктов: {e}")
+        await session.rollback()
+        raise
+
+
+
+async def initialize_db_data():
+    """Инициализация начальных данных в БД"""
+    async with async_session_maker() as session:
+        await init_test_questions(session)
+        await init_food_items(session)
 
 if __name__ == '__main__':
-    asyncio.run(add_test_questions())
+    asyncio.run(initialize_db_data())
     
-# py -m db_init
+# py -m app.core.db_init

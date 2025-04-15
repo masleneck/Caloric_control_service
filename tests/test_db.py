@@ -2,7 +2,7 @@ import asyncio
 from faker import Faker
 from loguru import logger
 from app.core.database import Base, async_session_maker, check_db_connection, async_engine
-from app.models import User, Profile, TestResult, Meals, MealFoodItem, FoodItems
+from app.models import User, Profile, TestResult, Meal, MealFoodItem, FoodItem, Workout, UserWorkout
 from app.utils.auth_utils import get_password_hash
 
 fake = Faker('ru_RU')

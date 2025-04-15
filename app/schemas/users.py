@@ -91,7 +91,7 @@ class UpdateConfidentialInfoRequest(BaseModel):
     
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
+    hashed_password: str
 
 class ProfileCreate(BaseModel):
     user_id: int
