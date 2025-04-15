@@ -67,3 +67,13 @@ class FoodItemCreate(BaseModel):
     carbs: float = Field(..., gt=0)
     
     model_config = ConfigDict(from_attributes=True)
+
+class FoodItemResponse(BaseModel):
+    id: int
+    name: str
+    calories: float
+    proteins: float
+    fats: float
+    carbs: float
+
+    model_config = ConfigDict(from_attributes=True)

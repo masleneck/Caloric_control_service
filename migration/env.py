@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from app.core.database import Base, DATABASE_URL  # Импортируем URL базы из db.py
-from app.models import User, Profile, TestQuestion, TestResult, Meals, FoodItems, MealFoodItem
 
 # Указываем Alembic, какой URL использовать для подключения к базе данных
 config = context.config
@@ -17,6 +16,7 @@ config.set_main_option('sqlalchemy.url', DATABASE_URL)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+from app.models import User, Workout, UserWorkout, Profile, TestQuestion, TestResult, Meal, FoodItem, MealFoodItem 
 # Указываем Alembic, где искать информацию о моделях. 
 # Для этого присваиваем переменной target_metadata метаданные из Base, которые включают все модели
 # Эти шаги подготавливают файл env.py к работе с вашей базой данных. 

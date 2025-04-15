@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Index
+from sqlalchemy import Float, ForeignKey, Index, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -12,7 +12,17 @@ class MealFoodItem(Base):
         Index("idx_meal_food_composite", "meal_id", "food_item_id", unique=True),  # Композитный индекс
     )
 
-    meal_id: Mapped[int] = mapped_column(ForeignKey("meals.id", ondelete="CASCADE"), primary_key=True)
-    food_item_id: Mapped[int] = mapped_column(ForeignKey("food_items.id", ondelete="CASCADE"), primary_key=True)
-    quantity: Mapped[float]
+    meal_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("meals.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    food_item_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("food_items.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    quantity: Mapped[float] = mapped_column(
+        Float,
+    )
 

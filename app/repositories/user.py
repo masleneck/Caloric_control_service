@@ -18,7 +18,7 @@ class UserDAO(BaseDAO[User]):
             select(TestResult).where(TestResult.session_id == session_id)
         )
         if not test_result:
-            raise HTTPException(status_code=400, detail='Неверный session_id')
+            raise HTTPException(400, "Неверный session_id")
         # Проверяем email 
         if await self.find_one_by_fields(email=user_data.email):
             raise HTTPException(400, "Пользователь с таким email уже существует")
@@ -26,7 +26,7 @@ class UserDAO(BaseDAO[User]):
         user = await self.add(
             UserCreate(
                 email=user_data.email,
-                password=get_password_hash(user_data.password)
+                hashed_password=get_password_hash(user_data.password)
             )
         )
         # Создаём профиль
@@ -54,7 +54,7 @@ class UserDAO(BaseDAO[User]):
         """Аутентификация пользователя"""
         # Поиск пользователя
         user = await self.find_one_by_fields(email=user_data.email)
-        if not user or not verify_password(user_data.password, user.password):
+        if not user or not verify_password(user_data.password, user.hashed_password):
             raise HTTPException(401, "Неверный email или пароль")
         return user
 
@@ -66,11 +66,11 @@ class UserDAO(BaseDAO[User]):
     ) -> dict:
         """Обновление пароля"""
         # Валидация текущих данных
-        if user.email != update_data.current_email or not verify_password(update_data.current_password, user.password):
+        if user.email != update_data.current_email or not verify_password(update_data.current_password, user.hashed_password):
             raise HTTPException(400, "Неверный email или пароль")
         # Обновление пароля (только если передан новый пароль)
         if update_data.new_password:
-            user.password = get_password_hash(update_data.new_password)
+            user.hashed_password = get_password_hash(update_data.new_password)
         
         await self._session.commit()
         return {"message": "Данные обновлены"}

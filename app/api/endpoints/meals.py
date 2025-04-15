@@ -1,12 +1,13 @@
 from datetime import date
-from fastapi import APIRouter, Depends
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.users import User
 from app.repositories.food_item import FoodItemDAO
 from app.repositories.meal import MealDAO
 from app.dependencies.database_dep import get_async_session
 from app.dependencies.auth_dep import get_current_admin_user, get_current_user
-from app.schemas.meals import DailyMealsResponse, DailyNutritionResponse, FoodItemCreate, MealResponse, MealUpsertRequest
+from app.schemas.meals import DailyMealsResponse, DailyNutritionResponse, FoodItemCreate, FoodItemResponse, MealResponse, MealUpsertRequest
 
 router = APIRouter(
    prefix='/meals',
@@ -59,3 +60,13 @@ async def create_food_item(
     """Добавление нового продукта (только для администраторов)"""
     food_item = await FoodItemDAO(session).create_food_item(food_data)
     return {"message": "Продукт успешно добавлен"}
+
+
+@router.get("/search_item", response_model=List[FoodItemResponse])
+async def search_foods(
+    query: str = Query(..., min_length=2, max_length=50),
+    limit: int = Query(10, ge=1, le=50),
+    session: AsyncSession = Depends(get_async_session)
+):
+    '''Поиск продуктов питания'''
+    return await FoodItemDAO(session).search_foods(query=query, limit=limit)
