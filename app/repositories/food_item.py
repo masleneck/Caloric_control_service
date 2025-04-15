@@ -63,11 +63,15 @@ class FoodItemDAO(BaseDAO[FoodItem]):
     async def create_food_item(self, food_data: FoodItemCreate) -> FoodItem:
         """Создает новый продукт"""
         # Проверяем, не существует ли уже продукт с таким названием
-        existing_item = await self.find_one_by_fields(name=food_data.name)
+        capitalized_name = food_data.name.capitalize()
+        existing_item = await self.find_one_by_fields(name=capitalized_name)
         if existing_item:
             raise HTTPException(400,detail="Продукт с таким названием уже существует")
+        # Подготавливаем данные
+        food_data_dict = food_data.model_dump()
+        food_data_dict['name'] = capitalized_name
         
-        new_item = self.model(**food_data.model_dump())
-        self._session.add(new_item)
+        new_item = await self.add(FoodItemCreate(**food_data_dict))
+
         await self._session.commit()
         return new_item

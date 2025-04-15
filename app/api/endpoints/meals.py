@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.users import User
 from app.repositories.food_item import FoodItemDAO
@@ -51,6 +51,16 @@ async def get_daily_meals(
     return await MealDAO(session).get_daily_meals(user.id, target_date)
 
 
+@router.get("/search_item", response_model=List[FoodItemResponse], summary="Поиск схожих продуктов")
+async def search_foods(
+    query: str = Query(..., min_length=2, max_length=50),
+    limit: int = Query(10, ge=1, le=50),
+    session: AsyncSession = Depends(get_async_session)
+):
+    '''Поиск продуктов питания'''
+    return await FoodItemDAO(session).search_foods(query=query, limit=limit)
+
+
 @router.post("/food_items",summary="Добавить новый продукт(is_superuser)")
 async def create_food_item(
     food_data: FoodItemCreate,
@@ -61,12 +71,3 @@ async def create_food_item(
     food_item = await FoodItemDAO(session).create_food_item(food_data)
     return {"message": "Продукт успешно добавлен"}
 
-
-@router.get("/search_item", response_model=List[FoodItemResponse])
-async def search_foods(
-    query: str = Query(..., min_length=2, max_length=50),
-    limit: int = Query(10, ge=1, le=50),
-    session: AsyncSession = Depends(get_async_session)
-):
-    '''Поиск продуктов питания'''
-    return await FoodItemDAO(session).search_foods(query=query, limit=limit)
