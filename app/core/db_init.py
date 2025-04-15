@@ -12,7 +12,7 @@ async def init_test_questions(session: AsyncSession) -> None:
         # Удаляем старые вопросы
         await session.execute(delete(TestQuestion))
         await session.commit()
-        logger.info("Старые тестовые вопросы удалены!")
+        # logger.info("Старые тестовые вопросы удалены!")
         # Добавляем новые вопросы
         questions = [
             TestQuestion(
