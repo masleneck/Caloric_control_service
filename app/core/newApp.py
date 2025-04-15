@@ -5,12 +5,18 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from app.core.config import settings
-from app.api.routers import main_router 
+from app.api.routers import main_router
+from app.core.db_init import initialize_db_data 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
     '''Управление жизненным циклом приложения.'''
     logger.info('Инициализация приложения...')
+    try:
+        await initialize_db_data()
+    except Exception as e:
+        logger.error(f"Ошибка при инициализации данных: {e}")
+
     yield
     logger.info('Завершение работы приложения...')
 

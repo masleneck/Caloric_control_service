@@ -11,3 +11,4 @@ passlib[bcrypt]
 python-jose
 loguru
 faker
+black

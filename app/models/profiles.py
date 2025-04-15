@@ -1,8 +1,7 @@
 from datetime import date
-from sqlalchemy import ForeignKey, Date, text
+from sqlalchemy import Float, ForeignKey, Date, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
-
 from app.core.database import Base
 
 class Gender(enum.Enum):
@@ -30,17 +29,40 @@ class ActivityLevel(enum.Enum):
 class Profile(Base):
     """Хранит информацию пользователя"""
     __tablename__ = "profile"
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
-    name: Mapped[str]
-    last_name: Mapped[str | None]
-    gender: Mapped[Gender] = mapped_column(default = Gender.NOT_STATED, server_default = text("'NOT_STATED'"))
-    weight: Mapped[float]
-    height: Mapped[int]
-    goal: Mapped[CurrentGoal] = mapped_column(default = CurrentGoal.NOT_STATED, server_default = text("'NOT_STATED'"))
-    birthday_date: Mapped[date | None] = mapped_column(Date)
-    activity_level: Mapped[ActivityLevel] = mapped_column(default = ActivityLevel.NOT_STATED, server_default = text("'NOT_STATED'"))
 
-    
+    name: Mapped[str] = mapped_column(
+        String(50),
+    )
+    last_name: Mapped[str | None] = mapped_column(
+        String(50),
+    )
+    gender: Mapped[Gender] = mapped_column(
+        default = Gender.NOT_STATED,
+        server_default = text("'NOT_STATED'"),
+    )
+    weight: Mapped[float] = mapped_column(
+        Float,
+    )
+    height: Mapped[int] = mapped_column(
+        Integer,
+    )
+    goal: Mapped[CurrentGoal] = mapped_column(
+        default = CurrentGoal.NOT_STATED, 
+        server_default = text("'NOT_STATED'")
+    )
+    birthday_date: Mapped[date | None] = mapped_column(
+        Date,
+    )
+    activity_level: Mapped[ActivityLevel] = mapped_column(
+        default = ActivityLevel.NOT_STATED,
+        server_default = text("'NOT_STATED'"),
+    )
+    user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True
+    )
+
     # Обратная связь один-к-одному с User
     user: Mapped["User"] = relationship(
         back_populates="profile",
