@@ -20,6 +20,24 @@
   border-radius: 50px;
 }
 
+.sidebar {
+  all: unset;
+  width: 60px;
+  background-color: #fef4dc;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #c3e1cc;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar:hover {
+  width: 220px;
+  padding: 20px;
+}
+
 .container {
   position: relative;
   width: 1200px;

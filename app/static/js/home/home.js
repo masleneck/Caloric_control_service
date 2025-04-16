@@ -15,11 +15,3 @@ import { setupLogout } from './logout.js';
   document.getElementById("nav-options").addEventListener("click", () => {
       alert("Options clicked");
   });
-
-  document.getElementById("nav-meals").addEventListener("click", () => {
-      alert("Meals clicked");
-  });
-
-  document.getElementById("nav-training").addEventListener("click", () => {
-      alert("Training clicked");
-  });
