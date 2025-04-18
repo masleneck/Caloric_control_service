@@ -99,10 +99,6 @@
 .calendar .month .next {
   cursor: pointer;
 }
-.calendar .month .prev:hover,
-.calendar .month .next:hover {
-  color: var(--primary-clr);
-}
 .calendar .weekdays {
   width: 100%;
   height: 100px;
@@ -261,27 +257,28 @@
 }
 
 .right .today-date {
-  width: 100%;
-  height: 50px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
-  padding-left: 70px;
-  margin-top: 50px;
-  margin-bottom: 20px;
-  text-transform: capitalize;
+  align-items: center;
+  padding: 10px 30px;
+  margin: 0 auto 20px auto;
+  width: 80%;
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-family: "Poppins", sans-serif;
 }
+
 .right .today-date .event-day {
-  font-size: 2rem;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 600;
+  color: #b85143;
 }
 .right .today-date .event-date {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #fffaf1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
 }
 .events {
   width: 100%;
@@ -295,41 +292,72 @@
 }
 .events .event {
   position: relative;
-  width: 95%;
-  min-height: 70px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 5px;
-  padding: 0 20px;
-  padding-left: 50px;
-  color: #fffaf1;
-  background: linear-gradient(90deg, #3f4458, transparent);
-  cursor: pointer;
-}
-/* even event */
-.events .event:nth-child(even) {
-  background: transparent;
+  background: #fffaf1;
+  border: 2px solid #a6bdad;
+  border-radius: 12px;
+  margin: 10px;
+  padding: 15px 20px 50px 20px;
+  color: #333;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 .events .event:hover {
-  background: linear-gradient(90deg, var(--primary-clr), transparent);
+  border-color: #b85143;
 }
 .events .event .title {
   display: flex;
   align-items: center;
-  pointer-events: none;
+  font-weight: bold;
+  font-size: 16px;
+  gap: 10px;
+}
+.events .event .title i {
+  color: #b85143;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: none !important;
+}
+.event:hover .title i {
+  color: #b85143 !important;
+}
+.events .event .products {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.events .event .actions {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.events .event .actions button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background-color: #b85143;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.events .event .actions button:hover {
+  background-color: #933b2e;
 }
 .events .event .title .event-title {
   font-size: 1rem;
   font-weight: 400;
   margin-left: 20px;
 }
-.events .event i {
-  color: var(--primary-clr);
-  font-size: 0.5rem;
-}
-.events .event:hover i {
-  color: #fffaf1;
+.events .event:hover .actions i {
+  color: white;
 }
 .events .event .event-time {
   font-size: 0.8rem;
@@ -343,7 +371,6 @@
 }
 /* add tick in event after */
 .events .event::after {
-  content: "✓";
   position: absolute;
   top: 50%;
   right: 0;
@@ -392,21 +419,7 @@
   font-weight: 500;
   color: #fffaf1;
 }
-.add-event-wrapper {
-  position: absolute;
-  bottom: 100px;
-  left: 50%;
-  width: 90%;
-  max-height: 0;
-  overflow: hidden;
-  border-radius: 5px;
-  background-color: #fffaf1;
-  transform: translateX(-50%);
-  transition: max-height 0.5s ease;
-}
-.add-event-wrapper.active {
-  max-height: 300px;
-}
+
 .add-event-header {
   width: 100%;
   height: 50px;
@@ -525,9 +538,6 @@
   }
   .events {
     padding-bottom: 340px;
-  }
-  .add-event-wrapper {
-    bottom: 100px;
   }
 }
 @media screen and (max-width: 500px) {

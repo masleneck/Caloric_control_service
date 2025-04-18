@@ -62,6 +62,7 @@ REAL_FOOD_ITEMS = [
     {"name": "Цыпленок", "calories": 170, "proteins": 18, "fats": 11, "carbs": 0},
     {"name": "Свиная печень", "calories": 130, "proteins": 21, "fats": 4.0, "carbs": 3.0},
     {"name": "Говяжье сердце", "calories": 112, "proteins": 17, "fats": 5.0, "carbs": 0},
+    {"name": "Яйцо куриное", "calories": 153, "proteins": 12.5, "fats": 9.5, "carbs": 0.7},
 
     # Рыба и морепродукты 
     {"name": "Семга слабосоленая", "calories": 202, "proteins": 22, "fats": 12, "carbs": 0},

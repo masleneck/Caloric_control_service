@@ -1,10 +1,11 @@
 import asyncio
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models import TestQuestion, FoodItem
+from app.models import TestQuestion, FoodItem, Workout
 from app.core.database import async_session_maker
 from loguru import logger
 from app.core.food_data import REAL_FOOD_ITEMS  
+from app.core.workout_data import REAL_WORKOUTS
 
 async def init_test_questions(session: AsyncSession) -> None:
     '''Инициализация тестовых вопросов в базе данных'''
@@ -94,7 +95,6 @@ async def init_test_questions(session: AsyncSession) -> None:
 
 
     
-
 async def init_food_items(session: AsyncSession) -> None:
     try:
         await session.execute(delete(FoodItem))
@@ -126,11 +126,39 @@ async def init_food_items(session: AsyncSession) -> None:
 
 
 
+async def init_workouts(session: AsyncSession) -> None:
+    try:
+        await session.execute(delete(Workout))
+        await session.commit()
+        
+        # Добавляем тренировки партиями по 50 штук
+        for i in range(0, len(REAL_WORKOUTS), 50):
+            batch = REAL_WORKOUTS[i:i+50]
+            workouts = [
+                Workout(
+                    name=item["name"],
+                    description=item["description"],
+                ) 
+                for item in batch
+            ]
+            session.add_all(workouts)
+            await session.commit()
+            # logger.info(f"Добавлено {i+50 if i+50 < len(REAL_WORKOUTS) else len(REAL_WORKOUTS)} тренировок")
+        
+        logger.success(f"Всего добавлено {len(REAL_WORKOUTS)} тренировок")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при добавлении тренировок: {e}")
+        await session.rollback()
+        raise
+
+
 async def initialize_db_data():
     """Инициализация начальных данных в БД"""
     async with async_session_maker() as session:
         await init_test_questions(session)
         await init_food_items(session)
+        await init_workouts(session)
 
 if __name__ == '__main__':
     asyncio.run(initialize_db_data())
