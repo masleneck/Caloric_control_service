@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import date
 from typing import List
 from sqlalchemy import and_, func, or_, select, delete
