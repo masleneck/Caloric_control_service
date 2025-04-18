@@ -61,6 +61,21 @@ async def search_foods(
     return await FoodItemDAO(session).search_foods(query=query, limit=limit)
 
 
+@router.delete("/delete_meal", summary="Удалить прием пищи по типу и дате")
+async def delete_meal(
+    mealtime: str,
+    meal_date: date,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    await MealDAO(session).delete_meal_by_type_and_date(
+        mealtime=mealtime,
+        meal_date=meal_date,
+        user_id=user.id
+    )
+    return {"message": "Прием пищи успешно удален!"}
+
+
 @router.post("/food_items",summary="Добавить новый продукт(is_superuser)")
 async def create_food_item(
     food_data: FoodItemCreate,

@@ -9,7 +9,8 @@ class FoodItem(Base):
 
     name: Mapped[str] = mapped_column(
         String(100),
-        unique=True
+        unique=True,
+        index=True,
     )
     calories: Mapped[float] = mapped_column(
         Float,

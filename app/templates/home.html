@@ -6,6 +6,7 @@
     <title>Домашняя страница</title>
     <link rel="stylesheet" href="/static/css/styles.css" />
     <link rel="stylesheet" href="/static/css/calendar.css" />
+    <link rel="stylesheet" href="/static/css/meal.css" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
     <link
       rel="stylesheet"
@@ -16,92 +17,106 @@
     />
 </head>
 <body>
-    <div class="dashboard">
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <p class="sidebar-title">User</p>
-                <p class="sidebar-title">Status</p>
-            </div>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <p class="sidebar-title">User</p>
+        <p class="sidebar-title">Status</p>
+      </div>
 
-            <nav class="sidebar-nav">
-                <button class="nav-btn" id="nav-home"><i class="ri-home-line"></i> <span class="label">Home</span></button>
-                <button class="nav-btn" id="nav-profile"><i class="ri-user-line"></i> <span class="label">Profile</span></button>
-                <button class="nav-btn" id="nav-options"><i class="ri-settings-3-line"></i> <span class="label">Options</span></button>
-                <button class="nav-btn" id="nav-meals"><i class="ri-restaurant-line"></i> <span class="label">Meals</span></button>
-                <button class="nav-btn" id="nav-training"><i class="ri-run-line"></i> <span class="label">Training</span></button>
-              </nav>
-              
-              <div class="sidebar-bottom">
-                <button class="nav-btn logout-btn" id="logoutBtn">
-                  <i class="ri-logout-box-r-line"></i> <span class="label">Logout</span>
-                </button>
-              </div>              
-        </aside>
+      <nav class="sidebar-nav">
+        <button class="nav-btn" id="nav-home"><i class="ri-home-line"></i> <span class="label">Home</span></button>
+        <button class="nav-btn" id="nav-profile"><i class="ri-user-line"></i> <span class="label">Profile</span></button>
+        <button class="nav-btn" id="nav-options"><i class="ri-settings-3-line"></i> <span class="label">Options</span></button>
+      </nav>
+      
+      <div class="sidebar-bottom">
+        <button class="nav-btn logout-btn" id="logoutBtn">
+          <i class="ri-logout-box-r-line"></i> <span class="label">Logout</span>
+        </button>
+      </div>              
+    </aside>
 
-        <main class="main-content">
-          <div class="container">
-            <div class="left">
-              <div class="calendar">
-                <div class="month">
-                  <i class="fas fa-angle-left prev"></i>
-                  <div class="date">december 2015</div>
-                  <i class="fas fa-angle-right next"></i>
-                </div>
-                <div class="weekdays">
-                  <div>Sun</div>
-                  <div>Mon</div>
-                  <div>Tue</div>
-                  <div>Wed</div>
-                  <div>Thu</div>
-                  <div>Fri</div>
-                  <div>Sat</div>
-                </div>
-                <div class="days"></div>
-                <div class="goto-today">
-                  <div class="goto">
-                    <input type="text" placeholder="mm/yyyy" class="date-input" />
-                    <button class="goto-btn">Go</button>
-                  </div>
-                  <button class="today-btn">Today</button>
-                </div>
-              </div>
+    <main class="main-content">
+      <div class="container">
+        <div class="left">
+          <div class="calendar">
+            <div class="month">
+              <button class="nav-arrow prev"><i class="fas fa-angle-left"></i></button>
+              <div class="date">december 2015</div>
+              <button class="nav-arrow next"><i class="fas fa-angle-right"></i></button>
             </div>
-            <div class="right">
-              <div class="today-date">
-                <div class="event-day">wed</div>
-                <div class="event-date">12th december 2022</div>
-              </div>
-              <div class="events"></div>
-              <div class="add-event-wrapper">
-                <div class="add-event-header">
-                  <div class="title">Add Event</div>
-                  <i class="fas fa-times close"></i>
-                </div>
-                <div class="add-event-body">
-                  <div class="add-event-input">
-                    <input type="text" placeholder="Event Name" class="event-name" />
-                  </div>
-                  <div class="add-event-input">
-                    <input type="text" placeholder="Event Time From" class="event-time-from" />
-                  </div>
-                  <div class="add-event-input">
-                    <input type="text" placeholder="Event Time To" class="event-time-to" />
-                  </div>
-                </div>
-                <div class="add-event-footer">
-                  <button class="add-event-btn">Add Event</button>
-                </div>
-              </div>
+            <div class="weekdays">
+              <div>Sun</div>
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
             </div>
-            <button class="add-event">
-              <i class="fas fa-plus"></i>
-            </button>
+            <div class="days"></div>
+            <div class="goto-today">
+              <div class="goto">
+                <input type="text" placeholder="mm/yyyy" class="date-input" />
+                <button class="goto-btn">Go</button>
+              </div>
+              <button class="today-btn">Today</button>
+            </div>
           </div>
-        </main>
-                
-    </div>
-    <script src="/static/js/sidebar.js"></script>
-    <script type="module" src="/static/js/home/home.js"></script>
-    <script type="module" src="/static/js/home/calendar.js"></script>
+        </div>
+        <div class="right">
+          <div class="today-date">
+            <div class="event-day">wed</div>
+            <div class="event-date">12th december 2022</div>
+          </div>
+          <div class="nutrition-info">
+            <p>Калории: <span id="calories">–</span></p>
+            <p>Белки: <span id="proteins">–</span> г</p>
+            <p>Жиры: <span id="fats">–</span> г</p>
+            <p>Углеводы: <span id="carbs">–</span> г</p>
+          </div>
+          <div class="events"></div>
+
+          <!-- Модалка теперь для добавления приёма пищи -->
+          <div class="add-event-wrapper">
+            <div class="add-event-header">
+              <div class="title">Добавить прием пищи</div>
+              <i class="fas fa-times close"></i>
+            </div>
+            <div class="add-event-body">
+              <div class="add-event-input">
+                <label for="mealType">Тип приёма пищи:</label>
+                <select id="mealType">
+                  <option value="BREAKFAST">Завтрак</option>
+                  <option value="LUNCH">Обед</option>
+                  <option value="DINNER">Ужин</option>
+                  <option value="SNACK">Перекус</option>
+                </select>
+              </div>
+              <div class="add-event-input">
+                <label for="productSearch">Поиск продукта:</label>
+                <input type="text" id="productSearch" placeholder="Начните ввод..." />
+                <ul id="productResults" class="suggestions"></ul>
+              </div>              
+              <div id="selectedProducts" class="add-event-input"></div>
+            </div>
+            <div class="add-event-footer">
+              <button class="add-event-btn">GO</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="add-event">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/sidebar.js"></script>
+  <script type="module" src="/static/js/home/home.js"></script>
+  <script type="module" src="/static/js/home/meal.js"></script>
+  <script type="module" src="/static/js/home/calendar.js"></script>
 </body>
 </html>

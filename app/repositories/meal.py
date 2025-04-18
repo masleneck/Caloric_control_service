@@ -140,3 +140,20 @@ class MealDAO(BaseDAO[Meal]):
             }
         )
     
+    async def delete_meal_by_type_and_date(
+        self, 
+        mealtime: str, 
+        meal_date: date, 
+        user_id: int,
+    ) -> None:
+        # Находим прием пищи
+        meal = await self.find_one_by_fields(
+            mealtime=mealtime,
+            meal_date=meal_date,
+            user_id=user_id
+        )
+        if not meal:
+            raise HTTPException(404,detail=f"Прием пищи не найден!")
+        
+        await self.delete_by_id(meal.id)
+        await self._session.commit()

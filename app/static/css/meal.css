@@ -1,0 +1,260 @@
+.add-event-wrapper,
+.add-event-wrapper label,
+.add-event-wrapper .title,
+.add-event-wrapper select,
+.add-event-wrapper input,
+.add-event-wrapper .selected-product span {
+  color: #333;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+}
+
+.add-event-wrapper {
+  width: 420px;
+  max-height: 0;
+  opacity: 0;
+  background-color: #fefaf4;
+  border-radius: 8px;
+  position: absolute;
+  bottom: 70px;
+  right: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  flex-direction: column;
+  z-index: 999;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.add-event-wrapper.active {
+  max-height: 1000px;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.add-event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background-color: #fefaf4;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+
+.add-event-header .title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.add-event-header .close {
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.add-event-header .close:hover {
+  color: #000;
+}
+
+.add-event-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 20px 0;
+}
+
+.add-event-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.add-event-input label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.add-event-input input,
+.add-event-input select {
+  flex: 2;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.suggestions,
+#productResults {
+  position: absolute;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  top: 100%;
+  left: 0;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+  width: 100%;
+  z-index: 1000;
+  color: #333;
+  font-size: 14px;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.08);
+  margin-bottom: 4px;
+}
+
+.suggestions li,
+#productResults li {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestions li:last-child,
+#productResults li:last-child {
+  border-bottom: none;
+}
+
+.suggestions li:hover,
+#productResults li:hover {
+  background-color: #f1f1f1;
+}
+
+#selectedProducts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selected-product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fcfcfc;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 10px;
+  gap: 10px;
+}
+
+.selected-product input[type="number"] {
+  width: 70px;
+  padding: 4px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.add-event-footer {
+  padding: 14px 20px 16px;
+  background-color: #fefaf4;
+  display: flex;
+  justify-content: center;
+}
+
+.add-event-btn {
+  background-color: #b54c3b;
+  color: white;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-event-btn:hover {
+  background-color: #933b2e;
+}
+
+.nutrition-info {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.nutrition-info p {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+  background: #fffaf1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 2px solid #a6bdad;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.event {
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease;
+  position: relative;
+}
+
+.event:hover {
+  border-color: #b85143;
+}
+
+.event .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #b85143;
+  margin-bottom: 10px;
+}
+
+.event .title i {
+  font-size: 20px;
+  color: #b85143;
+}
+
+.event .products {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.event .actions {
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.event .actions button {
+  background-color: #b85143;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s;
+}
+
+.event .actions button:hover {
+  background-color: #a04030;
+  transform: scale(1.05);
+}
+
