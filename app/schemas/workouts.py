@@ -18,10 +18,12 @@ class WorkoutUpsertRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class WorkoutItemResponse(BaseModel):
-    name: str
-    duration: int
-    calories: float
+    name: str | None
+    duration: int | None
+    calories: float | None
+    description: str | None = None  # Добавляем описание тренировки
 
+    model_config = ConfigDict(from_attributes=True)
 class WorkoutResponse(BaseModel):
     workout_date: date
     workout_items: List[WorkoutItemResponse]
@@ -44,4 +46,5 @@ class DailyWorkoutsSummaryResponse(BaseModel):
 
 class DailyWorkoutsResponse(BaseModel):
     date: date
-    workouts: List[WorkoutItemResponse]  
+    workouts: List[WorkoutItemResponse]   
+    model_config = ConfigDict(from_attributes=True)

@@ -49,3 +49,18 @@ async def get_daily_workouts(
 ) -> DailyWorkoutsResponse:
     return await WorkoutDAO(session).get_daily_workouts(user.id, target_date)
 
+
+
+@router.delete("/delete_workout", summary="Удалить тренировку по названию и дате")
+async def delete_workout(
+    workout_name: str,
+    workout_date: date,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    await WorkoutDAO(session).delete_workout_by_name_and_date(
+        workout_name=workout_name,
+        workout_date=workout_date,
+        user_id=user.id
+    )
+    return {"message": f"Тренировка '{workout_name}' за {workout_date} успешно удалена!"}

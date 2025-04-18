@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import and_, func, or_, select, delete
 from fastapi import HTTPException
 from sqlalchemy.orm import selectinload
-
+from loguru import logger
 from app.models import Workout, UserWorkout
 from app.repositories.base import BaseDAO
 from app.schemas.workouts import DailyWorkoutsResponse, DailyWorkoutsSummaryResponse, WorkoutItemResponse, WorkoutUpsertRequest, WorkoutSearchItemResponse
@@ -169,7 +169,8 @@ class WorkoutDAO(BaseDAO[Workout]):
             select(Workout.name, 
                 UserWorkout.duration_minutes, 
                 UserWorkout.calories_burned,
-                Workout.description)
+                Workout.description,
+            )
             .join(Workout, UserWorkout.workout_id == Workout.id)
             .where(
                 and_(
@@ -181,17 +182,57 @@ class WorkoutDAO(BaseDAO[Workout]):
         )
 
         result = await self._session.execute(stmt)
-        workouts = [
-            WorkoutItemResponse(
-                name=name,
-                duration_minutes=duration,
-                calories_burned=calories,
-                description=description
+        rows = result.all()
+        if not rows:
+            return DailyWorkoutsResponse(date=target_date, workouts=[])
+        workouts = []
+        for row in rows:
+            # Проверяем, что все необходимые поля присутствуют
+            name, duration_minutes, calories_burned, description = row
+            if duration_minutes is None or calories_burned is None:
+                logger.warning(
+                    f"Пропущены данные для тренировки {name}: "
+                    f"duration_minutes={duration_minutes}, calories_burned={calories_burned}"
+                )
+                continue  # Пропускаем некорректные записи
+
+            workouts.append(
+                WorkoutItemResponse(
+                    name=name,
+                    duration=duration_minutes,
+                    calories=calories_burned,
+                    description=description
+                )
             )
-            for name, duration, calories, description in result.all()
-        ]
 
         return DailyWorkoutsResponse(
             date=target_date,
             workouts=workouts
         )
+    
+
+    async def delete_workout_by_name_and_date(
+        self,
+        workout_name: str,
+        workout_date: date,
+        user_id: int,
+    ) -> None:
+        """Удаляет конкретную тренировку пользователя по названию и дате"""
+        # Проверяем существование тренировки по имени
+        stmt = select(Workout).where(func.lower(Workout.name) == func.lower(workout_name))
+        result = await self._session.execute(stmt)
+        workout = result.scalar_one_or_none()
+
+        if not workout:
+            raise HTTPException(404, detail=f"Тренировка с названием '{workout_name}' не найдена")
+
+        # Удаляем запись из UserWorkout
+        stmt = delete(UserWorkout).where(
+            and_(
+                UserWorkout.user_id == user_id,
+                UserWorkout.workout_date == workout_date,
+                UserWorkout.workout_id == workout.id
+            )
+        )
+        result = await self._session.execute(stmt)
+        await self._session.commit()
