@@ -44,6 +44,10 @@ class DailyNutritionResponse(BaseModel):
     total_fats: float = 0.0
     total_carbs: float = 0.0
     
+    @field_validator('total_calories', 'total_proteins', 'total_fats', 'total_carbs', mode='after')
+    def round_values(cls, v: float) -> float:
+        return round(v, 2)
+    
     model_config = ConfigDict(from_attributes=True)
 
 

@@ -19,18 +19,18 @@ class MealDAO(BaseDAO[Meal]):
         meal_data: MealUpsertRequest,
     ) -> Meal:
         """Метод для создания/обновления приема пищи с продуктами"""
-        capitalized_names = [name.capitalize() for name in meal_data.food_names]
-        if len(capitalized_names) != len(meal_data.food_quantities):
+        food_names = meal_data.food_names
+        if len(food_names) != len(meal_data.food_quantities):
             raise HTTPException(400,detail="Количество продуктов и граммовок не совпадает")
         # Проверяем существование продуктов
-        stmt = select(FoodItem).where(FoodItem.name.in_(capitalized_names))
+        stmt = select(FoodItem).where(FoodItem.name.in_(food_names))
         result = await self._session.execute(stmt)
         db_food_items = result.scalars().all()
 
-        if len(db_food_items) != len(capitalized_names):
+        if len(db_food_items) != len(food_names):
             found_names = {item.name for item in db_food_items}
             not_found = [
-                name for name in capitalized_names 
+                name for name in food_names 
                 if name not in found_names
             ]
             raise HTTPException(404,detail=f"Продукты не найдены: {', '.join(not_found)}")
@@ -47,7 +47,7 @@ class MealDAO(BaseDAO[Meal]):
                 food_item_id=name_to_item[name].id,
                 quantity=meal_data.food_quantities[i]
             )
-            for i, name in enumerate(capitalized_names)
+            for i, name in enumerate(food_names)
         ]
         # Создаем или обновляем прием пищи
         if existing_meal:
