@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Домашняя страница</title>
-    <link rel="stylesheet" href="/static/css/styles.css" />
-    <link rel="stylesheet" href="/static/css/calendar.css" />
-    <link rel="stylesheet" href="/static/css/meal.css" />
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-      integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Домашняя страница</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="stylesheet" href="/static/css/calendar.css" />
+  <link rel="stylesheet" href="/static/css/meal.css" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 </head>
 <body>
   <div class="dashboard">
@@ -38,6 +37,10 @@
     </aside>
 
     <main class="main-content">
+      <div class="calendar-toggle top-toggle">
+        <button class="toggle-btn active" id="show-meals">Питание</button>
+        <button class="toggle-btn" id="show-workouts">Тренировки</button>
+      </div>
       <div class="container">
         <div class="left">
           <div class="calendar">
@@ -65,25 +68,33 @@
             </div>
           </div>
         </div>
+
         <div class="right">
           <div class="today-date">
             <div class="event-day">wed</div>
             <div class="event-date">12th december 2022</div>
           </div>
+
           <div class="nutrition-info">
             <p>Калории: <span id="calories">–</span></p>
             <p>Белки: <span id="proteins">–</span> г</p>
             <p>Жиры: <span id="fats">–</span> г</p>
             <p>Углеводы: <span id="carbs">–</span> г</p>
           </div>
+
+          <div class="workout-summary" style="display: none;">
+            <p>Длительность: <span id="totalDuration">–</span> мин</p>
+            <p>Потрачено калорий: <span id="totalWorkoutCalories">–</span> ккал</p>
+          </div>
+
           <div class="events"></div>
 
-          <!-- Модалка теперь для добавления приёма пищи -->
           <div class="add-event-wrapper">
             <div class="add-event-header">
-              <div class="title">Добавить прием пищи</div>
+              <div class="title">Добавить событие</div>
               <i class="fas fa-times close"></i>
             </div>
+
             <div class="add-event-body">
               <div class="add-event-input">
                 <label for="mealType">Тип приёма пищи:</label>
@@ -101,6 +112,23 @@
               </div>              
               <div id="selectedProducts" class="add-event-input"></div>
             </div>
+
+            <div class="add-workout-body" style="display: none; flex-direction: column; gap: 10px; padding: 20px;">
+              <div class="add-event-input">
+                <label for="workoutName">Название тренировки:</label>
+                <input type="text" id="workoutName" placeholder="Начните ввод..." />
+                <ul id="workoutSuggestions" class="suggestions"></ul>
+              </div>
+              <div class="add-event-input">
+                <label for="workoutDuration">Длительность (мин):</label>
+                <input type="number" id="workoutDuration" min="1" />
+              </div>
+              <div class="add-event-input">
+                <label for="workoutCalories">Потрачено калорий:</label>
+                <input type="number" id="workoutCalories" min="0" />
+              </div>
+            </div>
+
             <div class="add-event-footer">
               <button class="add-event-btn">GO</button>
             </div>
@@ -117,6 +145,7 @@
   <script src="/static/js/sidebar.js"></script>
   <script type="module" src="/static/js/home/home.js"></script>
   <script type="module" src="/static/js/home/meal.js"></script>
+  <script type="module" src="/static/js/home/workout.js"></script>
   <script type="module" src="/static/js/home/calendar.js"></script>
 </body>
 </html>

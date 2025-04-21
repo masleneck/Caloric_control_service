@@ -579,3 +579,109 @@
 .credits a:hover {
   text-decoration: underline;
 }
+
+.calendar-toggle.top-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+.toggle-btn {
+  padding: 10px 18px;
+  font-weight: 600;
+  background-color: #ccc;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-btn.active {
+  background-color: #b85143;
+  color: white;
+}
+
+.calendar.meal-mode {
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad;
+}
+
+.calendar.workout-mode {
+  background-color: #a6bdad;
+  border: 2px solid #fffaf1;
+}
+
+.calendar.workout-mode .days .day:not(.prev-date, .next-date):hover {
+  background-color: #fffaf1;
+  color: #333;
+}
+
+.calendar.workout-mode .days .active {
+  background-color: #fffaf1;
+  color: #333;
+}
+
+.calendar.workout-mode .days .active::before {
+  box-shadow: 0 0 10px 2px #fffaf1;
+}
+
+.calendar.workout-mode .days .event::after {
+  background-color: #fffaf1;
+}
+
+.calendar.workout-mode .goto-today button:hover,
+.calendar.workout-mode .goto-today .goto button:hover {
+  background-color: #fffaf1;
+  color: #a6bdad;
+  border-color: #fffaf1;
+}
+
+.calendar.workout-mode .month {
+  color: #fffaf1;
+}
+.container.workout-mode {
+  background-color: #fffaf1;
+}
+
+.container.workout-mode .calendar {
+  background-color: #a6bdad;
+  border: 2px solid #fffaf1;
+}
+
+.calendar.workout-mode .goto input {
+  background-color: #a6bdad;
+  color: #fffaf1;
+}
+
+.calendar.workout-mode .goto input::placeholder {
+  color: #fffaf1;
+  opacity: 0.8;
+}
+
+.container.workout-mode .events .event {
+  background-color: #a6bdad;
+  border: 2px solid #fffaf1;
+  color: #fffaf1;
+}
+
+.container.workout-mode .events .event .actions button:hover {
+  background-color: #f5f5f5;
+  color: #a6bdad;
+}
+
+.container.workout-mode .today-date {
+  background-color: #a6bdad;
+  border: 2px solid #fffaf1;
+}
+
+.container.workout-mode .today-date .event-date {
+  color: #fffaf1;
+}
+
+.calendar.workout-mode .nav-arrow {
+  background: #fffaf1;
+  color: #b85143;
+  border: 2px solid #b85143;
+}
