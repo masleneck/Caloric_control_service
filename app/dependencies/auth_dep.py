@@ -56,7 +56,8 @@ async def get_current_user(
         token: str = Depends(get_access_token),
         session: AsyncSession = Depends(get_async_session)
 ) -> User:
-    '''Проверяем access_token и возвращаем пользователя. Если access_token истек, используем refresh_token для обновления токенов.'''
+    '''Проверяем access_token и возвращаем пользователя. Если access_token истек, используем refresh_token для обновления токенов.
+    не безопасно ибо шлем рефрештокены в каждом запросе!'''
     try:
         # Декодируем токен
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])

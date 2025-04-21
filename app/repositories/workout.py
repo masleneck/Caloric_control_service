@@ -1,10 +1,11 @@
-from datetime import date
+from datetime import date, timedelta
 from typing import List
 from sqlalchemy import and_, func, or_, select, delete
 from fastapi import HTTPException
 from sqlalchemy.orm import selectinload
 from loguru import logger
 from app.models import Workout, UserWorkout
+from app.models.profiles import ActivityLevel, Profile
 from app.repositories.base import BaseDAO
 from app.schemas.workouts import DailyWorkoutsResponse, DailyWorkoutsSummaryResponse, WorkoutItemResponse, WorkoutUpsertRequest, WorkoutSearchItemResponse
 
@@ -23,14 +24,14 @@ class WorkoutDAO(BaseDAO[Workout]):
             raise HTTPException(400,detail="Количество тренировок, продолжительности и калорий должно совпадать")
 
         # Проверяем существование тренировок в базе
-        capitalized_names = [name.capitalize() for name in workout_data.workout_names]
-        stmt = select(Workout).where(Workout.name.in_(capitalized_names))
+        workout_names = [name for name in workout_data.workout_names]
+        stmt = select(Workout).where(Workout.name.in_(workout_names))
         result = await self._session.execute(stmt)
         db_workouts = result.scalars().all()
 
-        if len(db_workouts) != len(capitalized_names):
+        if len(db_workouts) != len(workout_names):
             found_names = {workout.name for workout in db_workouts}
-            not_found = [name for name in capitalized_names if name not in found_names]
+            not_found = [name for name in workout_names if name not in found_names]
             raise HTTPException(404,detail=f"Тренировки не найдены: {', '.join(not_found)}")
 
         # Получаем существующие тренировки пользователя на эту дату
@@ -46,7 +47,7 @@ class WorkoutDAO(BaseDAO[Workout]):
         workout_mapping = {w.name: w for w in db_workouts}
         result_workouts = []
 
-        for i, workout_name in enumerate(capitalized_names):
+        for i, workout_name in enumerate(workout_names):
             workout = workout_mapping[workout_name]
             
             if workout.id in existing_mapping:
@@ -236,3 +237,45 @@ class WorkoutDAO(BaseDAO[Workout]):
         )
         result = await self._session.execute(stmt)
         await self._session.commit()
+
+
+    async def update_and_get_activity_level(self, user_id: int) -> ActivityLevel:
+        """Обновляет и возвращает уровень активности на основе тренировок за текущую неделю."""
+        # Определение текущей недели
+        today = date.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        # Вычисление суммарных минут тренировок
+        stmt = select(
+            func.coalesce(func.sum(UserWorkout.duration_minutes), 0).label("total_duration")
+        ).where(
+            and_(
+                UserWorkout.user_id == user_id,
+                UserWorkout.workout_date >= start_of_week,
+                UserWorkout.workout_date <= end_of_week
+            )
+        )
+        result = await self._session.execute(stmt)
+        total_duration = result.scalar_one()
+        # Определение нового уровня активности
+        if total_duration < 90:
+            new_level = ActivityLevel.SEDENTARY
+        elif total_duration < 180:
+            new_level = ActivityLevel.LIGHT
+        elif total_duration < 300:
+            new_level = ActivityLevel.MODERATE
+        elif total_duration < 480:
+            new_level = ActivityLevel.ACTIVE
+        else:
+            new_level = ActivityLevel.ATHLETE
+        # Обновление или создание профиля
+        profile_stmt = select(Profile).where(Profile.user_id == user_id)
+        profile_result = await self._session.execute(profile_stmt)
+        profile = profile_result.scalar_one_or_none()
+
+        profile.activity_level = new_level
+
+        await self._session.commit()
+
+        return new_level
+

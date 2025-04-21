@@ -5,7 +5,8 @@ from app.dependencies.database_dep import get_async_session
 from app.dependencies.auth_dep import get_current_user
 from app.repositories.profile import ProfileDAO
 from app.models.users import User
-from app.schemas.profile import BmiRequest, FullNameResponse, ProfileInfoResponse, UpdateProfileRequest
+from app.repositories.workout import WorkoutDAO
+from app.schemas.profile import BmiRequest, FullNameResponse, ProfileInfoResponse, UpdateProfileRequest, StatusResponse
 from app.core.calculations import calculate_bmi
 
 router = APIRouter(prefix='/profile', tags=['Профиль 👥'])
@@ -22,6 +23,15 @@ async def get_fullname(
     )
 
 
+@router.get('/r_status', response_model=StatusResponse, summary='Получить статус пользователя')
+async def get_status(
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session)
+) -> StatusResponse:
+    new_level = await WorkoutDAO(session).update_and_get_activity_level(current_user.id)
+    return StatusResponse(status=new_level)
+
+
 @router.get('/profile_info', response_model=ProfileInfoResponse,summary='Получить информацию о профиле')
 async def get_profile_info(
     current_user: User = Depends(get_current_user)
@@ -29,7 +39,6 @@ async def get_profile_info(
     if not current_user.profile:
         raise HTTPException(404, 'Профиль пользователя не найден')
     return ProfileInfoResponse.model_validate(current_user.profile)
-
 
 @router.patch(
     "/update_profile",
@@ -51,3 +60,4 @@ async def update_profile(
 async def calculate_bmi_api(data: BmiRequest):
     '''Эндпоинт для расчёта метрик'''
     return calculate_bmi(data.model_dump())
+

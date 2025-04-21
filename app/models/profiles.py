@@ -19,12 +19,12 @@ class CurrentGoal(enum.Enum):
 
 class ActivityLevel(enum.Enum):
     """Уровень активности пользователя"""
-    SEDENTARY = "SEDENTARY"  # Малоподвижный образ жизни
-    LIGHT = "LIGHT"  # Легкая активность (1-3 тренировки в неделю)
-    MODERATE = "MODERATE"  # Средняя активность (3-5 тренировок в неделю)
-    ACTIVE = "ACTIVE"  # Высокая активность (6-7 тренировок в неделю)
-    ATHLETE = "ATHLETE"  # Спортсмен
-    NOT_STATED= "NOT_STATED"
+    SEDENTARY = "SEDENTARY"  # Малоподвижный образ жизни < 90 минут в неделю
+    LIGHT = "LIGHT"  # Легкая активность 90 < 180 минут в неделю
+    MODERATE = "MODERATE"  # Средняя активность 180 < 300 минут в неделю
+    ACTIVE = "ACTIVE"  # Высокая активность 300 < 480 минут в неделю
+    ATHLETE = "ATHLETE"  # Спортсмен > 480 минут в неделю
+    NOT_STATED= "NOT_STATED" # 0
 
 class Profile(Base):
     """Хранит информацию пользователя"""

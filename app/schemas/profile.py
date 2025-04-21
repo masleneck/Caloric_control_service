@@ -2,6 +2,7 @@ from datetime import date
 from typing import Optional
 from pydantic import BaseModel, field_validator, ConfigDict
 from app.models import Gender, CurrentGoal
+from app.models.profiles import ActivityLevel
 class ProfileInfoResponse(BaseModel):
     name: str 
     last_name: str 
@@ -44,6 +45,11 @@ class UpdateProfileRequest(BaseModel):
 class FullNameResponse(BaseModel):
     '''Схема для ответа с полным именем пользователя.'''
     full_name: str 
+    model_config = ConfigDict(from_attributes=True)
+
+class StatusResponse(BaseModel):
+    '''Схема для ответа со статусом пользователя.'''
+    status: ActivityLevel 
     model_config = ConfigDict(from_attributes=True)
 
 class BmiRequest(BaseModel):
