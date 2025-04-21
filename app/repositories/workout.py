@@ -240,24 +240,21 @@ class WorkoutDAO(BaseDAO[Workout]):
 
 
     async def update_and_get_activity_level(self, user_id: int) -> ActivityLevel:
-        """Обновляет и возвращает уровень активности на основе тренировок за текущую неделю."""
-        # Определение текущей недели
+        """Обновляет и возвращает уровень активности на основе тренировок за последние 7 дней."""
         today = date.today()
-        start_of_week = today - timedelta(days=today.weekday())
-        end_of_week = start_of_week + timedelta(days=6)
-        # Вычисление суммарных минут тренировок
+        start_date = today - timedelta(days=7)
+        end_date = today
         stmt = select(
             func.coalesce(func.sum(UserWorkout.duration_minutes), 0).label("total_duration")
         ).where(
             and_(
                 UserWorkout.user_id == user_id,
-                UserWorkout.workout_date >= start_of_week,
-                UserWorkout.workout_date <= end_of_week
+                UserWorkout.workout_date >= start_date,
+                UserWorkout.workout_date <= end_date
             )
         )
         result = await self._session.execute(stmt)
         total_duration = result.scalar_one()
-        # Определение нового уровня активности
         if total_duration < 90:
             new_level = ActivityLevel.SEDENTARY
         elif total_duration < 180:
@@ -268,14 +265,12 @@ class WorkoutDAO(BaseDAO[Workout]):
             new_level = ActivityLevel.ACTIVE
         else:
             new_level = ActivityLevel.ATHLETE
-        # Обновление или создание профиля
+
         profile_stmt = select(Profile).where(Profile.user_id == user_id)
         profile_result = await self._session.execute(profile_stmt)
         profile = profile_result.scalar_one_or_none()
 
         profile.activity_level = new_level
-
         await self._session.commit()
 
         return new_level
-
