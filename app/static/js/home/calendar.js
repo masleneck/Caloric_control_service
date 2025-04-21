@@ -102,44 +102,62 @@ function getActiveDay(day) {
   eventDay.innerHTML = dayName;
   eventDate.innerHTML = formattedDate;
 
-  fetch(`/meals/daily_meals?target_date=${serverDate}`)
-    .then(res => res.json())
-    .then(data => {
-      eventsContainer.innerHTML = "";
+  eventsContainer.innerHTML = "";
 
-      if (!data.meals) {
-        eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о приемах пищи</div>";
-        return;
-      }
+  if (window.calendarMode === "meals") {
+    fetch(`/meals/daily_meals?target_date=${serverDate}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.meals) {
+          eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о приемах пищи</div>";
+          return;
+        }
+        if (typeof updateMealsFromServer === "function") {
+          updateMealsFromServer(serverDate, data.meals);
+        }
+      })
+      .catch(err => {
+        console.error("Ошибка загрузки приёмов пищи:", err);
+        eventsContainer.innerHTML = "<div class='error'>Ошибка загрузки приёмов пищи</div>";
+      });
 
-      if (typeof updateMealsFromServer === "function") {
-        updateMealsFromServer(serverDate, data.meals);
-      }
+    fetch(`/meals/daily_nutrition?target_date=${serverDate}`)
+      .then(res => res.json())
+      .then(nutrition => {
+        document.getElementById("calories").textContent = nutrition.total_calories || 0;
+        document.getElementById("proteins").textContent = nutrition.total_proteins || 0;
+        document.getElementById("fats").textContent = nutrition.total_fats || 0;
+        document.getElementById("carbs").textContent = nutrition.total_carbs || 0;
+      })
+      .catch(err => {
+        console.error("Ошибка загрузки nutrition:", err);
+        document.getElementById("calories").textContent = "-";
+        document.getElementById("proteins").textContent = "-";
+        document.getElementById("fats").textContent = "-";
+        document.getElementById("carbs").textContent = "-";
+      });
+  } else if (window.calendarMode === "workouts") {
+    fetch(`/workouts/daily_workouts?target_date=${serverDate}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.workouts || data.workouts.length === 0) {
+          eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о тренировках</div>";
+          return;
+        }
+        if (typeof updateWorkoutsFromServer === "function") {
+          updateWorkoutsFromServer(serverDate, data.workouts);
+        }
+      })
+      .catch(err => {
+        console.error("Ошибка загрузки тренировок:", err);
+        eventsContainer.innerHTML = "<div class='error'>Ошибка загрузки тренировок</div>";
+      });
 
-      if (typeof updateMealsFromServer === "function") {
-        updateMealsFromServer(serverDate, data.meals);
-      }
-    })
-    .catch(err => {
-      console.error("Ошибка загрузки приёмов пищи:", err);
-      eventsContainer.innerHTML = "<div class='error'>Ошибка загрузки приёмов пищи</div>";
-    });
-
-  fetch(`/meals/daily_nutrition?target_date=${serverDate}`)
-    .then(res => res.json())
-    .then(nutrition => {
-      document.getElementById("calories").textContent = nutrition.total_calories || 0;
-      document.getElementById("proteins").textContent = nutrition.total_proteins || 0;
-      document.getElementById("fats").textContent = nutrition.total_fats || 0;
-      document.getElementById("carbs").textContent = nutrition.total_carbs || 0;
-    })
-    .catch(err => {
-      console.error("Ошибка загрузки nutrition:", err);
-      document.getElementById("calories").textContent = "-";
-      document.getElementById("proteins").textContent = "-";
-      document.getElementById("fats").textContent = "-";
-      document.getElementById("carbs").textContent = "-";
-    });
+    document.getElementById("calories").textContent = "-";
+    document.getElementById("proteins").textContent = "-";
+    document.getElementById("fats").textContent = "-";
+    document.getElementById("carbs").textContent = "-";
+  }
 }
 
 function getMealName(mealType) {
@@ -210,10 +228,6 @@ dateInput.addEventListener("input", (e) => {
   if (dateInput.value.length > 7) {
     dateInput.value = dateInput.value.slice(0, 7);
   }
-});
-
-addEventBtn.addEventListener("click", () => {
-  addEventWrapper.classList.toggle("active");
 });
 
 addEventCloseBtn.addEventListener("click", () => {

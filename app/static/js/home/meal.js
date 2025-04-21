@@ -87,6 +87,7 @@ function renderSelected() {
 }
 
 saveMealBtn.addEventListener("click", async () => {
+  if (window.calendarMode !== "meals") return;
   const mealDateRaw = document.querySelector(".event-date").textContent;
   const formattedDate = formatDate(mealDateRaw);
 
@@ -136,6 +137,7 @@ saveMealBtn.addEventListener("click", async () => {
 });
 
 function updateMealsFromServer(dateStr, mealsObj) {
+  if (window.calendarMode !== "meals") return;
   const meals = Object.entries(mealsObj).map(([mealType, data]) => ({
     mealType,
     products: data.products.map(p => {
@@ -150,7 +152,6 @@ function updateMealsFromServer(dateStr, mealsObj) {
   window.mealsByDate[dateStr] = meals;
   renderEventsForDate(dateStr);
 }
-
 
 window.updateMealsFromServer = updateMealsFromServer;
 
@@ -172,9 +173,8 @@ function updateLocalMeals(mealType, products, mealDate) {
   renderEventsForDate(mealDate);
 }
 
-
-
 function renderEventsForDate(dateStr) {
+  if (window.calendarMode !== "meals") return;
   eventsContainer.innerHTML = "";
   const meals = window.mealsByDate[dateStr] || [];
 
@@ -218,21 +218,26 @@ function renderEventsForDate(dateStr) {
   });
 }
 
-
 function editMeal(mealType, dateStr) {
+  if (window.calendarMode !== "meals") return;
   const meal = window.mealsByDate[dateStr].find(m => m.mealType === mealType);
   if (!meal) return;
 
   selectedProducts = meal.products.map(p => ({ ...p }));
   document.getElementById("mealType").value = mealType;
   document.getElementById("mealType").disabled = true;
-  addEventWrapper.classList.add("active");
+
+  document.querySelector(".add-event-body").style.display = "flex";
+  document.querySelector(".add-workout-body").style.display = "none";
+
+  document.querySelector(".add-event-wrapper").classList.add("active");
   editMode = true;
   editTargetElement = { mealType, dateStr };
   renderSelected();
 }
 
 async function deleteMeal(mealType, dateStr) {
+  if (window.calendarMode !== "meals") return;
   if (!confirm("Удалить этот приём пищи?")) return;
 
   const formattedDate = formatDate(dateStr);
@@ -342,3 +347,5 @@ function debounce(func, timeout = 300) {
     timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };
 }
+
+window.calendarMode = "meals";
