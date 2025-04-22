@@ -3,14 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navMap = {
     "/home": "nav-home",
-    "/profile": "nav-profile",
-    "/options": "nav-options",
+    "/profile": "nav-profile"
   };
 
   const urlMap = {
     "nav-home": "/home",
-    "nav-profile": "/profile",
-    "nav-options": "/options",
+    "nav-profile": "/profile"
   };
 
   const activeBtnId = navMap[path];
