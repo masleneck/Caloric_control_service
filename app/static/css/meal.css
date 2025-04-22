@@ -295,3 +295,9 @@
 .warning-tooltip.show {
   display: block;
 }
+
+select:disabled {
+  color: #999;
+  background-color: #f3f3f3;
+  cursor: not-allowed;
+}

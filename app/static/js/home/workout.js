@@ -102,6 +102,8 @@ function startEditWorkout(name, dateStr) {
   if (!workout) return;
 
   workoutNameInput.value = workout.name;
+  workoutNameInput.disabled = true;
+  workoutNameInput.classList.add("input-disabled");
   workoutDurationInput.value = workout.duration;
   workoutCaloriesInput.value = workout.calories;
 
@@ -112,6 +114,7 @@ function startEditWorkout(name, dateStr) {
   editWorkoutMode = true;
   editWorkoutTarget = { name, dateStr };
 }
+
 
 async function deleteWorkout(name, dateStr) {
   if (!confirm("Удалить эту тренировку?")) return;
@@ -153,6 +156,13 @@ saveWorkoutBtn.addEventListener("click", async () => {
 
   if (!name || isNaN(duration) || isNaN(calories)) {
     alert("Заполните все поля корректно.");
+    return;
+  }
+
+  const existing = window.workoutsByDate[formattedDate]?.some(w => w.name.toLowerCase() === name.toLowerCase());
+
+  if (!editWorkoutMode && existing) {
+    alert("Тренировка с таким названием уже существует на эту дату.");
     return;
   }
 
@@ -203,6 +213,8 @@ saveWorkoutBtn.addEventListener("click", async () => {
 
     editWorkoutMode = false;
     editWorkoutTarget = null;
+    workoutNameInput.disabled = false;
+    workoutNameInput.classList.remove("input-disabled");
 
   } catch (err) {
     console.error("Ошибка:", err);

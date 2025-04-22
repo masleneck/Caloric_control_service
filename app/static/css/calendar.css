@@ -757,3 +757,9 @@
 .container.workout-mode .event:hover .title i {
   color: #a6bdad !important;
 }
+
+input.input-disabled {
+  background-color: #f0f0f0;
+  color: #888 !important;
+  cursor: not-allowed;
+}
