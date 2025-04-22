@@ -304,3 +304,20 @@ workoutCaloriesInput.addEventListener("input", (e) => {
     e.target.value = 20000;
   }
 });
+
+function resetWorkoutForm() {
+  workoutNameInput.value = "";
+  workoutDurationInput.value = "";
+  workoutCaloriesInput.value = "";
+  workoutSuggestions.innerHTML = "";
+  addEventWrapper.classList.remove("active");
+
+  workoutNameInput.disabled = false;
+  workoutNameInput.style.color = "";
+  workoutNameInput.style.cursor = "";
+  workoutNameInput.classList.remove("input-disabled");
+  editWorkoutMode = false;
+  editWorkoutTarget = null;
+}
+
+window.resetWorkoutForm = resetWorkoutForm;

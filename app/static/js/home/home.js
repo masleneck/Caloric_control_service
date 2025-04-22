@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
     addEventWrapper.classList.remove("active");
     mealForm.style.display = "none";
     workoutForm.style.display = "none";
+    if (typeof resetForm === "function") resetForm();
+    if (typeof resetWorkoutForm === "function") resetWorkoutForm();
   });
 
   window.calendarMode = "meals";

@@ -351,6 +351,7 @@ function resetForm() {
   mealType.value = "BREAKFAST";
   addEventWrapper.classList.remove("active");
   editMode = false;
+  editTargetElement = null;
 }
 
 function debounce(func, timeout = 300) {
@@ -362,3 +363,4 @@ function debounce(func, timeout = 300) {
 }
 
 window.calendarMode = "meals";
+window.resetForm = resetForm;
