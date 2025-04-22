@@ -66,7 +66,7 @@ function renderSelected() {
     div.className = "selected-product";
     div.innerHTML = `
       <span>${product.name}</span>
-      <input type="number" value="${product.grams}" min="1" data-index="${index}">
+      <input type="number" value="${product.grams}" min="1" max="5000" data-index="${index}">
       <button class="remove-btn" data-index="${index}">×</button>
     `;
     selectedContainer.appendChild(div);
@@ -74,7 +74,20 @@ function renderSelected() {
 
   selectedContainer.querySelectorAll("input").forEach(input => {
     input.addEventListener("change", (e) => {
-      selectedProducts[e.target.dataset.index].grams = parseInt(e.target.value) || 1;
+      let value = parseInt(e.target.value) || 1;
+      if (value > 5000) value = 5000;
+      selectedProducts[e.target.dataset.index].grams = value;
+      input.value = value;
+    });
+  
+    input.addEventListener("input", (e) => {
+      let value = parseInt(e.target.value) || 1;
+      if (value > 5000) {
+        alert("Нельзя указывать больше 5000 грамм.");
+        value = 5000;
+        e.target.value = value;
+      }
+      selectedProducts[e.target.dataset.index].grams = value;
     });
   });
 
@@ -184,38 +197,38 @@ function renderEventsForDate(dateStr) {
     DINNER: "Ужин",
     SNACK: "Перекус"
   };
-
-  meals.forEach(meal => {
-    const div = document.createElement("div");
-    div.className = "event";
-    div.innerHTML = `
-      <div class="title">
-        <i class="fas fa-utensils"></i>
-        <h3>${mealNames[meal.mealType] || meal.mealType}</h3>
-      </div>
-      <div class="products">
-        ${meal.products.map(p => `${p.name} (${p.grams}г)`).join(", ")}
-      </div>
-      <div class="actions">
-        <button class="edit" data-type="${meal.mealType}">
-          <i class="ri-edit-line"></i>
-        </button>
-        <button class="delete" data-type="${meal.mealType}">
-          <i class="ri-delete-bin-line"></i>
-        </button>
-      </div>
-    `;
-
-    div.querySelector(".edit").addEventListener("click", () => {
-      editMeal(meal.mealType, dateStr);
+  if (meals.length === 0) {
+    eventsContainer.innerHTML = "<div class='no-meals'>Нет добавленных продуктов</div>";
+  } else {
+    meals.forEach(meal => {
+      const div = document.createElement("div");
+      div.className = "event";
+      div.innerHTML = `
+        <div class="title">
+          <i class="fas fa-utensils"></i>
+          <h3>${mealNames[meal.mealType] || meal.mealType}</h3>
+        </div>
+        <div class="products">
+          ${meal.products.map(p => `${p.name} (${p.grams}г)`).join(", ")}
+        </div>
+        <div class="actions">
+          <button class="edit" data-type="${meal.mealType}">
+            <i class="ri-edit-line"></i>
+          </button>
+          <button class="delete" data-type="${meal.mealType}">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
+      `;
+      div.querySelector(".edit").addEventListener("click", () => {
+        editMeal(meal.mealType, dateStr);
+      });
+      div.querySelector(".delete").addEventListener("click", () => {
+        deleteMeal(meal.mealType, dateStr);
+      });
+      eventsContainer.appendChild(div);
     });
-
-    div.querySelector(".delete").addEventListener("click", () => {
-      deleteMeal(meal.mealType, dateStr);
-    });
-
-    eventsContainer.appendChild(div);
-  });
+  }
 }
 
 function editMeal(mealType, dateStr) {
@@ -338,6 +351,7 @@ function resetForm() {
   mealType.value = "BREAKFAST";
   addEventWrapper.classList.remove("active");
   editMode = false;
+  editTargetElement = null;
 }
 
 function debounce(func, timeout = 300) {
@@ -349,3 +363,4 @@ function debounce(func, timeout = 300) {
 }
 
 window.calendarMode = "meals";
+window.resetForm = resetForm;

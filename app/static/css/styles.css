@@ -1018,3 +1018,21 @@ button.active {
   font-size: 18px;
   color: #b85143;
 }
+.status-sedentary { color: #999; }
+.status-light     { color: #facc15; }
+.status-moderate  { color: #3b82f6; }
+.status-active    { color: #10b981; }
+.status-athlete   { color: #ef4444; }
+
+#sidebar-status span {
+  cursor: pointer;
+}
+
+.no-meals, .no-workouts {
+  text-align: center;
+  font-size: 18px;
+  color: #fffaf1;
+  font-weight: 600;
+  margin-top: 20px;
+  padding: 15px;
+}

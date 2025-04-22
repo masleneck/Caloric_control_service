@@ -1,3 +1,4 @@
+
 const eventsContainer = document.querySelector(".events");
 
 if (!window.workoutsByDate) window.workoutsByDate = {};
@@ -33,7 +34,6 @@ function formatDateForServer(str) {
   return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
-
 function updateWorkoutsFromServer(dateStr, workouts) {
   const parsedWorkouts = workouts.map(w => ({
     name: w.name,
@@ -43,8 +43,16 @@ function updateWorkoutsFromServer(dateStr, workouts) {
     date: dateStr
   }));
 
-  window.workoutsByDate[dateStr] = parsedWorkouts;
-  renderWorkoutsForDate(dateStr);
+  if (parsedWorkouts.length > 0) {
+    window.workoutsByDate[dateStr] = parsedWorkouts;
+    renderWorkoutsForDate(dateStr);
+  } else {
+    if (window.workoutsByDate[dateStr]) {
+      renderWorkoutsForDate(dateStr);
+    } else {
+      eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о тренировках</div>";
+    }
+  }
   refreshWorkoutSummary(dateStr);
 }
 
@@ -54,39 +62,39 @@ function renderWorkoutsForDate(dateStr) {
   if (window.calendarMode !== "workouts") return;
   eventsContainer.innerHTML = "";
   const workouts = window.workoutsByDate[dateStr] || [];
-
-  workouts.forEach(workout => {
-    const div = document.createElement("div");
-    div.className = "event";
-    div.innerHTML = `
-      <div class="title">
-        <i class="fas fa-dumbbell"></i>
-        <h3>${workout.name}</h3>
-      </div>
-      <div class="products">
-        Длительность: ${workout.duration} мин<br>
-        Калории: ${workout.calories} ккал
-      </div>
-      <div class="actions">
-        <button class="edit" data-name="${workout.name}">
-          <i class="ri-edit-line"></i>
-        </button>
-        <button class="delete" data-name="${workout.name}">
-          <i class="ri-delete-bin-line"></i>
-        </button>
-      </div>
-    `;
-
-    div.querySelector(".delete").addEventListener("click", () => {
-      deleteWorkout(workout.name, dateStr);
+  if (workouts.length === 0) {
+    eventsContainer.innerHTML = "<div class='no-workouts'>Нет данных о тренировках</div>";
+  } else {
+    workouts.forEach(workout => {
+      const div = document.createElement("div");
+      div.className = "event";
+      div.innerHTML = `
+        <div class="title">
+          <i class="fas fa-dumbbell"></i>
+          <h3>${workout.name}</h3>
+        </div>
+        <div class="products">
+          Длительность: ${workout.duration} мин<br>
+          Калории: ${workout.calories} ккал
+        </div>
+        <div class="actions">
+          <button class="edit" data-name="${workout.name}">
+            <i class="ri-edit-line"></i>
+          </button>
+          <button class="delete" data-name="${workout.name}">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
+      `;
+      div.querySelector(".delete").addEventListener("click", () => {
+        deleteWorkout(workout.name, dateStr);
+      });
+      div.querySelector(".edit").addEventListener("click", () => {
+        startEditWorkout(workout.name, dateStr);
+      });
+      eventsContainer.appendChild(div);
     });
-
-    div.querySelector(".edit").addEventListener("click", () => {
-      startEditWorkout(workout.name, dateStr);
-    });
-
-    eventsContainer.appendChild(div);
-  });
+  }
 }
 
 function startEditWorkout(name, dateStr) {
@@ -94,10 +102,11 @@ function startEditWorkout(name, dateStr) {
   if (!workout) return;
 
   workoutNameInput.value = workout.name;
+  workoutNameInput.disabled = true;
+  workoutNameInput.classList.add("input-disabled");
   workoutDurationInput.value = workout.duration;
   workoutCaloriesInput.value = workout.calories;
 
-  // Показываем только блок тренировки
   document.querySelector(".add-event-body").style.display = "none";
   document.querySelector(".add-workout-body").style.display = "flex";
 
@@ -105,6 +114,7 @@ function startEditWorkout(name, dateStr) {
   editWorkoutMode = true;
   editWorkoutTarget = { name, dateStr };
 }
+
 
 async function deleteWorkout(name, dateStr) {
   if (!confirm("Удалить эту тренировку?")) return;
@@ -149,6 +159,23 @@ saveWorkoutBtn.addEventListener("click", async () => {
     return;
   }
 
+  const existing = window.workoutsByDate[formattedDate]?.some(w => w.name.toLowerCase() === name.toLowerCase());
+
+  if (!editWorkoutMode && existing) {
+    alert("Тренировка с таким названием уже существует на эту дату.");
+    return;
+  }
+
+  if (duration > 1440) {
+    alert("Максимальная длительность тренировки — 1440 минут (24 часа).");
+    return;
+  }
+
+  if (calories > 20000) {
+    alert("Максимум потраченных калорий — 20000 ккал.");
+    return;
+  }
+
   try {
     const res = await fetch("/workouts/upsert_workout", {
       method: "POST",
@@ -172,22 +199,11 @@ saveWorkoutBtn.addEventListener("click", async () => {
       return;
     }
 
-    const updatedWorkout = { name, duration, calories, date: formattedDate };
-
-    if (!window.workoutsByDate[formattedDate]) {
-      window.workoutsByDate[formattedDate] = [];
-    }
-
-    if (editWorkoutMode && editWorkoutTarget) {
-      const list = window.workoutsByDate[formattedDate];
-      const index = list.findIndex(w => w.name === editWorkoutTarget.name);
-      if (index !== -1) list[index] = updatedWorkout;
-    } else {
-      window.workoutsByDate[formattedDate].push(updatedWorkout);
-    }
-
-    renderWorkoutsForDate(formattedDate);
-    refreshWorkoutSummary(formattedDate);
+    fetch(`/workouts/daily_workouts?target_date=${formattedDate}`)
+      .then(res => res.json())
+      .then(data => {
+        updateWorkoutsFromServer(formattedDate, data.workouts || []);
+      });
 
     workoutNameInput.value = "";
     workoutDurationInput.value = "";
@@ -197,6 +213,8 @@ saveWorkoutBtn.addEventListener("click", async () => {
 
     editWorkoutMode = false;
     editWorkoutTarget = null;
+    workoutNameInput.disabled = false;
+    workoutNameInput.classList.remove("input-disabled");
 
   } catch (err) {
     console.error("Ошибка:", err);
@@ -271,3 +289,35 @@ function refreshWorkoutSummary(dateStr) {
     });
 }
 
+workoutDurationInput.addEventListener("input", (e) => {
+  let value = parseInt(e.target.value) || 1;
+  if (value > 1440) {
+    alert("Максимальная длительность тренировки — 1440 минут (24 часа).");
+    e.target.value = 1440;
+  }
+});
+
+workoutCaloriesInput.addEventListener("input", (e) => {
+  let value = parseInt(e.target.value) || 0;
+  if (value > 20000) {
+    alert("Максимум потраченных калорий — 20000 ккал.");
+    e.target.value = 20000;
+  }
+});
+
+function resetWorkoutForm() {
+  workoutNameInput.value = "";
+  workoutDurationInput.value = "";
+  workoutCaloriesInput.value = "";
+  workoutSuggestions.innerHTML = "";
+  addEventWrapper.classList.remove("active");
+
+  workoutNameInput.disabled = false;
+  workoutNameInput.style.color = "";
+  workoutNameInput.style.cursor = "";
+  workoutNameInput.classList.remove("input-disabled");
+  editWorkoutMode = false;
+  editWorkoutTarget = null;
+}
+
+window.resetWorkoutForm = resetWorkoutForm;
