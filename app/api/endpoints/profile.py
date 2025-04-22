@@ -23,7 +23,7 @@ async def get_fullname(
     )
 
 
-@router.get('/r_status', response_model=StatusResponse, summary='Получить статус пользователя')
+@router.get('/r_status', response_model=StatusResponse, summary='Обновляет и возвращает уровень активности на основе тренировок за последние 7 дней')
 async def get_status(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session)
