@@ -270,12 +270,34 @@
   margin: 0;
   font-weight: 500;
   font-size: 14px;
-  color: #fff;
-  background: #a6bdad;
+  color: #333;
+  background: #fffaf1;
   padding: 10px 16px;
   border-radius: 10px;
   border: 2px solid #ffffff88;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
+.warning-tooltip {
+  display: none;
+  position: absolute;
+  background-color: #b85143;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 1000;
+  white-space: nowrap;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease;
+}
 
+.warning-tooltip.show {
+  display: block;
+}
+
+select:disabled {
+  color: #999;
+  background-color: #f3f3f3;
+  cursor: not-allowed;
+}

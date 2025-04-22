@@ -3,14 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navMap = {
     "/home": "nav-home",
-    "/profile": "nav-profile",
-    "/options": "nav-options",
+    "/profile": "nav-profile"
   };
 
   const urlMap = {
     "nav-home": "/home",
-    "nav-profile": "/profile",
-    "nav-options": "/options",
+    "nav-profile": "/profile"
   };
 
   const activeBtnId = navMap[path];
@@ -29,36 +27,62 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
+
+  loadUserNameAndStatus();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadUserName();
-});
-
-async function loadUserName() {
+async function loadUserNameAndStatus() {
   try {
-    const res = await fetch("/profile/profile_info");
-    if (!res.ok) throw new Error("Ошибка при получении профиля");
+    const resProfile = await fetch("/profile/profile_info");
+    if (!resProfile.ok) throw new Error("Ошибка при получении профиля");
 
-    const data = await res.json();
-    const fullName = `${data.name} ${data.last_name}`;
-    
+    const profileData = await resProfile.json();
+    const fullName = `${profileData.name} ${profileData.last_name}`;
     const usernameEl = document.getElementById("sidebar-username");
     if (usernameEl) {
       usernameEl.textContent = fullName;
     }
 
+    const resStatus = await fetch("/profile/r_status");
+    if (!resStatus.ok) throw new Error("Ошибка при получении статуса");
+
+    const statusData = await resStatus.json();
+    const status = statusData.status || "UNKNOWN";
+
+    const readableStatus = {
+      "SEDENTARY": "Малоподвижный",
+      "LIGHT": "Низкая активность",
+      "MODERATE": "Умеренная активность",
+      "ACTIVE": "Активный",
+      "ATHLETE": "Спортсмен"
+    };
+
+    const tooltipText = `Ваша активность за последние 7 дней:
+0–1.5 ч — Малоподвижный
+1.5–3 ч — Низкая активность
+3–5 ч — Умеренная активность
+5–8 ч — Активный
+8+ ч — Спортсмен`;
+
     const statusEl = document.getElementById("sidebar-status");
     if (statusEl) {
-      statusEl.textContent = "Профиль загружен";
+      const cssClass = `status-${status.toLowerCase()}`;
+      statusEl.innerHTML = `
+        <span 
+          class="${cssClass}" 
+          title="${tooltipText}"
+        >
+          ${readableStatus[status] || "Неизвестно"}
+        </span>
+      `;
     }
 
   } catch (err) {
-    console.error("Ошибка загрузки профиля в сайдбар:", err);
-
+    console.error("Ошибка загрузки профиля или статуса:", err);
     const statusEl = document.getElementById("sidebar-status");
     if (statusEl) {
       statusEl.textContent = "Гость";
     }
   }
 }
+

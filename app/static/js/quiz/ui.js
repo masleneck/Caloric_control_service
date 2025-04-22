@@ -54,10 +54,24 @@ export function renderQuestion(questionData, answers) {
                 locale: "ru",
                 dateFormat: "Y-m-d",
                 maxDate: "today",
+                minDate: new Date().getFullYear() - 100 + "-01-01",
                 defaultDate: answers[questionData.name] || null,
                 onChange: function (selectedDates, dateStr) {
-                    answers[questionData.name] = dateStr;
-                    updateNextButton(dateStr);
+                    const today = new Date();
+                    const birthDate = new Date(dateStr);
+                    const age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    const isTooYoung = age < 14 || (age === 14 && monthDiff < 0) || (age === 14 && monthDiff === 0 && today.getDate() < birthDate.getDate());
+            
+                    if (isTooYoung) {
+                        alert("Минимальный возраст — 14 лет");
+                        input._flatpickr.clear(); 
+                        answers[questionData.name] = null;
+                        updateNextButton(false);
+                    } else {
+                        answers[questionData.name] = dateStr;
+                        updateNextButton(dateStr);
+                    }
                 }
             });
             return;

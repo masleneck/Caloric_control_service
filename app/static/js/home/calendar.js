@@ -1,3 +1,4 @@
+
 const calendar = document.querySelector(".calendar"),
   date = document.querySelector(".date"),
   daysContainer = document.querySelector(".days"),
@@ -108,12 +109,8 @@ function getActiveDay(day) {
     fetch(`/meals/daily_meals?target_date=${serverDate}`)
       .then(res => res.json())
       .then(data => {
-        if (!data.meals) {
-          eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о приемах пищи</div>";
-          return;
-        }
         if (typeof updateMealsFromServer === "function") {
-          updateMealsFromServer(serverDate, data.meals);
+          updateMealsFromServer(serverDate, data.meals || {});
         }
       })
       .catch(err => {
@@ -140,12 +137,8 @@ function getActiveDay(day) {
     fetch(`/workouts/daily_workouts?target_date=${serverDate}`)
       .then(res => res.json())
       .then(data => {
-        if (!data.workouts || data.workouts.length === 0) {
-          eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о тренировках</div>";
-          return;
-        }
         if (typeof updateWorkoutsFromServer === "function") {
-          updateWorkoutsFromServer(serverDate, data.workouts);
+          updateWorkoutsFromServer(serverDate, data.workouts || []);
         }
       })
       .catch(err => {
@@ -153,21 +146,27 @@ function getActiveDay(day) {
         eventsContainer.innerHTML = "<div class='error'>Ошибка загрузки тренировок</div>";
       });
 
+    fetch(`/workouts/daily_summary?target_date=${serverDate}`)
+      .then(res => res.json())
+      .then(summary => {
+        const duration = document.getElementById("totalDuration");
+        const calories = document.getElementById("totalWorkoutCalories");
+        if (duration) duration.textContent = summary.total_duration || 0;
+        if (calories) calories.textContent = summary.total_calories_burned || 0;
+      })
+      .catch(err => {
+        console.error("Ошибка загрузки сводки:", err);
+        const duration = document.getElementById("totalDuration");
+        const calories = document.getElementById("totalWorkoutCalories");
+        if (duration) duration.textContent = "-";
+        if (calories) calories.textContent = "-";
+      });
+
     document.getElementById("calories").textContent = "-";
     document.getElementById("proteins").textContent = "-";
     document.getElementById("fats").textContent = "-";
     document.getElementById("carbs").textContent = "-";
   }
-}
-
-function getMealName(mealType) {
-  const names = {
-    BREAKFAST: "Завтрак",
-    LUNCH: "Обед", 
-    DINNER: "Ужин",
-    SNACK: "Перекус"
-  };
-  return names[mealType] || mealType;
 }
 
 function formatDateForServer(str) {

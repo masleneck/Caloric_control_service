@@ -22,13 +22,12 @@
     <aside class="sidebar">
       <div class="sidebar-section">
         <p class="sidebar-title" id="sidebar-username">User</p>
-        <p class="sidebar-title" id="sidebar-status">Status</p>
+        <p class="sidebar-title" id="sidebar-status"></p>
       </div>
 
       <nav class="sidebar-nav">
         <button class="nav-btn" id="nav-home"><i class="ri-home-line"></i> <span class="label">Home</span></button>
         <button class="nav-btn" id="nav-profile"><i class="ri-user-line"></i> <span class="label">Profile</span></button>
-        <button class="nav-btn" id="nav-options"><i class="ri-settings-3-line"></i> <span class="label">Options</span></button>
       </nav>
       
       <div class="sidebar-bottom">
@@ -123,11 +122,11 @@
               </div>
               <div class="add-event-input">
                 <label for="workoutDuration">Длительность (мин):</label>
-                <input type="number" id="workoutDuration" min="1" />
+                <input type="number" id="workoutDuration" min="1" max="1440" />
               </div>
               <div class="add-event-input">
                 <label for="workoutCalories">Потрачено калорий:</label>
-                <input type="number" id="workoutCalories" min="0" />
+                <input type="number" id="workoutCalories" min="0" max="20000" />
               </div>
             </div>
 
