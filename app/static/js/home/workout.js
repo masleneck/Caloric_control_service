@@ -62,39 +62,39 @@ function renderWorkoutsForDate(dateStr) {
   if (window.calendarMode !== "workouts") return;
   eventsContainer.innerHTML = "";
   const workouts = window.workoutsByDate[dateStr] || [];
-
-  workouts.forEach(workout => {
-    const div = document.createElement("div");
-    div.className = "event";
-    div.innerHTML = `
-      <div class="title">
-        <i class="fas fa-dumbbell"></i>
-        <h3>${workout.name}</h3>
-      </div>
-      <div class="products">
-        Длительность: ${workout.duration} мин<br>
-        Калории: ${workout.calories} ккал
-      </div>
-      <div class="actions">
-        <button class="edit" data-name="${workout.name}">
-          <i class="ri-edit-line"></i>
-        </button>
-        <button class="delete" data-name="${workout.name}">
-          <i class="ri-delete-bin-line"></i>
-        </button>
-      </div>
-    `;
-
-    div.querySelector(".delete").addEventListener("click", () => {
-      deleteWorkout(workout.name, dateStr);
+  if (workouts.length === 0) {
+    eventsContainer.innerHTML = "<div class='no-workouts'>Нет данных о тренировках</div>";
+  } else {
+    workouts.forEach(workout => {
+      const div = document.createElement("div");
+      div.className = "event";
+      div.innerHTML = `
+        <div class="title">
+          <i class="fas fa-dumbbell"></i>
+          <h3>${workout.name}</h3>
+        </div>
+        <div class="products">
+          Длительность: ${workout.duration} мин<br>
+          Калории: ${workout.calories} ккал
+        </div>
+        <div class="actions">
+          <button class="edit" data-name="${workout.name}">
+            <i class="ri-edit-line"></i>
+          </button>
+          <button class="delete" data-name="${workout.name}">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
+      `;
+      div.querySelector(".delete").addEventListener("click", () => {
+        deleteWorkout(workout.name, dateStr);
+      });
+      div.querySelector(".edit").addEventListener("click", () => {
+        startEditWorkout(workout.name, dateStr);
+      });
+      eventsContainer.appendChild(div);
     });
-
-    div.querySelector(".edit").addEventListener("click", () => {
-      startEditWorkout(workout.name, dateStr);
-    });
-
-    eventsContainer.appendChild(div);
-  });
+  }
 }
 
 function startEditWorkout(name, dateStr) {

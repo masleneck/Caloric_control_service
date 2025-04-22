@@ -1027,3 +1027,12 @@ button.active {
 #sidebar-status span {
   cursor: pointer;
 }
+
+.no-meals, .no-workouts {
+  text-align: center;
+  font-size: 18px;
+  color: #fffaf1;
+  font-weight: 600;
+  margin-top: 20px;
+  padding: 15px;
+}

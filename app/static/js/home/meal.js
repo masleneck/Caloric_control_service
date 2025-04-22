@@ -197,38 +197,38 @@ function renderEventsForDate(dateStr) {
     DINNER: "Ужин",
     SNACK: "Перекус"
   };
-
-  meals.forEach(meal => {
-    const div = document.createElement("div");
-    div.className = "event";
-    div.innerHTML = `
-      <div class="title">
-        <i class="fas fa-utensils"></i>
-        <h3>${mealNames[meal.mealType] || meal.mealType}</h3>
-      </div>
-      <div class="products">
-        ${meal.products.map(p => `${p.name} (${p.grams}г)`).join(", ")}
-      </div>
-      <div class="actions">
-        <button class="edit" data-type="${meal.mealType}">
-          <i class="ri-edit-line"></i>
-        </button>
-        <button class="delete" data-type="${meal.mealType}">
-          <i class="ri-delete-bin-line"></i>
-        </button>
-      </div>
-    `;
-
-    div.querySelector(".edit").addEventListener("click", () => {
-      editMeal(meal.mealType, dateStr);
+  if (meals.length === 0) {
+    eventsContainer.innerHTML = "<div class='no-meals'>Нет добавленных продуктов</div>";
+  } else {
+    meals.forEach(meal => {
+      const div = document.createElement("div");
+      div.className = "event";
+      div.innerHTML = `
+        <div class="title">
+          <i class="fas fa-utensils"></i>
+          <h3>${mealNames[meal.mealType] || meal.mealType}</h3>
+        </div>
+        <div class="products">
+          ${meal.products.map(p => `${p.name} (${p.grams}г)`).join(", ")}
+        </div>
+        <div class="actions">
+          <button class="edit" data-type="${meal.mealType}">
+            <i class="ri-edit-line"></i>
+          </button>
+          <button class="delete" data-type="${meal.mealType}">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
+      `;
+      div.querySelector(".edit").addEventListener("click", () => {
+        editMeal(meal.mealType, dateStr);
+      });
+      div.querySelector(".delete").addEventListener("click", () => {
+        deleteMeal(meal.mealType, dateStr);
+      });
+      eventsContainer.appendChild(div);
     });
-
-    div.querySelector(".delete").addEventListener("click", () => {
-      deleteMeal(meal.mealType, dateStr);
-    });
-
-    eventsContainer.appendChild(div);
-  });
+  }
 }
 
 function editMeal(mealType, dateStr) {
