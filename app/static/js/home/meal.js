@@ -66,7 +66,7 @@ function renderSelected() {
     div.className = "selected-product";
     div.innerHTML = `
       <span>${product.name}</span>
-      <input type="number" value="${product.grams}" min="1" data-index="${index}">
+      <input type="number" value="${product.grams}" min="1" max="5000" data-index="${index}">
       <button class="remove-btn" data-index="${index}">×</button>
     `;
     selectedContainer.appendChild(div);
@@ -74,7 +74,20 @@ function renderSelected() {
 
   selectedContainer.querySelectorAll("input").forEach(input => {
     input.addEventListener("change", (e) => {
-      selectedProducts[e.target.dataset.index].grams = parseInt(e.target.value) || 1;
+      let value = parseInt(e.target.value) || 1;
+      if (value > 5000) value = 5000;
+      selectedProducts[e.target.dataset.index].grams = value;
+      input.value = value;
+    });
+  
+    input.addEventListener("input", (e) => {
+      let value = parseInt(e.target.value) || 1;
+      if (value > 5000) {
+        alert("Нельзя указывать больше 5000 грамм.");
+        value = 5000;
+        e.target.value = value;
+      }
+      selectedProducts[e.target.dataset.index].grams = value;
     });
   });
 

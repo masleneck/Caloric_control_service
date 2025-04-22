@@ -156,6 +156,16 @@ saveWorkoutBtn.addEventListener("click", async () => {
     return;
   }
 
+  if (duration > 1440) {
+    alert("Максимальная длительность тренировки — 1440 минут (24 часа).");
+    return;
+  }
+
+  if (calories > 20000) {
+    alert("Максимум потраченных калорий — 20000 ккал.");
+    return;
+  }
+
   try {
     const res = await fetch("/workouts/upsert_workout", {
       method: "POST",
@@ -266,3 +276,19 @@ function refreshWorkoutSummary(dateStr) {
       console.error("Ошибка загрузки сводки по тренировкам:", err);
     });
 }
+
+workoutDurationInput.addEventListener("input", (e) => {
+  let value = parseInt(e.target.value) || 1;
+  if (value > 1440) {
+    alert("Максимальная длительность тренировки — 1440 минут (24 часа).");
+    e.target.value = 1440;
+  }
+});
+
+workoutCaloriesInput.addEventListener("input", (e) => {
+  let value = parseInt(e.target.value) || 0;
+  if (value > 20000) {
+    alert("Максимум потраченных калорий — 20000 ккал.");
+    e.target.value = 20000;
+  }
+});

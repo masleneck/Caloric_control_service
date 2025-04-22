@@ -278,4 +278,20 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
+.warning-tooltip {
+  display: none;
+  position: absolute;
+  background-color: #b85143;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 1000;
+  white-space: nowrap;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease;
+}
 
+.warning-tooltip.show {
+  display: block;
+}
