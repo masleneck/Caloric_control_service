@@ -1,3 +1,4 @@
+
 const eventsContainer = document.querySelector(".events");
 
 if (!window.workoutsByDate) window.workoutsByDate = {};
@@ -33,7 +34,6 @@ function formatDateForServer(str) {
   return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
-
 function updateWorkoutsFromServer(dateStr, workouts) {
   const parsedWorkouts = workouts.map(w => ({
     name: w.name,
@@ -43,8 +43,16 @@ function updateWorkoutsFromServer(dateStr, workouts) {
     date: dateStr
   }));
 
-  window.workoutsByDate[dateStr] = parsedWorkouts;
-  renderWorkoutsForDate(dateStr);
+  if (parsedWorkouts.length > 0) {
+    window.workoutsByDate[dateStr] = parsedWorkouts;
+    renderWorkoutsForDate(dateStr);
+  } else {
+    if (window.workoutsByDate[dateStr]) {
+      renderWorkoutsForDate(dateStr);
+    } else {
+      eventsContainer.innerHTML = "<div class='no-meals'>Нет данных о тренировках</div>";
+    }
+  }
   refreshWorkoutSummary(dateStr);
 }
 
@@ -97,7 +105,6 @@ function startEditWorkout(name, dateStr) {
   workoutDurationInput.value = workout.duration;
   workoutCaloriesInput.value = workout.calories;
 
-  // Показываем только блок тренировки
   document.querySelector(".add-event-body").style.display = "none";
   document.querySelector(".add-workout-body").style.display = "flex";
 
@@ -172,22 +179,11 @@ saveWorkoutBtn.addEventListener("click", async () => {
       return;
     }
 
-    const updatedWorkout = { name, duration, calories, date: formattedDate };
-
-    if (!window.workoutsByDate[formattedDate]) {
-      window.workoutsByDate[formattedDate] = [];
-    }
-
-    if (editWorkoutMode && editWorkoutTarget) {
-      const list = window.workoutsByDate[formattedDate];
-      const index = list.findIndex(w => w.name === editWorkoutTarget.name);
-      if (index !== -1) list[index] = updatedWorkout;
-    } else {
-      window.workoutsByDate[formattedDate].push(updatedWorkout);
-    }
-
-    renderWorkoutsForDate(formattedDate);
-    refreshWorkoutSummary(formattedDate);
+    fetch(`/workouts/daily_workouts?target_date=${formattedDate}`)
+      .then(res => res.json())
+      .then(data => {
+        updateWorkoutsFromServer(formattedDate, data.workouts || []);
+      });
 
     workoutNameInput.value = "";
     workoutDurationInput.value = "";
@@ -270,4 +266,3 @@ function refreshWorkoutSummary(dateStr) {
       console.error("Ошибка загрузки сводки по тренировкам:", err);
     });
 }
-

@@ -76,41 +76,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   workoutToggle.addEventListener("click", () => {
     window.calendarMode = "workouts";
-
+  
     workoutToggle.classList.add("active");
     mealToggle.classList.remove("active");
-
+  
     calendar.classList.remove("meal-mode");
     calendar.classList.add("workout-mode");
-
+  
     container.classList.remove("meal-mode");
     container.classList.add("workout-mode");
-
+  
     rightPanel.classList.remove("meal-mode");
     rightPanel.classList.add("workout-mode");
-
+  
     nutritionInfo.style.display = "none";
     events.setAttribute("data-mode", "workouts");
-
+  
     addEventWrapper.classList.remove("active");
     mealForm.style.display = "none";
     workoutForm.style.display = "none";
-
-    nutritionInfo.style.display = "none";
+  
     document.querySelector(".workout-summary").style.display = "flex";
-
+  
     const eventDate = document.querySelector(".event-date").textContent;
     if (typeof updateWorkoutsFromServer === "function" && eventDate) {
       const serverDate = formatDateForServer(eventDate);
+  
+      const duration = document.getElementById("totalDuration");
+      const calories = document.getElementById("totalWorkoutCalories");
+      if (duration) duration.textContent = "–";
+      if (calories) calories.textContent = "–";
+  
       fetch(`/workouts/daily_workouts?target_date=${serverDate}`)
         .then(res => res.json())
         .then(data => {
-          if (data.workouts) {
+          if (data.workouts && data.workouts.length > 0) {
             updateWorkoutsFromServer(serverDate, data.workouts);
+          } else {
+            events.innerHTML = `<div class="no-event">Нет тренировок</div>`;
+            window.workoutsByDate[serverDate] = [];
+  
+            document.getElementById("totalDuration").textContent = "–";
+            document.getElementById("totalWorkoutCalories").textContent = "–";
           }
         });
     }
-  });
+  });  
 });
 
 function formatDateForServer(str) {

@@ -137,6 +137,10 @@
   color: var(--primary-clr);
   border: 1px solid #f5f5f5;
 }
+
+.calendar.workout-mode .days .day {
+  color: #a6bdad;
+}
 .calendar .days .day:nth-child(7n + 1) {
   border-left: 2px solid #f5f5f5;
 }
@@ -609,61 +613,84 @@
 }
 
 .calendar.workout-mode {
-  background-color: #a6bdad;
-  border: 2px solid #fffaf1;
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad; 
 }
 
 .calendar.workout-mode .days .day:not(.prev-date, .next-date):hover {
-  background-color: #fffaf1;
-  color: #333;
+  background-color: #a6bdad;
+  color: #fffaf1;
 }
 
 .calendar.workout-mode .days .active {
-  background-color: #fffaf1;
-  color: #333;
+  background-color: #a6bdad;
+  color: #fffaf1;
 }
 
 .calendar.workout-mode .days .active::before {
-  box-shadow: 0 0 10px 2px #fffaf1;
+  box-shadow: 0 0 10px 2px #a6bdad;
 }
 
 .calendar.workout-mode .days .event::after {
-  background-color: #fffaf1;
+  background-color: #a6bdad;
+}
+
+.calendar.workout-mode .goto-today .goto {
+  border: 1px solid #a6bdad;
+}
+
+.calendar.workout-mode .goto-today .goto button {
+  border-left: 1px solid #a6bdad;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  background-color: transparent;
+  color: #a6bdad;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.calendar.workout-mode .goto-today > button {
+  border: 1px solid #a6bdad;
+  background-color: transparent;
+  color: #a6bdad;
+  padding: 10px;
+  cursor: pointer;
 }
 
 .calendar.workout-mode .goto-today button:hover,
 .calendar.workout-mode .goto-today .goto button:hover {
-  background-color: #fffaf1;
-  color: #a6bdad;
-  border-color: #fffaf1;
+  background-color: #a6bdad;
+  color: #fffaf1;
 }
 
 .calendar.workout-mode .month {
-  color: #fffaf1;
+  color: #333;
 }
+
 .container.workout-mode {
-  background-color: #fffaf1;
+  background-color: #b85143;
 }
 
 .container.workout-mode .calendar {
-  background-color: #a6bdad;
-  border: 2px solid #fffaf1;
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad;
 }
 
 .calendar.workout-mode .goto input {
-  background-color: #a6bdad;
-  color: #fffaf1;
+  background-color: #fffaf1;
+  color: #a6bdad;
 }
 
 .calendar.workout-mode .goto input::placeholder {
-  color: #fffaf1;
+  color: #a6bdad;
   opacity: 0.8;
 }
 
 .container.workout-mode .events .event {
-  background-color: #a6bdad;
-  border: 2px solid #fffaf1;
-  color: #fffaf1;
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad;
+  color: #a6bdad;
 }
 
 .container.workout-mode .events .event .actions button:hover {
@@ -672,16 +699,61 @@
 }
 
 .container.workout-mode .today-date {
-  background-color: #a6bdad;
-  border: 2px solid #fffaf1;
+  background-color: #fffaf1;
+  border: 2px solid #a6bdad;
 }
 
 .container.workout-mode .today-date .event-date {
-  color: #fffaf1;
+  color: #333;
 }
 
 .calendar.workout-mode .nav-arrow {
-  background: #fffaf1;
-  color: #b85143;
-  border: 2px solid #b85143;
+  background: #a6bdad;
+  color: #fffaf1; 
+  border: 2px solid #a6bdad;
+}
+
+.calendar.workout-mode .goto-today button {
+  border-left: 1px solid #a6bdad;
+  color: #a6bdad;
+}
+
+.container.workout-mode .add-event-footer .add-event-btn {
+  background-color: #a6bdad;
+  border: 1px solid #a6bdad;
+  color: #fffaf1;
+}
+
+.container.workout-mode .add-event-footer .add-event-btn:hover {
+  background-color: transparent;
+  color: #a6bdad;
+}
+
+.container.workout-mode .today-date .event-day {
+  color: #a6bdad;
+}
+
+.container.workout-mode .events .event .actions button {
+  background-color: #a6bdad;
+  color: white;
+}
+
+.container.workout-mode .events .event .actions button:hover {
+  background-color: #89a897;
+}
+
+.container.workout-mode .events .event:hover {
+  border-color: #a6bdad; 
+}
+
+.container.workout-mode .events .event .title {
+  color: #a6bdad;
+}
+
+.container.workout-mode .events .event .title i {
+  color: #a6bdad;
+}
+
+.container.workout-mode .event:hover .title i {
+  color: #a6bdad !important;
 }
