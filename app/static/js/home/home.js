@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (data.workouts && data.workouts.length > 0) {
             updateWorkoutsFromServer(serverDate, data.workouts);
           } else {
-            events.innerHTML = `<div class="no-workouts">Нет тренировок</div>`;
+            events.innerHTML = `<div class="no-workouts">Нет данных о тренировках</div>`;
             window.workoutsByDate[serverDate] = [];
   
             document.getElementById("totalDuration").textContent = "–";
